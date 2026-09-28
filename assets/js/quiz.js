@@ -165,8 +165,8 @@
       kind: 'scen', ch: '3.2', ans: 1,
       title: { en: 'Sharing with a partner insurer', vi: 'Chia sẻ với công ty bảo hiểm đối tác' },
       q: {
-        en: 'VietCare Insurance will build its own fingerprint vault for the same customers. The two vaults must not be linkable, and the key release must be kept. Which design?',
-        vi: 'VietCare Insurance sẽ xây vault vân tay riêng cho cùng tập khách hàng. Hai vault không được liên kết với nhau, và vẫn phải giữ khả năng giải phóng khoá. Chọn thiết kế nào?'
+        en: 'Manulife Vietnam will build its own fingerprint vault for the same customers. The two vaults must not be linkable, and the key release must be kept. Which design?',
+        vi: 'Manulife Vietnam sẽ xây vault vân tay riêng cho cùng tập khách hàng. Hai vault không được liên kết với nhau, và vẫn phải giữ khả năng giải phóng khoá. Chọn thiết kế nào?'
       },
       opts: [
         { en: 'Plain Fuzzy Vault at both sites', vi: 'Fuzzy Vault thuần ở cả hai nơi' },
