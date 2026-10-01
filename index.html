@@ -966,50 +966,19 @@
 <!-- 3.2 a1 general idea -->
 <section class="slide" data-ch="3" data-sec="3.2">
   <h2><span class="en">Biometric cryptosystems: a match = recovering the right key</span><span class="vi">Hệ mật sinh trắc: khớp = khôi phục đúng khoá</span></h2>
-  <div class="s-body">
-    <div class="g2" style="gap:18px">
-      <div class="card flat" style="padding:14px 18px">
-        <div class="kicker"><span class="en">(a) Key binding — helper = F(template, key)</span><span class="vi">(a) Key binding — helper = F(template, khoá)</span></div>
-        <div class="flow small">
-          <div class="node"><span class="en">Biometric</span><span class="vi">Sinh trắc</span></div><div class="arr"></div>
-          <div class="node key"><span class="en">+ random key</span><span class="vi">+ khoá ngẫu nhiên</span></div><div class="arr"></div>
-          <div class="node solid"><span class="en">Key binding</span><span class="vi">Gắn khoá</span></div><div class="arr"></div>
-          <div class="node store">Helper data</div>
-        </div>
-        <div class="flow small mt-s">
-          <div class="node"><span class="en">New sample</span><span class="vi">Mẫu mới</span></div><div class="arr"></div>
-          <div class="node store">+ helper data</div><div class="arr"></div>
-          <div class="node solid"><span class="en">Key retrieval</span><span class="vi">Lấy lại khoá</span></div><div class="arr"></div>
-          <div class="node good"><span class="en">Key ✓ = match</span><span class="vi">Khoá ✓ = khớp</span></div>
-        </div>
-        <p class="xs muted" style="margin:10px 0 0">Fuzzy Commitment · Fuzzy Vault</p>
-      </div>
-      <div class="card flat" style="padding:14px 18px">
-        <div class="kicker"><span class="en">(b) Key generation — helper = F(template)</span><span class="vi">(b) Key generation — helper = F(template)</span></div>
-        <div class="flow small">
-          <div class="node"><span class="en">Biometric</span><span class="vi">Sinh trắc</span></div><div class="arr"></div>
-          <div class="node solid"><span class="en">Key / helper-data generation</span><span class="vi">Sinh khoá / helper data</span></div><div class="arr"></div>
-          <div class="node store">Helper data</div>
-        </div>
-        <div class="flow small mt-s">
-          <div class="node"><span class="en">New sample</span><span class="vi">Mẫu mới</span></div><div class="arr"></div>
-          <div class="node store">+ helper data</div><div class="arr"></div>
-          <div class="node solid"><span class="en">Key recovery</span><span class="vi">Khôi phục khoá</span></div><div class="arr"></div>
-          <div class="node good"><span class="en">Key ✓</span><span class="vi">Khoá ✓</span></div>
-        </div>
-        <p class="xs muted" style="margin:10px 0 0">Secure sketch · Fuzzy Extractor</p>
-      </div>
-    </div>
-    <div class="g-7-5 mt">
+  <div class="s-body g-5-7 ai-c">
+    <figure class="img-card orig-fig" style="margin:0 auto;max-width:470px"><img src="assets/img/bcs-key-binding-generation.png" alt="Key binding and key generation schemes"><figcaption class="cap" style="color:#555;padding:4px 6px 0"><span class="en">(a) key binding · (b) key generation</span><span class="vi">(a) gắn khoá · (b) sinh khoá</span></figcaption></figure>
+    <div class="stack">
       <ul class="b small tight">
         <li><span class="en"><b>Unlike §3.1</b>, two templates are never compared with each other. The system stores only <b>helper data</b> — public information that reveals little about the template.</span><span class="vi"><b>Khác §3.1</b>, không so hai template với nhau. Hệ thống chỉ lưu <b>helper data</b> — thông tin công khai, tiết lộ rất ít về template.</span></li>
         <li><span class="en">At verification, helper data + query are used to <b>recover a key</b>; recovering the correct key means a match.</span><span class="vi">Khi xác thực, helper data + truy vấn được dùng để <b>khôi phục khoá</b>; khôi phục đúng khoá nghĩa là khớp.</span></li>
         <li><span class="en"><b>Key binding</b> binds a randomly chosen key to the template; <b>key generation</b> derives the key from the template itself.</span><span class="vi"><b>Key binding</b> gắn một khoá chọn ngẫu nhiên vào template; <b>key generation</b> suy ra khoá từ chính template.</span></li>
+        <li><span class="en">Representatives: <b>Fuzzy Commitment</b>, <b>Fuzzy Vault</b> (binding) · <b>Fuzzy Extractor</b> (generation).</span><span class="vi">Tiêu biểu: <b>Fuzzy Commitment</b>, <b>Fuzzy Vault</b> (gắn khoá) · <b>Fuzzy Extractor</b> (sinh khoá).</span></li>
       </ul>
-      <div class="callout" style="align-self:start"><span class="en"><b>Why this branch exists:</b> two scans are never identical, but a cryptographic key must be correct to the last bit. <b>Error correction</b> turns “approximately right” biometrics into an “exactly right” key.</span><span class="vi"><b>Vì sao cần nhánh này:</b> hai lần quét không bao giờ giống hệt nhau, nhưng khoá mật mã phải đúng tới từng bit. <b>Sửa lỗi</b> biến sinh trắc “gần đúng” thành khoá “đúng tuyệt đối”.</span></div>
+      <div class="callout"><span class="en"><b>Why this branch exists:</b> two scans are never identical, but a cryptographic key must be correct to the last bit. <b>Error correction</b> turns “approximately right” biometrics into an “exactly right” key.</span><span class="vi"><b>Vì sao cần nhánh này:</b> hai lần quét không bao giờ giống hệt nhau, nhưng khoá mật mã phải đúng tới từng bit. <b>Sửa lỗi</b> biến sinh trắc “gần đúng” thành khoá “đúng tuyệt đối”.</span></div>
     </div>
   </div>
-  <p class="src">[1] Jain et al. 2008, §3 &amp; Fig. 8 (<span class="en">redrawn</span><span class="vi">vẽ lại</span>) · [2] Rathgeb &amp; Uhl 2011</p>
+  <p class="src">[2] Rathgeb &amp; Uhl 2011 (<span class="en">original figure</span><span class="vi">hình gốc</span>) · [1] Jain et al. 2008, §3</p>
 </section>
 
 <!-- 3.2 a2 terms -->
@@ -1040,34 +1009,14 @@
 <section class="slide" data-ch="3" data-sec="3.2">
   <h2><span class="en">Key binding · Fuzzy Commitment: XOR the template with a codeword</span><span class="vi">Key binding · Fuzzy Commitment: XOR template với một từ mã</span></h2>
   <div class="s-body">
-    <div class="card flat" style="padding:16px 20px">
-      <div class="lane">
-        <div class="lane-l"><span class="en">Enrolment</span><span class="vi">Đăng ký</span></div>
-        <div class="flow">
-          <div class="node key"><span class="en">Random key</span><span class="vi">Khoá ngẫu nhiên</span></div><div class="arr"></div>
-          <div class="node"><span class="en">ECC encode</span><span class="vi">Mã hoá ECC</span></div><div class="arr" data-l="c"></div>
-          <div class="node solid"><span class="en">Binding: x ⊕ c</span><span class="vi">Gắn: x ⊕ c</span><small style="color:inherit;opacity:.8"><span class="en">x = witness (template bits)</span><span class="vi">x = template dạng bit</span></small></div><div class="arr"></div>
-          <div class="node store"><span class="en">Commitment: δ = x ⊕ c and h(c)</span><span class="vi">Commitment: δ = x ⊕ c và h(c)</span><small><span class="en">neither x nor c is stored</span><span class="vi">không lưu x, cũng không lưu c</span></small></div>
-        </div>
-      </div>
-      <div class="lane mt">
-        <div class="lane-l"><span class="en">Authentication</span><span class="vi">Xác thực</span></div>
-        <div class="flow">
-          <div class="node"><span class="en">New scan x′</span><span class="vi">Lần quét mới x′</span></div><div class="arr"></div>
-          <div class="node solid">x′ ⊕ δ = c ⊕ (x ⊕ x′)<small style="color:inherit;opacity:.8"><span class="en">c with a few flipped bits</span><span class="vi">c bị lật vài bit</span></small></div><div class="arr"></div>
-          <div class="node"><span class="en">ECC decode</span><span class="vi">Giải mã ECC</span></div><div class="arr" data-l="c′"></div>
-          <div class="node"><span class="en">h(c′) = h(c) ?</span><span class="vi">h(c′) = h(c) ?</span></div><div class="arr"></div>
-          <div class="node good"><span class="en">Accept + key released</span><span class="vi">Chấp nhận + giải phóng khoá</span></div>
-        </div>
-      </div>
-    </div>
+    <figure class="img-card orig-fig" style="margin:0 auto;max-width:600px"><img src="assets/img/fuzzy-commitment.png" alt="Fuzzy Commitment scheme"></figure>
     <div class="g3 mt" style="gap:16px">
-      <div class="card flat small"><div class="kicker"><span class="en">Input</span><span class="vi">Đầu vào</span></div><span class="en">A <b>fixed-length bit string</b> x — e.g. an IrisCode or a binarised face embedding.</span><span class="vi"><b>Chuỗi bit độ dài cố định</b> x — vd. IrisCode hoặc face embedding đã nhị phân hoá.</span></div>
-      <div class="card flat small"><div class="kicker"><span class="en">Enrolment</span><span class="vi">Đăng ký</span></div><span class="en">Pick a random key, encode it into codeword c, store <b>x ⊕ c</b> (template “mixed” with the codeword) and <b>h(c)</b>.</span><span class="vi">Chọn khoá ngẫu nhiên, mã hoá thành từ mã c, lưu <b>x ⊕ c</b> (template “trộn” với từ mã) và <b>h(c)</b>.</span></div>
-      <div class="card flat small"><div class="kicker"><span class="en">Verification</span><span class="vi">Xác thực</span></div><span class="en">x′ ⊕ (x ⊕ c) is c flipped exactly where x′ differs from x. If only a few bits flip, the ECC returns c exactly → h matches → accept.</span><span class="vi">x′ ⊕ (x ⊕ c) chính là c bị lật đúng ở các bit x′ khác x. Nếu chỉ vài bit lật, ECC trả về đúng c → h khớp → chấp nhận.</span></div>
+      <div class="card flat xs"><div class="kicker"><span class="en">Input</span><span class="vi">Đầu vào</span></div><span class="en">A <b>fixed-length bit string</b> x — e.g. an IrisCode or a binarised face embedding.</span><span class="vi"><b>Chuỗi bit độ dài cố định</b> x — vd. IrisCode hoặc face embedding đã nhị phân hoá.</span></div>
+      <div class="card flat xs"><div class="kicker"><span class="en">Enrolment</span><span class="vi">Đăng ký</span></div><span class="en">Pick a random key, encode it into codeword c, store <b>x ⊕ c</b> (template “mixed” with the codeword) and <b>h(c)</b>.</span><span class="vi">Chọn khoá ngẫu nhiên, mã hoá thành từ mã c, lưu <b>x ⊕ c</b> (template “trộn” với từ mã) và <b>h(c)</b>.</span></div>
+      <div class="card flat xs"><div class="kicker"><span class="en">Verification</span><span class="vi">Xác thực</span></div><span class="en">x′ ⊕ (x ⊕ c) is c flipped exactly where x′ differs from x. If only a few bits flip, the ECC returns c exactly → h matches → accept.</span><span class="vi">x′ ⊕ (x ⊕ c) chính là c bị lật đúng ở các bit x′ khác x. Nếu chỉ vài bit lật, ECC trả về đúng c → h khớp → chấp nhận.</span></div>
     </div>
   </div>
-  <p class="src">Juels &amp; Wattenberg, ACM CCS 1999 · [2] Rathgeb &amp; Uhl 2011 (<span class="en">redrawn</span><span class="vi">vẽ lại</span>)</p>
+  <p class="src">Juels &amp; Wattenberg, ACM CCS 1999 · [2] Rathgeb &amp; Uhl 2011 (<span class="en">original figure</span><span class="vi">hình gốc</span>)</p>
 </section>
 
 <!-- 3.2 b2 FC example -->
@@ -1124,63 +1073,29 @@
 <section class="slide" data-ch="3" data-sec="3.2">
   <h2><span class="en">Key binding · Fuzzy Vault: hide a polynomial among chaff points</span><span class="vi">Key binding · Fuzzy Vault: giấu đa thức giữa các điểm nhiễu (chaff)</span></h2>
   <div class="s-body">
-    <div class="card flat" style="padding:16px 20px">
-      <div class="lane">
-        <div class="lane-l"><span class="en">Locking</span><span class="vi">Khoá vault</span></div>
-        <div class="flow">
-          <div class="node"><span class="en">Feature set A</span><span class="vi">Tập đặc trưng A</span><small><span class="en">unordered</span><span class="vi">không thứ tự</span></small></div><div class="arr"></div>
-          <div class="node key"><span class="en">Secret k → polynomial p</span><span class="vi">Bí mật k → đa thức p</span><small><span class="en">k = coefficients (RS-type code)</span><span class="vi">k = hệ số (mã kiểu RS)</span></small></div><div class="arr"></div>
-          <div class="node solid"><span class="en">Genuine points (a, p(a))</span><span class="vi">Điểm thật (a, p(a))</span></div><div class="arr"></div>
-          <div class="node"><span class="en">+ many chaff points</span><span class="vi">+ nhiều điểm chaff</span><small><span class="en">not on p</span><span class="vi">không nằm trên p</span></small></div><div class="arr"></div>
-          <div class="node store"><span class="en">Vault + hash(k)</span><span class="vi">Vault + hash(k)</span></div>
-        </div>
-      </div>
-      <div class="lane mt">
-        <div class="lane-l"><span class="en">Unlocking</span><span class="vi">Mở vault</span></div>
-        <div class="flow">
-          <div class="node"><span class="en">Feature set B</span><span class="vi">Tập đặc trưng B</span></div><div class="arr"></div>
-          <div class="node"><span class="en">Pick vault points that match B</span><span class="vi">Chọn điểm vault khớp với B</span></div><div class="arr"></div>
-          <div class="node solid"><span class="en">≥ n + 1 genuine → Lagrange → p′</span><span class="vi">≥ n + 1 điểm thật → Lagrange → p′</span></div><div class="arr"></div>
-          <div class="node"><span class="en">k′ ; check hash</span><span class="vi">k′ ; kiểm tra hash</span></div><div class="arr"></div>
-          <div class="node good"><span class="en">k′ = k → accept</span><span class="vi">k′ = k → chấp nhận</span></div>
-        </div>
-      </div>
-    </div>
+    <figure class="img-card orig-fig" style="margin:0 auto;max-width:740px"><img src="assets/img/fuzzy-vault.png" alt="Fuzzy Vault scheme"></figure>
     <div class="g3 mt" style="gap:16px">
-      <div class="card flat small"><div class="kicker"><span class="en">Input</span><span class="vi">Đầu vào</span></div><span class="en">An <b>unordered set</b> — a fingerprint minutiae set, or integers derived from a face embedding. Fuzzy Commitment needs a fixed-length bit string instead.</span><span class="vi">Một <b>tập không thứ tự</b> — tập minutiae vân tay, hoặc tập số nguyên suy từ face embedding. Fuzzy Commitment thì cần chuỗi bit độ dài cố định.</span></div>
-      <div class="card flat small"><div class="kicker"><span class="en">The vault</span><span class="vi">Vault</span></div><span class="en">Genuine points mixed with chaff are the <b>only</b> thing stored as the template (plus a hash / CRC of k so k′ can be checked).</span><span class="vi">Điểm thật trộn lẫn chaff là thứ <b>duy nhất</b> được lưu làm template (kèm hash / CRC của k để kiểm tra k′).</span></div>
-      <div class="card flat small"><div class="kicker"><span class="en">Why it tolerates noise</span><span class="vi">Vì sao chịu được nhiễu</span></div><span class="en">B need not equal A — it only needs enough elements in common to pin down p, so a few missing or extra features are fine.</span><span class="vi">B không cần bằng A — chỉ cần đủ phần tử chung để xác định p, nên thiếu hay thừa vài đặc trưng vẫn được.</span></div>
+      <div class="card flat xs"><div class="kicker"><span class="en">Input</span><span class="vi">Đầu vào</span></div><span class="en">An <b>unordered set</b> — a fingerprint minutiae set, or integers derived from a face embedding. Fuzzy Commitment needs a fixed-length bit string instead.</span><span class="vi">Một <b>tập không thứ tự</b> — tập minutiae vân tay, hoặc tập số nguyên suy từ face embedding. Fuzzy Commitment thì cần chuỗi bit độ dài cố định.</span></div>
+      <div class="card flat xs"><div class="kicker"><span class="en">The vault</span><span class="vi">Vault</span></div><span class="en">Genuine points mixed with chaff are the <b>only</b> thing stored as the template (plus a hash / CRC of k so k′ can be checked).</span><span class="vi">Điểm thật trộn lẫn chaff là thứ <b>duy nhất</b> được lưu làm template (kèm hash / CRC của k để kiểm tra k′).</span></div>
+      <div class="card flat xs"><div class="kicker"><span class="en">Why it tolerates noise</span><span class="vi">Vì sao chịu được nhiễu</span></div><span class="en">B need not equal A — it only needs enough elements in common to pin down p, so a few missing or extra features are fine.</span><span class="vi">B không cần bằng A — chỉ cần đủ phần tử chung để xác định p, nên thiếu hay thừa vài đặc trưng vẫn được.</span></div>
     </div>
   </div>
-  <p class="src">Juels &amp; Sudan, ISIT 2002 · [2] Rathgeb &amp; Uhl 2011 (<span class="en">redrawn</span><span class="vi">vẽ lại</span>)</p>
+  <p class="src">Juels &amp; Sudan, ISIT 2002 · [2] Rathgeb &amp; Uhl 2011 (<span class="en">original figure</span><span class="vi">hình gốc</span>)</p>
 </section>
 
 <!-- 3.2 b5 FV example -->
 <section class="slide" data-ch="3" data-sec="3.2">
   <h2><span class="en">Fuzzy Vault — unlocking a degree-1 vault</span><span class="vi">Fuzzy Vault — mở một vault bậc 1</span></h2>
   <div class="s-body g-7-5">
-    <div class="card flat fig" id="fig-vault" style="padding:12px 16px 10px">
-      <div class="ctl-row" style="justify-content:space-between;margin:0 0 2px">
-        <div class="small"><span class="t-dot" style="background:var(--fig-3)"></span> <span class="en">genuine (on p)</span><span class="vi">điểm thật (trên p)</span> &nbsp; <span class="t-dia"></span> chaff</div>
-        <div class="seg" role="group">
-          <button data-m="truth"><span class="en">Truth</span><span class="vi">Sự thật</span></button>
-          <button data-m="attacker"><span class="en">Attacker view</span><span class="vi">Góc kẻ trộm</span></button>
-          <button data-m="genuine"><span class="en">Genuine query</span><span class="vi">Người thật</span></button>
-          <button data-m="impostor"><span class="en">Impostor</span><span class="vi">Kẻ giả mạo</span></button>
-        </div>
-      </div>
-      <div class="plot"></div>
-    </div>
-    <div class="stack small">
+    <figure class="img-card orig-fig" style="margin:0 auto;max-width:640px"><img src="assets/img/fuzzy-vault-example.png" alt="Degree-1 fuzzy vault: genuine points on p(x) = 2x + 3 and chaff points"></figure>
+    <div class="stack xs">
       <div class="card flat">
         <div class="kicker"><span class="en">Locking</span><span class="vi">Khoá vault</span></div>
         <span class="en">Key (2, 3) → p(x) = 2x + 3 (degree 1 → 2 points unlock). Genuine elements {1, 4, 6} → (1, 5), (4, 11), (6, 15). Chaff (2, 9), (3, 4), (5, 7), (7, 12). Stored: all 7 points + h(2, 3).</span>
         <span class="vi">Khoá (2, 3) → p(x) = 2x + 3 (bậc 1 → cần 2 điểm). Phần tử thật {1, 4, 6} → (1, 5), (4, 11), (6, 15). Chaff (2, 9), (3, 4), (5, 7), (7, 12). Lưu: cả 7 điểm + h(2, 3).</span>
       </div>
-      <div class="v-note card flat" data-m="truth" hidden><span class="en">Only the owner's feature set knows which x-values are genuine.</span><span class="vi">Chỉ tập đặc trưng của chủ nhân biết giá trị x nào là thật.</span></div>
-      <div class="v-note card flat" data-m="attacker" hidden><span class="en">A thief sees 7 identical-looking points and must guess which ones lie on p.</span><span class="vi">Kẻ trộm thấy 7 điểm như nhau và phải đoán điểm nào nằm trên p.</span></div>
-      <div class="v-note card good" data-m="genuine" hidden><span class="en">Query {1, 4, 5} picks (1, 5), (4, 11), (5, 7). The pair (1, 5), (4, 11) gives 2x + 3 → key (2, 3), hash ✓ → <b>accept</b>, despite one wrong element (5).</span><span class="vi">Truy vấn {1, 4, 5} chọn (1, 5), (4, 11), (5, 7). Cặp (1, 5), (4, 11) cho 2x + 3 → khoá (2, 3), hash ✓ → <b>chấp nhận</b>, dù có một phần tử sai (5).</span></div>
-      <div class="v-note card bad" data-m="impostor" hidden><span class="en">Query {2, 3, 7} picks only chaff: every pair gives a wrong key, e.g. (2, 9), (3, 4) → −5x + 19, hash ✗ → <b>reject</b>.</span><span class="vi">Truy vấn {2, 3, 7} chỉ chọn trúng chaff: mọi cặp cho khoá sai, vd. (2, 9), (3, 4) → −5x + 19, hash ✗ → <b>từ chối</b>.</span></div>
+      <div class="card good"><span class="en">Query {1, 4, 5} picks (1, 5), (4, 11), (5, 7). The pair (1, 5), (4, 11) gives 2x + 3 → key (2, 3), hash ✓ → <b>accept</b>, despite one wrong element (5).</span><span class="vi">Truy vấn {1, 4, 5} chọn (1, 5), (4, 11), (5, 7). Cặp (1, 5), (4, 11) cho 2x + 3 → khoá (2, 3), hash ✓ → <b>chấp nhận</b>, dù có một phần tử sai (5).</span></div>
+      <div class="card bad"><span class="en">Query {2, 3, 7} picks only chaff: every pair gives a wrong key, e.g. (2, 9), (3, 4) → −5x + 19, hash ✗ → <b>reject</b>.</span><span class="vi">Truy vấn {2, 3, 7} chỉ chọn trúng chaff: mọi cặp cho khoá sai, vd. (2, 9), (3, 4) → −5x + 19, hash ✗ → <b>từ chối</b>.</span></div>
       <div class="callout"><span class="en"><b>The threshold lives in the degree n:</b> higher n → more matching elements needed → longer key, harder to forge, but also harder for the genuine user.</span><span class="vi"><b>Ngưỡng nằm ở bậc n:</b> n càng cao → cần càng nhiều phần tử khớp → khoá dài hơn, khó giả mạo hơn, nhưng người thật cũng khó mở hơn.</span></div>
     </div>
   </div>
@@ -1229,26 +1144,7 @@
 <section class="slide" data-ch="3" data-sec="3.2">
   <h2><span class="en">Key generation · Fuzzy Extractor: the key comes from the biometric itself</span><span class="vi">Key generation · Fuzzy Extractor: khoá sinh ra từ chính sinh trắc</span></h2>
   <div class="s-body">
-    <div class="card flat" style="padding:16px 20px">
-      <div class="lane">
-        <div class="lane-l"><span class="en">Enrolment</span><span class="vi">Đăng ký</span></div>
-        <div class="flow">
-          <div class="node">w</div><div class="arr"></div>
-          <div class="node solid">Gen(w)</div><div class="arr" data-l="R"></div>
-          <div class="node key">Enc<sub>R</sub>(record)</div><div class="arr"></div>
-          <div class="node store"><span class="en">store P and C = Enc<sub>R</sub>(record)</span><span class="vi">lưu P và C = Enc<sub>R</sub>(record)</span><small><span class="en">R is thrown away</span><span class="vi">R bị huỷ</span></small></div>
-        </div>
-      </div>
-      <div class="lane mt">
-        <div class="lane-l"><span class="en">Later use</span><span class="vi">Khi dùng</span></div>
-        <div class="flow">
-          <div class="node">w′ ≈ w <span class="xs muted">+ P</span></div><div class="arr"></div>
-          <div class="node solid">Rep(w′, P)</div><div class="arr" data-l="R"></div>
-          <div class="node key">Dec<sub>R</sub>(C)</div><div class="arr"></div>
-          <div class="node good"><span class="en">record ✓ — can't be decrypted without the person</span><span class="vi">record ✓ — không giải mã được nếu thiếu chính người đó</span></div>
-        </div>
-      </div>
-    </div>
+    <figure class="img-card orig-fig" style="margin:0 auto;max-width:1040px"><img src="assets/img/fuzzy-extractor.png" alt="Fuzzy extractor: Gen, Rep, Enc, Dec"></figure>
     <div class="g2 mt small">
       <ul class="b tight">
         <li><span class="en"><b>Two procedures</b> (Dodis, Reyzin &amp; Smith): <b>Gen</b> turns biometric w into a nearly uniform key <b>R</b> plus <b>helper data P</b>; <b>Rep</b> turns a new sample w′ ≈ w plus P back into the <b>same R</b>.</span><span class="vi"><b>Hai thủ tục</b> (Dodis, Reyzin &amp; Smith): <b>Gen</b> biến sinh trắc w thành khoá gần đều <b>R</b> và <b>helper data P</b>; <b>Rep</b> biến mẫu mới w′ ≈ w cùng P trở lại <b>đúng R</b>.</span></li>
@@ -1260,7 +1156,7 @@
       </ul>
     </div>
   </div>
-  <p class="src">Dodis, Reyzin &amp; Smith, EUROCRYPT 2004 · Dodis et al., SIAM J. Comput. 2008</p>
+  <p class="src">Dodis, Reyzin &amp; Smith, EUROCRYPT 2004 (<span class="en">original figure</span><span class="vi">hình gốc</span>) · Dodis et al., SIAM J. Comput. 2008</p>
 </section>
 
 <!-- 3.2 c2 FE example -->
@@ -1314,25 +1210,18 @@
 <!-- 3.2 d hybrid -->
 <section class="slide" data-ch="3" data-sec="3.2">
   <h2><span class="en">Why hybrid methods are needed</span><span class="vi">Vì sao cần phương pháp lai</span></h2>
-  <div class="s-body">
-    <div class="card flat" style="padding:16px 20px">
-      <div class="kicker"><span class="en">Classic example — “password hardening” of the Fuzzy Vault (Nandakumar, Nagar &amp; Jain 2007)</span><span class="vi">Ví dụ kinh điển — “làm cứng bằng mật khẩu” cho Fuzzy Vault (Nandakumar, Nagar &amp; Jain 2007)</span></div>
-      <div class="flow mt-s">
-        <div class="node"><span class="en">Minutiae</span><span class="vi">Minutiae</span></div><div class="arr"></div>
-        <div class="node key"><span class="en">+ password</span><span class="vi">+ mật khẩu</span></div><div class="arr"></div>
-        <div class="node solid"><span class="en">Salt the minutiae</span><span class="vi">Salt minutiae</span><small style="color:inherit;opacity:.8">§3.1</small></div><div class="arr"></div>
-        <div class="node solid"><span class="en">Build the Fuzzy Vault</span><span class="vi">Lập Fuzzy Vault</span><small style="color:inherit;opacity:.8">§3.2</small></div><div class="arr"></div>
-        <div class="node solid"><span class="en">Encrypt the vault with a password-derived key</span><span class="vi">Mã hoá vault bằng khoá suy từ mật khẩu</span></div><div class="arr"></div>
-        <div class="node store"><span class="en">Stored</span><span class="vi">Lưu</span></div>
-      </div>
+  <div class="s-body g-7-5 ai-c">
+    <div class="stack-s">
+      <div class="kicker" style="color:var(--ch)"><span class="en">Classic example — “password hardening” of the Fuzzy Vault (Nandakumar, Nagar &amp; Jain 2007)</span><span class="vi">Ví dụ kinh điển — “làm cứng bằng mật khẩu” cho Fuzzy Vault (Nandakumar, Nagar &amp; Jain 2007)</span></div>
+      <figure class="img-card orig-fig" style="margin:0 auto;max-width:700px"><img src="assets/img/password-hardening.png" alt="Password-hardened fuzzy vault"></figure>
     </div>
-    <div class="g3 mt">
-      <div class="card flat small"><div class="kicker"><span class="en">Each branch is missing a piece</span><span class="vi">Mỗi nhánh thiếu một mảnh</span></div><span class="en">Salting (§3.1) gives unlinkability / renewability but depends on a secret token. Cryptosystems (§3.2) need no token but lack unlinkability / renewability and suffer the attacks above. Jain et al.: a single method can hardly meet every requirement.</span><span class="vi">Salting (§3.1) có tính không liên kết / thu hồi nhưng phụ thuộc token bí mật. Hệ mật (§3.2) không cần token nhưng thiếu tính không liên kết / thu hồi và dính các tấn công ở trên. Jain et al.: một phương pháp đơn lẻ khó đáp ứng mọi yêu cầu.</span></div>
-      <div class="card flat small"><div class="kicker"><span class="en">What each layer fixes</span><span class="vi">Mỗi lớp vá gì</span></div><span class="en"><b>Salting</b> counters record multiplicity and brings unlinkability / renewability. <b>Encryption</b> counters blended substitution and stolen-key inversion.</span><span class="vi"><b>Salting</b> chống record multiplicity và mang lại tính không liên kết / thu hồi. <b>Mã hoá</b> chống blended substitution và stolen-key inversion.</span></div>
-      <div class="card flat small"><div class="kicker"><span class="en">Recent example</span><span class="vi">Ví dụ gần đây</span></div><span class="en">Bloom filters combined with homomorphic encryption to balance speed and security — HE is next, in §3.3.</span><span class="vi">Kết hợp Bloom filter với mã hoá đồng hình để cân bằng tốc độ và an toàn — HE ở ngay §3.3.</span></div>
+    <div class="stack-s">
+      <div class="card flat xs"><div class="kicker"><span class="en">Each branch is missing a piece</span><span class="vi">Mỗi nhánh thiếu một mảnh</span></div><span class="en">Salting (§3.1) gives unlinkability / renewability but depends on a secret token. Cryptosystems (§3.2) need no token but lack unlinkability / renewability and suffer the attacks above. Jain et al.: a single method can hardly meet every requirement.</span><span class="vi">Salting (§3.1) có tính không liên kết / thu hồi nhưng phụ thuộc token bí mật. Hệ mật (§3.2) không cần token nhưng thiếu tính không liên kết / thu hồi và dính các tấn công ở trên. Jain et al.: một phương pháp đơn lẻ khó đáp ứng mọi yêu cầu.</span></div>
+      <div class="card flat xs"><div class="kicker"><span class="en">What each layer fixes</span><span class="vi">Mỗi lớp vá gì</span></div><span class="en"><b>Salting</b> counters record multiplicity and brings unlinkability / renewability. <b>Encryption</b> counters blended substitution and stolen-key inversion.</span><span class="vi"><b>Salting</b> chống record multiplicity và mang lại tính không liên kết / thu hồi. <b>Mã hoá</b> chống blended substitution và stolen-key inversion.</span></div>
+      <div class="card flat xs"><div class="kicker"><span class="en">Recent example</span><span class="vi">Ví dụ gần đây</span></div><span class="en">Bloom filters combined with homomorphic encryption to balance speed and security — HE is next, in §3.3.</span><span class="vi">Kết hợp Bloom filter với mã hoá đồng hình để cân bằng tốc độ và an toàn — HE ở ngay §3.3.</span></div>
     </div>
   </div>
-  <p class="src">Nandakumar, Nagar &amp; Jain, ICB 2007 · [1] Jain et al. 2008 · [4] Krivokuća Hahn &amp; Marcel 2023</p>
+  <p class="src">Nandakumar, Nagar &amp; Jain, ICB 2007 (<span class="en">original figure</span><span class="vi">hình gốc</span>) · [1] Jain et al. 2008 · [4] Krivokuća Hahn &amp; Marcel 2023</p>
 </section>
 
 <!-- 3.3 a -->
