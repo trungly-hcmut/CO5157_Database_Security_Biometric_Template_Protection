@@ -718,29 +718,7 @@
 <section class="slide" data-ch="3" data-sec="3.1">
   <h2><span class="en">Feature transformation: transform first, then match in the new domain</span><span class="vi">Biến đổi đặc trưng: biến đổi trước, so khớp trong miền mới</span></h2>
   <div class="s-body">
-    <div class="card flat" style="padding:16px 20px">
-      <div class="lane">
-        <div class="lane-l"><span class="en">Enrolment</span><span class="vi">Đăng ký</span></div>
-        <div class="flow">
-          <div class="node"><span class="en">Template T</span><span class="vi">Template T</span></div><div class="arr"></div>
-          <div class="node key"><span class="en">Key K</span><span class="vi">Khoá K</span></div><div class="arr"></div>
-          <div class="node solid"><span class="en">Transform F</span><span class="vi">Biến đổi F</span></div><div class="arr"></div>
-          <div class="node store">F(T, K)<small><span class="en">only this is stored</span><span class="vi">chỉ lưu cái này</span></small></div>
-          <div class="arr" style="visibility:hidden"></div>
-          <div class="node ghost" style="visibility:hidden">match</div>
-        </div>
-      </div>
-      <div class="lane mt">
-        <div class="lane-l"><span class="en">Authentication</span><span class="vi">Xác thực</span></div>
-        <div class="flow">
-          <div class="node"><span class="en">Query Q</span><span class="vi">Truy vấn Q</span></div><div class="arr"></div>
-          <div class="node key"><span class="en">same K</span><span class="vi">cùng K</span></div><div class="arr"></div>
-          <div class="node solid"><span class="en">Transform F</span><span class="vi">Biến đổi F</span></div><div class="arr"></div>
-          <div class="node">F(Q, K)</div><div class="arr"></div>
-          <div class="node good"><span class="en">Match against F(T, K)</span><span class="vi">So khớp với F(T, K)</span><small><span class="en">in the transformed domain</span><span class="vi">trong miền biến đổi</span></small></div>
-        </div>
-      </div>
-    </div>
+    <figure class="img-card orig-fig" style="margin:0 auto;max-width:740px"><img src="assets/img/feature-transformation.png" alt="Authentication when the template is protected by a feature transformation"></figure>
     <div class="g-5-7 mt">
       <ul class="b small tight">
         <li><span class="en"><b>Key K</b>: per-user or per-application value that sets the transform — a password, a token on a card, or a random number issued by the system.</span><span class="vi"><b>Khoá K</b>: giá trị theo người dùng hoặc ứng dụng quyết định phép biến đổi — mật khẩu, token trên thẻ, hoặc số ngẫu nhiên do hệ thống cấp.</span></li>
@@ -753,48 +731,21 @@
       </div>
     </div>
   </div>
-  <p class="src">[1] Jain et al. 2008, §3, Fig. 7 (<span class="en">redrawn</span><span class="vi">vẽ lại</span>)</p>
+  <p class="src">[1] Jain et al. 2008, §3, Fig. 7 (<span class="en">original figure</span><span class="vi">hình gốc</span>)</p>
 </section>
 
 <!-- 3.1 b1 BioHashing principle -->
 <section class="slide" data-ch="3" data-sec="3.1">
   <h2><span class="en">Salting · BioHashing: random projection, then binarisation</span><span class="vi">Salting · BioHashing: chiếu ngẫu nhiên rồi nhị phân hoá</span></h2>
-  <div class="s-body">
-    <div class="card flat" style="padding:16px 20px">
-      <div class="lane">
-        <div class="lane-l"><span class="en">Secret token</span><span class="vi">Token bí mật</span></div>
-        <div class="flow">
-          <div class="node key"><span class="en">Token (tokenised random number)</span><span class="vi">Token (số ngẫu nhiên)</span></div><div class="arr"></div>
-          <div class="node"><span class="en">Seed RNG → n random vectors</span><span class="vi">Gieo RNG → n vector ngẫu nhiên</span></div><div class="arr"></div>
-          <div class="node"><span class="en">Gram–Schmidt → orthonormal R</span><span class="vi">Gram–Schmidt → R trực chuẩn</span><small>n × N</small></div>
-        </div>
-      </div>
-      <div class="lane mt-s">
-        <div class="lane-l"><span class="en">Biometric</span><span class="vi">Sinh trắc</span></div>
-        <div class="flow">
-          <div class="node"><span class="en">Sample</span><span class="vi">Mẫu</span></div><div class="arr"></div>
-          <div class="node"><span class="en">Pre-processing</span><span class="vi">Tiền xử lý</span></div><div class="arr"></div>
-          <div class="node"><span class="en">Feature extraction</span><span class="vi">Trích đặc trưng</span></div><div class="arr"></div>
-          <div class="node"><span class="en">Feature vector x</span><span class="vi">Vector đặc trưng x</span><small><span class="en">fixed length N</span><span class="vi">độ dài cố định N</span></small></div>
-        </div>
-      </div>
-      <div class="lane mt-s">
-        <div class="lane-l"><span class="en">BioHash</span><span class="vi">BioHash</span></div>
-        <div class="flow">
-          <div class="node solid">y = R · x<small style="color:inherit;opacity:.8"><span class="en">n dot products</span><span class="vi">n tích vô hướng</span></small></div><div class="arr"></div>
-          <div class="node solid"><span class="en">Threshold: bit = 1 if y &gt; 0</span><span class="vi">Ngưỡng: bit = 1 nếu y &gt; 0</span></div><div class="arr"></div>
-          <div class="node store"><span class="en">BioHash b (n bits)</span><span class="vi">BioHash b (n bit)</span><small><span class="en">only this is stored</span><span class="vi">chỉ lưu cái này</span></small></div><div class="arr"></div>
-          <div class="node good"><span class="en">Hamming distance</span><span class="vi">Khoảng cách Hamming</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="g3 mt" style="gap:16px">
-      <div class="card flat small"><div class="kicker"><span class="en">Random projection</span><span class="vi">Chiếu ngẫu nhiên</span></div><span class="en">Multiply x by a random matrix from the token. R is orthogonal, so distances are nearly preserved → matching still works.</span><span class="vi">Nhân x với ma trận ngẫu nhiên sinh từ token. R trực giao nên khoảng cách gần như được giữ → vẫn so khớp được.</span></div>
-      <div class="card flat small"><div class="kicker"><span class="en">Binarisation</span><span class="vi">Nhị phân hoá</span></div><span class="en">Each real value becomes one bit via a threshold that balances 0s and 1s — tolerates small scan-to-scan differences.</span><span class="vi">Mỗi giá trị thực thành một bit qua ngưỡng cân bằng 0/1 — chịu được sai khác nhỏ giữa các lần quét.</span></div>
-      <div class="card flat small"><div class="kicker"><span class="en">Enrol → verify</span><span class="vi">Đăng ký → xác thực</span></div><span class="en">Enrol: store only the BioHash. Verify: same process with the same token → new BioHash → compare with the stored one by <b>Hamming distance</b>.</span><span class="vi">Đăng ký: chỉ lưu BioHash. Xác thực: làm lại với cùng token → BioHash mới → so với bản đã lưu bằng <b>khoảng cách Hamming</b>.</span></div>
+  <div class="s-body g-7-5 ai-c">
+    <figure class="img-card orig-fig" style="margin:0 auto;max-width:none"><img src="assets/img/biohashing.png" alt="BioHashing: tokenised random number, orthonormal vectors, dot products and thresholds"></figure>
+    <div class="stack-s">
+      <div class="card flat xs"><div class="kicker"><span class="en">Random projection</span><span class="vi">Chiếu ngẫu nhiên</span></div><span class="en">Multiply x by a random matrix from the token. R is orthogonal, so distances are nearly preserved → matching still works.</span><span class="vi">Nhân x với ma trận ngẫu nhiên sinh từ token. R trực giao nên khoảng cách gần như được giữ → vẫn so khớp được.</span></div>
+      <div class="card flat xs"><div class="kicker"><span class="en">Binarisation</span><span class="vi">Nhị phân hoá</span></div><span class="en">Each real value becomes one bit via a threshold that balances 0s and 1s — tolerates small scan-to-scan differences.</span><span class="vi">Mỗi giá trị thực thành một bit qua ngưỡng cân bằng 0/1 — chịu được sai khác nhỏ giữa các lần quét.</span></div>
+      <div class="card flat xs"><div class="kicker"><span class="en">Enrol → verify</span><span class="vi">Đăng ký → xác thực</span></div><span class="en">Enrol: store only the BioHash. Verify: same process with the same token → new BioHash → compare with the stored one by <b>Hamming distance</b>.</span><span class="vi">Đăng ký: chỉ lưu BioHash. Xác thực: làm lại với cùng token → BioHash mới → so với bản đã lưu bằng <b>khoảng cách Hamming</b>.</span></div>
     </div>
   </div>
-  <p class="src">Teoh, Ngo &amp; Goh, Pattern Recognition 2004 · [2] Rathgeb &amp; Uhl 2011</p>
+  <p class="src">Teoh, Ngo &amp; Goh, Pattern Recognition 2004 · [2] Rathgeb &amp; Uhl 2011 (<span class="en">original figure</span><span class="vi">hình gốc</span>)</p>
 </section>
 
 <!-- 3.1 b2 why it works -->
@@ -892,29 +843,23 @@
 <!-- 3.1 c2 Cartesian -->
 <section class="slide" data-ch="3" data-sec="3.1">
   <h2><span class="en">Cartesian transform: the key shuffles grid cells</span><span class="vi">Biến đổi Cartesian: khoá xáo trộn các ô lưới</span></h2>
-  <div class="s-body">
-    <div class="card flat fig fig-scroll" style="padding:14px 20px 8px;max-width:960px;margin:0 auto"><div id="fig-cart"></div></div>
-    <div class="g2 mt small">
-      <ul class="b tight">
-        <li><span class="en">Extract minutiae → divide the space into a grid of numbered cells, so every point falls into one cell.</span><span class="vi">Trích minutiae → chia không gian thành lưới ô đánh số, mỗi điểm rơi vào một ô.</span></li>
-        <li><span class="en">A user-specific <b>key decides where each cell moves</b>, together with the points inside it.</span><span class="vi"><b>Khoá riêng của người dùng quyết định mỗi ô di chuyển tới đâu</b>, kèm các điểm bên trong.</span></li>
-      </ul>
-      <ul class="b tight">
-        <li><span class="en"><b>Many-to-one:</b> 6 &amp; 14 land in one cell, 7 &amp; 24 in another; some cells stay empty. A point in a merged cell cannot be traced back — even with the key.</span><span class="vi"><b>Nhiều-về-một:</b> ô 6 &amp; 14 rơi vào một ô, 7 &amp; 24 vào ô khác; có ô bỏ trống. Điểm trong ô bị gộp không truy ngược được — kể cả khi biết khoá.</span></li>
-        <li><span class="en">Still matched with the usual matcher, as long as the query uses the same key.</span><span class="vi">Vẫn so khớp bằng bộ so khớp thường, miễn truy vấn dùng cùng khoá.</span></li>
-      </ul>
-    </div>
+  <div class="s-body g-7-5 ai-c">
+    <figure class="img-card orig-fig" style="margin:0 auto;max-width:none"><img src="assets/img/cartesian-transform.png" alt="Cartesian transformation of fingerprint minutiae"></figure>
+    <ul class="b small">
+      <li><span class="en">Extract minutiae → divide the space into a grid of numbered cells, so every point falls into one cell.</span><span class="vi">Trích minutiae → chia không gian thành lưới ô đánh số, mỗi điểm rơi vào một ô.</span></li>
+      <li><span class="en">A user-specific <b>key decides where each cell moves</b>, together with the points inside it.</span><span class="vi"><b>Khoá riêng của người dùng quyết định mỗi ô di chuyển tới đâu</b>, kèm các điểm bên trong.</span></li>
+      <li><span class="en"><b>Many-to-one:</b> 6 &amp; 14 land in one cell, 7 &amp; 24 in another; some cells stay empty. A point in a merged cell cannot be traced back — even with the key.</span><span class="vi"><b>Nhiều-về-một:</b> ô 6 &amp; 14 rơi vào một ô, 7 &amp; 24 vào ô khác; có ô bỏ trống. Điểm trong ô bị gộp không truy ngược được — kể cả khi biết khoá.</span></li>
+      <li><span class="en">Still matched with the usual matcher, as long as the query uses the same key.</span><span class="vi">Vẫn so khớp bằng bộ so khớp thường, miễn truy vấn dùng cùng khoá.</span></li>
+    </ul>
   </div>
-  <p class="src">Ratha et al., IEEE TPAMI 2007 (<span class="en">redrawn</span><span class="vi">vẽ lại</span>)</p>
+  <p class="src">Ratha et al., IEEE TPAMI 2007 (<span class="en">original figure</span><span class="vi">hình gốc</span>)</p>
 </section>
 
 <!-- 3.1 c3 Polar -->
 <section class="slide" data-ch="3" data-sec="3.1">
   <h2><span class="en">Polar transform: rings and sectors around the core</span><span class="vi">Biến đổi Polar: vòng và cung quanh tâm vân</span></h2>
   <div class="s-body g-7-5 ai-c">
-    <div class="card flat fig" style="padding:16px 18px"><div id="fig-polar"></div>
-      <div class="cap"><span class="en">Left: sectors before. Right: after moving by the key — 2 &amp; 7 share a sector, so do 6 &amp; 8; hatched sectors are empty.</span><span class="vi">Trái: các cung ban đầu. Phải: sau khi dời theo khoá — 2 &amp; 7 chung một cung, 6 &amp; 8 cũng vậy; cung gạch chéo bị trống.</span></div>
-    </div>
+    <figure class="img-card orig-fig" style="margin:0 auto;max-width:640px"><img src="assets/img/polar-transform.png" alt="Polar transformation of fingerprint minutiae"><figcaption class="cap" style="color:#555;padding:4px 6px 0"><span class="en">Left: sectors before. Right: after moving by the key — 2 &amp; 7 share a sector, so do 6 &amp; 8; some sectors end up empty.</span><span class="vi">Trái: các cung ban đầu. Phải: sau khi dời theo khoá — 2 &amp; 7 chung một cung, 6 &amp; 8 cũng vậy; một số cung bị trống.</span></figcaption></figure>
     <ul class="b small">
       <li><span class="en"><b>Principle:</b> the space around a reference point (the centre) is cut into concentric <b>rings</b>, each ring into <b>sectors</b>. The key decides where each sector moves; points move with their sector.</span><span class="vi"><b>Nguyên lý:</b> không gian quanh điểm tham chiếu (tâm) được chia thành các <b>vòng</b> đồng tâm, mỗi vòng chia thành các <b>cung</b>. Khoá quyết định mỗi cung dời tới đâu; điểm dời theo cung.</span></li>
       <li><span class="en"><b>Many-to-one again:</b> even someone who knows the key cannot tell which sector a point came from.</span><span class="vi"><b>Lại là nhiều-về-một:</b> dù biết khoá cũng không biết điểm đến từ cung nào.</span></li>
@@ -922,14 +867,14 @@
       <li><span class="en"><b>Remark:</b> sectors near the centre are small; a slight shift can push a point across a border to a completely different place — one reason Polar loses more accuracy than Functional.</span><span class="vi"><b>Lưu ý:</b> cung gần tâm rất nhỏ; lệch nhẹ giữa hai lần chụp có thể đẩy điểm qua biên sang chỗ hoàn toàn khác — một lý do Polar mất độ chính xác nhiều hơn Functional.</span></li>
     </ul>
   </div>
-  <p class="src">Ratha et al., IEEE TPAMI 2007 (<span class="en">redrawn</span><span class="vi">vẽ lại</span>)</p>
+  <p class="src">Ratha et al., IEEE TPAMI 2007 (<span class="en">original figure</span><span class="vi">hình gốc</span>)</p>
 </section>
 
 <!-- 3.1 c4 Functional -->
 <section class="slide" data-ch="3" data-sec="3.1">
   <h2><span class="en">Functional transform: a smooth displacement field</span><span class="vi">Biến đổi Functional: trường dịch chuyển trơn</span></h2>
   <div class="s-body g-7-5 ai-c">
-    <div class="card flat fig" style="padding:14px 16px"><div id="fig-func"></div></div>
+    <figure class="img-card orig-fig" style="margin:0 auto;max-width:640px"><img src="assets/img/functional-transform.png" alt="Functional transformation of fingerprint minutiae"></figure>
     <ul class="b small">
       <li><span class="en"><b>Principle:</b> the key generates a smooth displacement field over the whole space (e.g. a mixture of Gaussians or an electric potential field). Each point moves by the field at its location.</span><span class="vi"><b>Nguyên lý:</b> khoá sinh ra một trường dịch chuyển trơn trên toàn không gian (vd. hỗn hợp Gauss hoặc trường thế điện). Mỗi điểm dời theo giá trị trường tại vị trí của nó.</span></li>
       <li><span class="en">Neighbouring grid lines bend together → points that start close stay close → matching still works. Where the grid <b>folds</b>, different regions land in one area → many-to-one.</span><span class="vi">Các đường lưới cạnh nhau uốn cùng nhau → điểm gần vẫn gần → vẫn so khớp được. Chỗ lưới <b>bị gấp</b>, nhiều vùng rơi vào cùng một chỗ → nhiều-về-một.</span></li>
@@ -937,7 +882,7 @@
       <li><span class="en"><b>Remark:</b> similar keys give similar deformations → the effective key space is smaller than it looks [1, §4.2]; folds are local, so non-invertibility is only partial.</span><span class="vi"><b>Lưu ý:</b> hai khoá gần nhau cho biến dạng gần nhau → không gian khoá thực tế nhỏ hơn vẻ ngoài [1, §4.2]; chỗ gấp chỉ cục bộ nên tính không khả nghịch chỉ một phần.</span></li>
     </ul>
   </div>
-  <p class="src">Ratha et al., IEEE TPAMI 2007 · <span class="en">field drawn procedurally for illustration</span><span class="vi">trường được vẽ minh hoạ</span></p>
+  <p class="src">Ratha et al., IEEE TPAMI 2007 (<span class="en">original figure</span><span class="vi">hình gốc</span>)</p>
 </section>
 
 <!-- 3.1 c5 comparison -->
