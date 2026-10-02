@@ -120,6 +120,32 @@ section.part:last-of-type { border-bottom: 0; }
 .box li { margin-bottom: 6px; }
 .box.warn { border-left: 4px solid var(--warn); }
 
+
+.gist {
+  margin: 4px 0 14px; padding: 10px 14px; border-radius: 10px;
+  background: var(--accent-soft); color: var(--ink); font-weight: 700; font-size: .86em; line-height: 1.5;
+}
+.gist::before { content: 'Ý chính · '; color: var(--accent); }
+p.bridge {
+  margin: 16px 0 6px; padding: 10px 14px; border-left: 4px solid var(--accent);
+  background: var(--surface); border-radius: 0 10px 10px 0; font-style: italic;
+}
+p.bridge::before { content: '→ '; font-style: normal; font-weight: 800; color: var(--accent); }
+p.opt { color: var(--muted); }
+p.opt::before {
+  content: 'có thể bỏ'; display: inline-block; margin-right: 8px; padding: 0 7px; border-radius: 6px;
+  font-size: .62em; font-weight: 700; vertical-align: .15em; background: var(--surface-2); color: var(--muted);
+}
+ol.chain { margin: 0 0 6px; padding-left: 1.3em; font-size: .9em; }
+ol.chain li { margin-bottom: 10px; padding-left: 4px; }
+ol.chain li::marker { color: var(--accent); font-weight: 800; }
+ol.chain i { color: var(--accent); }
+.lg-gist { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.lg-cue { background: var(--cue-soft); color: var(--cue); font-weight: 600; }
+.lg-key { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.lg-opt { background: var(--surface-2); color: var(--muted); }
+.lg-bridge { border-left: 3px solid var(--accent); background: var(--surface); font-style: italic; }
+
 /* ---------- glossary ---------- */
 details.grp { margin: 0 0 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
 details.grp summary {
@@ -157,6 +183,7 @@ dd { margin: 2px 0 0; color: var(--ink-2); }
       <button class="tb" id="wake" aria-pressed="false" aria-label="Giữ màn hình sáng" title="Giữ màn hình sáng">☀︎</button>
     </div>
     <nav class="chips" id="chips">
+      <a href="#mach">Mạch</a>
       <a href="#mo-dau">Mở đầu</a>
       <a href="#s1">1 · HE</a>
       <a href="#s2">2 · RSA</a>
@@ -174,99 +201,122 @@ dd { margin: 2px 0 0; color: var(--ink-2); }
 <main class="wrap">
   <header class="intro">
     <h1>Script trình bày 3.3 → hết chương 3</h1>
-    <p>Mã hoá đồng hình · So sánh &amp; lựa chọn · Các hướng khác — 7 slide, khoảng 5–6 phút</p>
+    <p>Mã hoá đồng hình · So sánh &amp; lựa chọn · Các hướng khác — 7 slide<br>Toàn bộ ≈ 5 phút 50 giây · bỏ các câu mờ còn ≈ 5 phút 10 giây</p>
     <div class="legend">
-      <span style="background:var(--cue-soft);color:var(--cue);font-weight:600">▸ hành động trên slide</span>
-      <span style="background:var(--accent-soft);color:var(--accent);font-weight:700">từ khoá cần nhấn</span>
+      <span class="lg-gist">Ý chính của slide</span>
+      <span class="lg-cue">▸ hành động trên slide</span>
+      <span class="lg-key">từ khoá cần nhấn</span>
+      <span class="lg-opt">câu có thể bỏ</span>
+      <span class="lg-bridge">→ câu nối sang slide sau</span>
     </div>
   </header>
 
+  <section class="part" id="mach">
+    <div class="part-head"><span class="num">≡</span><h2>Mạch trình bày — đọc cái này trước</h2></div>
+    <p class="time">Cả phần là một câu chuyện: mỗi slide trả lời câu hỏi mà slide trước để lại.</p>
+    <ol class="chain">
+      <li><b>Vấn đề:</b> hai hướng trước đều phải làm biến dạng template nên phải trả giá. <i>Có cách nào giữ nguyên template mà server vẫn không thấy?</i> → <b>mã hoá đồng hình</b>.</li>
+      <li><b>HE là gì:</b> tính được ngay trên bản mã. Nhưng có 3 cấp, <i>so khớp khuôn mặt cần cấp nào?</i></li>
+      <li><b>Kiểm chứng bằng số nhỏ</b> (RSA), rồi chỉ ra so khớp chỉ là "nhân rồi cộng" → <b>SHE là đủ</b>. <i>Đưa vào hệ thống thật thì ai giữ khoá?</i></li>
+      <li><b>Ba vai trò:</b> khoá bí mật phải tách khỏi server; bước so ngưỡng là chỗ khó. <i>Thực tế có chạy nổi không?</i></li>
+      <li><b>Thực tế:</b> ngày càng nhanh, đạt 3/4 yêu cầu ISO, nhưng tốn kém và phụ thuộc người giữ khoá → HE cũng phải đánh đổi. <i>Đặt tất cả cạnh nhau thì sao?</i></li>
+      <li><b>So sánh:</b> mỗi phương pháp yếu ở một chỗ khác nhau → không có phương pháp tốt nhất. <i>Vậy chọn thế nào?</i></li>
+      <li><b>Chọn theo hoàn cảnh:</b> ai giữ được bí mật, 1:1 hay 1:N, tài nguyên, rủi ro → <b>ghép nhiều lớp</b> → sang chương 4 kiểm chứng.</li>
+    </ol>
+  </section>
+
   <section class="part" id="mo-dau">
-    <div class="part-head"><span class="num">→</span><h2>Chuyển từ phần của Tú</h2></div>
-    <p>Cảm ơn Tú. Tú vừa nói hai hướng đầu, biến đổi đặc trưng và hệ mật sinh trắc, đều phải đánh đổi: hoặc phụ thuộc vào một khoá bí mật, hoặc giảm độ chính xác.</p>
-    <p>Em xin trình bày hướng thứ ba, <span class="key">mã hoá đồng hình</span>. Hướng này đi theo cách khác hẳn: không biến đổi template mà mã hoá luôn, rồi <span class="key">so khớp ngay trên bản mã</span>.</p>
+    <div class="part-head"><span class="num">→</span><h2>Mở đầu — nhận lời từ Tú</h2></div>
+    <p>Cảm ơn Tú. Như Tú vừa trình bày, hai hướng đầu đều phải <span class="key">làm biến dạng template</span> để che nó, nên đều phải trả giá: hoặc phụ thuộc vào khoá bí mật, hoặc giảm độ chính xác.</p>
+    <p>Vậy có cách nào <span class="key">giữ nguyên template</span> mà server vẫn không nhìn thấy nó không? Đó là hướng thứ ba em trình bày: <b>mã hoá đồng hình</b>.</p>
   </section>
 
   <section class="part" id="s1">
     <div class="part-head"><span class="num">1</span><h2>Mã hoá đồng hình — tính trên bản mã, không bao giờ giải mã template</h2></div>
-    <p class="time">≈ 50 giây</p>
+    <p class="time">≈ 55 giây</p>
+    <div class="gist">Mã hoá thường bắt server giải mã rồi mới so khớp được; mã hoá đồng hình cho phép so khớp ngay trên bản mã.</div>
     <span class="cue">Chỉ vào ô đỏ (AES)</span>
-    <p>Trước hết, vì sao mã hoá thông thường như AES không đủ. CSDL được mã hoá khi lưu, nhưng <span class="key">muốn so khớp thì phải giải mã</span>. Như vậy, ở mỗi lần đăng nhập, template gốc đều nằm dạng rõ trong RAM của server, và khoá giải mã cũng nằm trên chính server đó. Kẻ tấn công chiếm được server là có cả hai.</p>
+    <p>Trước hết, vì sao mã hoá thông thường như AES không đủ? Vì mỗi lần đăng nhập, server <span class="key">phải giải mã template ra để so khớp</span>. Lúc đó template nằm dạng rõ trong bộ nhớ, và khoá cũng nằm sẵn trên server. Chiếm được server là có cả hai.</p>
     <span class="cue">Chỉ vào ô xanh (HE)</span>
-    <p>Mã hoá đồng hình giải quyết đúng chỗ này. Tính trên bản mã cho cùng kết quả như tính trên dữ liệu rõ: giải mã của Enc(a) nhân Enc(b) bằng a nhân b. Nhờ vậy server tính được điểm so khớp mà <span class="key">không cần khoá giải mã</span>.</p>
+    <p>Mã hoá đồng hình sửa đúng chỗ này: tính trên bản mã rồi giải mã kết quả, thì ra đúng như tính trên dữ liệu gốc. Giống một <b>hộp khoá có găng tay</b>: người thợ làm việc với món đồ bên trong mà không lấy ra được. Server là người thợ, nó <span class="key">tính điểm so khớp mà không cần khoá giải mã</span>.</p>
     <span class="cue">Chỉ vào bảng PHE → SHE → FHE</span>
-    <p>Mã hoá đồng hình có ba cấp. <b>PHE</b> chỉ làm được một phép, nhân hoặc cộng, ví dụ RSA hay Paillier. <b>SHE</b> làm được cả cộng lẫn nhân, nhưng số phép nhân bị giới hạn vì nhiễu tăng sau mỗi phép nhân. <b>FHE</b> tính được mọi hàm nhờ kỹ thuật bootstrapping của Gentry năm 2009, nhưng chậm nhất.</p>
-    <p>Dòng được tô màu là SHE, vì đó là <span class="key">cấp vừa đủ</span> cho bài toán của chúng ta. Slide sau em sẽ giải thích vì sao.</p>
+    <p>Có ba cấp. <b>PHE</b> chỉ làm được cộng hoặc nhân. <b>SHE</b> làm được cả hai, nhưng mỗi phép nhân làm "nhiễu" trong bản mã tăng lên, nên chỉ nhân được vài lần. <b>FHE</b> có bootstrapping để làm sạch nhiễu, nên tính được mọi thứ, nhưng rất chậm.</p>
+    <p class="bridge">Vậy so khớp khuôn mặt cần cấp nào? Phải xem so khớp thực chất là phép tính gì.</p>
   </section>
 
   <section class="part" id="s2">
     <div class="part-head"><span class="num">2</span><h2>Ví dụ đồ chơi — nhân trên bản mã (2 × 5 = 10)</h2></div>
-    <p class="time">≈ 50 giây</p>
+    <p class="time">≈ 50 giây · bỏ câu mờ còn ≈ 40 giây</p>
+    <div class="gist">Kiểm chứng tính đồng hình bằng số nhỏ, rồi chỉ ra so khớp khuôn mặt chỉ cần "nhân rồi cộng", nên SHE là đủ.</div>
     <span class="cue">Đi theo 4 bước bên trái</span>
-    <p>Để thấy tính chất đồng hình, em dùng RSA với số nhỏ: p = <span class="num-s">7</span>, q = <span class="num-s">13</span>, nên n = <span class="num-s">91</span>, khoá công khai e = <span class="num-s">5</span>, khoá bí mật d = <span class="num-s">29</span>.</p>
-    <p>Client mã hoá số 2 thành <span class="num-s">32</span> và số 5 thành <span class="num-s">31</span>. Server chỉ nhân hai bản mã: 32 × 31 = <span class="num-s">992</span>, mod 91 còn <span class="num-s">82</span>. Server <span class="key">không hề biết 2, 5 hay kết quả 10</span>. Bên giữ khoá giải mã 82 và nhận đúng <span class="num-s">10</span>, bằng 2 × 5.</p>
-    <p>Lưu ý: RSA sách giáo khoa là mã hoá tất định, nên không an toàn cho dữ liệu thật. Ví dụ này chỉ để minh hoạ tính đồng hình. Thực tế dùng BFV hoặc CKKS, là mã hoá xác suất.</p>
+    <p>Em kiểm chứng bằng RSA với số nhỏ: n = <span class="num-s">91</span>, khoá công khai <span class="num-s">5</span>, khoá bí mật <span class="num-s">29</span>. Client mã hoá 2 thành <span class="num-s">32</span>, 5 thành <span class="num-s">31</span>. Server chỉ nhân hai bản mã, được <span class="num-s">82</span>, và <span class="key">không biết 82 nghĩa là gì</span>. Bên giữ khoá giải mã 82 ra <span class="num-s">10</span>, đúng bằng 2 × 5.</p>
+    <p class="opt">RSA ở đây chỉ để minh hoạ; nó mã hoá cùng một số luôn ra cùng một bản mã nên dễ bị đoán. Hệ thực tế như CKKS có thêm ngẫu nhiên.</p>
     <span class="cue">Chỉ vào ô bên phải</span>
-    <p>Vì sao HE hợp với khuôn mặt? Face embedding được chuẩn hoá L2, nên điểm cosine chính là <span class="key">tích vô hướng</span>: nhân từng cặp rồi cộng dồn. Phép này chỉ cần một tầng nhân, nên <span class="key">SHE là đủ</span>, không cần FHE hay bootstrapping. Thêm kỹ thuật batching, cả vector 512 chiều được đóng gói vào một bản mã và tính song song.</p>
+    <p>Quay lại câu hỏi: so khớp khuôn mặt là phép tính gì? Mỗi khuôn mặt là một vector 512 số đã chuẩn hoá, nên độ giống nhau chính là <span class="key">tích vô hướng</span>: nhân từng cặp rồi cộng lại. Chỉ một tầng nhân, nên <span class="key">SHE là đủ</span>, không cần FHE.</p>
+    <p class="bridge">HE làm được so khớp về mặt toán. Còn trong hệ thống thật thì ai làm gì, ai giữ khoá?</p>
   </section>
 
   <section class="part" id="s3">
     <div class="part-head"><span class="num">3</span><h2>Ai mã hoá, ai tính, ai giữ khoá, ai thấy điểm</h2></div>
-    <p class="time">≈ 50 giây</p>
+    <p class="time">≈ 55 giây · bỏ câu mờ còn ≈ 50 giây</p>
+    <div class="gist">HE chỉ an toàn khi khoá giải mã nằm ở bên khác server; bước so với ngưỡng là chỗ khó nhất.</div>
     <span class="cue">Đi từ trái sang phải qua 3 ô</span>
-    <p>Một hệ thống thực tế có ba bên. <b>Client</b> chụp mặt, trích embedding rồi mã hoá bằng khoá công khai. <b>Server CSDL</b> lưu bản mã và tính điểm trên bản mã; server <span class="key">chỉ thấy bản mã</span>. <b>Bên giữ khoá bí mật</b> giải mã điểm và so với ngưỡng để quyết định chấp nhận hay từ chối.</p>
-    <span class="cue">Chỉ vào ô bên trái phía dưới</span>
-    <p>Điều kiện an toàn là server CSDL và bên giữ khoá phải <span class="key">tách biệt, không thông đồng</span>.</p>
+    <p>Có ba vai trò. <b>Client</b> chụp mặt và mã hoá bằng khoá công khai. <b>Server</b> lưu bản mã và tính điểm trên bản mã, nên <span class="key">không biết điểm là bao nhiêu</span>. <b>Bên giữ khoá bí mật</b> giải mã điểm và quyết định chấp nhận hay từ chối.</p>
+    <span class="cue">Chỉ vào ô "Điều kiện an toàn"</span>
+    <p>Vì vậy, điều kiện an toàn là khoá bí mật phải ở <span class="key">một bên khác server</span> và hai bên không thông đồng. Nếu server giữ luôn khoá thì ta quay về đúng tình huống AES.</p>
     <span class="cue">Chỉ vào ô cam</span>
-    <p>Có một điểm khó: phép so ngưỡng. HE chỉ làm được cộng và nhân, còn "s ≥ τ" là hàm bậc thang. Có hai cách. Cách thứ nhất là xấp xỉ bằng đa thức bậc cao, nhưng tốn nhiều tầng nhân. Cách thứ hai là dùng giao thức hai bên như <b>garbled circuit</b>, để chỉ lộ đúng một bit chấp nhận/từ chối.</p>
-    <p>Nếu để lộ điểm s dạng rõ, kẻ tấn công có thể dò dần, gọi là <span class="key">hill-climbing</span>, để tìm ra mẫu được chấp nhận.</p>
+    <p>Chỗ khó là bước so với ngưỡng: HE chỉ cộng và nhân, còn so sánh lớn hơn hay nhỏ hơn thì không. Nên phải xấp xỉ bằng đa thức, rất tốn, hoặc dùng giao thức hai bên để <span class="key">chỉ lộ ra một bit chấp nhận hay từ chối</span>.</p>
+    <p class="opt">Không lộ điểm số vì nếu thấy điểm, kẻ tấn công có thể chỉnh dần dữ liệu giả cho điểm tăng tới khi vượt ngưỡng, gọi là hill-climbing.</p>
+    <p class="bridge">Lý thuyết đã đủ. Vấn đề là thực tế: có đủ nhanh không, và có đạt các yêu cầu ở chương 2 không?</p>
   </section>
 
   <section class="part" id="s4">
     <div class="part-head"><span class="num">4</span><h2>HE trong thực tế</h2></div>
-    <p class="time">≈ 50 giây · thiếu giờ thì chỉ nói cột "Điểm yếu"</p>
+    <p class="time">≈ 45 giây</p>
+    <div class="gist">HE ngày càng nhanh và đạt 3/4 yêu cầu ISO, nhưng vẫn tốn kém và phụ thuộc hoàn toàn vào người giữ khoá.</div>
     <span class="cue">Cột trái — ba công trình</span>
-    <p>Ba công trình tiêu biểu. <b>Boddeti 2018</b>: template mã hoá <span class="num-s">16 KB</span>, so một cặp mất khoảng <span class="num-s">0,01 giây</span>, độ chính xác gần như không đổi. <b>HERS 2022</b> đưa bài toán lên 1:N: tìm trong <span class="num-s">100 triệu</span> template mã hoá mất khoảng <span class="num-s">500 giây</span>, nhanh hơn trước <span class="num-s">275 lần</span>. <b>IDFace</b> ở ICCV 2025: tìm trong <span class="num-s">1 triệu</span> template chỉ <span class="num-s">126 mili-giây</span>, chậm hơn dữ liệu rõ khoảng 2 lần.</p>
+    <p>Về tốc độ, HE tiến bộ rất nhanh. Năm 2018, Boddeti so một cặp khuôn mặt trên bản mã chỉ khoảng <span class="num-s">0,01 giây</span>. Đến 2025, IDFace tìm trong <span class="num-s">1 triệu</span> template chỉ mất <span class="num-s">126 mili-giây</span>.</p>
     <span class="cue">Cột giữa — ISO/IEC 24745</span>
-    <p>Đối chiếu với bốn yêu cầu của ISO/IEC 24745. Không liên kết, thu hồi được và giữ độ chính xác: HE đạt cả ba. Không đảo ngược thì <span class="key">chỉ đạt một nửa</span>: an toàn với server và với kẻ trộm CSDL, nhưng không an toàn với người giữ khoá bí mật.</p>
+    <p>Về bảo vệ, HE đạt ba yêu cầu: không liên kết, thu hồi được, và giữ độ chính xác. Riêng không đảo ngược thì <span class="key">chỉ đạt một nửa</span>: server không đảo ngược được, nhưng người giữ khoá thì giải mã ra ngay template gốc.</p>
     <span class="cue">Cột phải — điểm yếu</span>
-    <p>Đó cũng là điểm yếu lớn nhất: <span class="key">ai có khoá bí mật là giải mã ra embedding gốc</span>, lộ khoá là lộ cả CSDL. Ngoài ra, chi phí lớn: template phình từ 2 KB lên 16 KB, trong demo của nhóm là <span class="num-s">324 KB</span>. Và mở rộng sang bài toán 1:N cần kỹ thuật chuyên biệt.</p>
+    <p>Đó chính là điểm yếu lớn nhất: <span class="key">toàn bộ an toàn dồn vào một chiếc khoá</span>. Kèm theo là chi phí: template trong demo của nhóm phình từ 2 KB lên <span class="num-s">324 KB</span>.</p>
+    <p class="bridge">Vậy HE cũng phải đánh đổi. Đến đây ta đã đi hết các hướng, nên em đặt tất cả cạnh nhau.</p>
   </section>
 
   <section class="part" id="s5">
     <div class="part-head"><span class="num">5</span><h2>So sánh các phương pháp theo ISO/IEC 24745</h2></div>
-    <p class="time">≈ 50 giây · chỉ nhấn 2–3 ô, không đọc hết bảng</p>
-    <p>Bây giờ em đặt cả năm phương pháp lên cùng một bảng, dùng bốn yêu cầu ở chương 2 cộng thêm tốc độ.</p>
-    <span class="cue">Đi theo từng hàng, chỉ vào ô đáng chú ý</span>
-    <p><b>Salting</b>, tức BioHashing, nhanh, thu hồi được, nhưng chỉ không đảo ngược được <span class="key">khi khoá còn bí mật</span>; lộ khoá thì độ chính xác tụt.</p>
-    <p><b>Biến đổi không khả nghịch</b> không phụ thuộc bí mật, nhưng độ chính xác thường giảm.</p>
-    <p><b>Key binding</b>, tức Fuzzy Commitment và Fuzzy Vault, dễ bị ghép nhiều bản ghi để liên kết.</p>
-    <p><b>Key generation</b> khó vừa ổn định vừa có entropy cao.</p>
-    <p><b>HE</b> giữ độ chính xác và không liên kết, nhưng chậm và template lớn.</p>
-    <p>Nhìn cả bảng, <span class="key">không hàng nào toàn dấu tích xanh</span>. Không có phương pháp nào thắng ở mọi tiêu chí.</p>
+    <p class="time">≈ 40 giây · bỏ câu mờ còn ≈ 35 giây</p>
+    <div class="gist">Mỗi phương pháp yếu ở một ô khác nhau — không phương pháp nào thắng ở mọi tiêu chí.</div>
+    <p>Bảng này dùng bốn yêu cầu của chương 2 và thêm tốc độ. Thay vì đọc hết, ta nhìn <span class="key">ô yếu nhất của từng hàng</span>, vì đó là cái giá của phương pháp.</p>
+    <span class="cue">Chỉ vào ô yếu của từng hàng</span>
+    <p><b>Salting</b> trả giá bằng <span class="key">phụ thuộc vào khoá</span>. <b>Biến đổi không khả nghịch</b> trả giá bằng <span class="key">độ chính xác</span>. <b>Key binding</b> trả giá bằng <span class="key">dễ bị liên kết</span>. <b>HE</b> trả giá bằng <span class="key">tốc độ</span>.</p>
+    <p class="opt">Key generation thì khó vừa ổn định vừa đủ ngẫu nhiên, nên yếu cả độ chính xác lẫn thu hồi.</p>
+    <p>Ô yếu của mỗi hàng nằm ở một cột khác nhau, nên <span class="key">không có phương pháp nào tốt nhất tuyệt đối</span>.</p>
+    <p class="bridge">Vậy câu hỏi đúng không phải là "chọn cái nào", mà là "dùng ở đâu".</p>
   </section>
 
   <section class="part" id="s6">
     <div class="part-head"><span class="num">6</span><h2>Khuyến nghị theo kịch bản</h2></div>
-    <p class="time">≈ 45 giây</p>
-    <p>Vì vậy, câu hỏi đúng không phải là "phương pháp nào tốt nhất" mà là <span class="key">"dùng ở đâu"</span>.</p>
-    <span class="cue">Đi nhanh từng dòng của bảng</span>
-    <p><b>ATM</b>: người dùng đã có thẻ và PIN, nên dùng salting với khoá sinh từ PIN. Theo Jain, như vậy là đủ nếu template và PIN không cùng bị lộ.</p>
-    <p><b>Danh sách theo dõi ở sân bay</b>: người bị nhận dạng không hợp tác và không mang khoá, nên dùng biến đổi không khả nghịch với khoá của hệ thống.</p>
-    <p><b>Thẻ thông minh</b>: dùng key binding, vì khớp thì giải phóng khoá để thẻ báo kết quả.</p>
-    <p><b>Điện thoại</b>: biến đổi nhẹ như PolyProtect hoặc BioHashing, cộng với vùng bảo mật phần cứng.</p>
-    <p><b>Cloud không tin cậy</b>: mã hoá đồng hình.</p>
+    <p class="time">≈ 45 giây · bỏ câu mờ còn ≈ 40 giây</p>
+    <div class="gist">Chọn phương pháp theo hoàn cảnh — câu hỏi đầu tiên luôn là: ai có thể giữ bí mật?</div>
+    <span class="cue">Đi theo từng dòng của bảng</span>
+    <p>Câu hỏi đầu tiên luôn là: <span class="key">ai giữ được bí mật?</span> Ở <b>ATM</b>, khách đã có thẻ và PIN, nên dùng salting với khoá từ PIN là đủ. Ở <b>sân bay</b>, người bị nhận dạng không mang khoá nào, nên phải dùng biến đổi không khả nghịch.</p>
+    <p>Tiếp theo là nhu cầu và mức tin cậy. <b>Thẻ thông minh</b> cần khớp thì mở ra khoá, nên dùng key binding. Còn khi <b>thuê cloud</b> mà không tin cloud, thì dùng HE để <span class="key">cloud không bao giờ thấy template</span>.</p>
+    <p class="opt">Trên điện thoại, tài nguyên có hạn, nên dùng biến đổi nhẹ như BioHashing cộng với vùng bảo mật phần cứng của máy.</p>
     <span class="cue">Chỉ vào ô kết luận</span>
-    <p>Câu chốt của phần này: lựa chọn phụ thuộc vào <span class="key">ai giữ khoá, bài toán 1:1 hay 1:N, tài nguyên tính toán và mức rủi ro chấp nhận được</span>. Hệ thống thực tế thường xếp nhiều lớp bảo vệ.</p>
+    <p>Tóm lại, lựa chọn phụ thuộc vào <span class="key">ai giữ khoá, 1:1 hay 1:N, tài nguyên, và mức rủi ro chấp nhận được</span>.</p>
+    <p class="bridge">Và thực tế, người ta thường không chỉ dùng một phương pháp.</p>
   </section>
 
   <section class="part" id="s7">
     <div class="part-head"><span class="num">7</span><h2>Các hướng khác — và cách các họ phương pháp ghép với nhau</h2></div>
-    <p class="time">≈ 40 giây · có thể rút gọn nếu thiếu giờ</p>
-    <p>Cuối chương 3, em nhắc nhanh hai hướng còn lại. <b>Mật mã thị giác</b> chia ảnh sinh trắc thành hai "share" lưu ở hai server khác nhau; một share riêng lẻ không lộ gì. <b>Phương pháp học sâu</b> thì để mạng nơ-ron tự học ra template đã được bảo vệ. Tuy nhiên, tính an toàn của nhánh này chủ yếu mới được lập luận lý thuyết, ít được kiểm chứng.</p>
+    <p class="time">≈ 40 giây · bỏ câu mờ còn ≈ 25 giây</p>
+    <div class="gist">Các họ phương pháp bảo vệ ở các lớp khác nhau, nên có thể chồng lên nhau — phòng thủ theo chiều sâu.</div>
+    <span class="cue">Hai ô bên phải</span>
+    <p class="opt">Thêm hai hướng nữa: mật mã thị giác chia ảnh thành hai mảnh cất ở hai server; còn hướng học sâu để mạng nơ-ron tự học template được bảo vệ, nhưng còn ít được kiểm chứng.</p>
     <span class="cue">Chỉ vào cột các lớp bên trái</span>
-    <p>Ý quan trọng nhất của slide này: các họ phương pháp <span class="key">không loại trừ nhau mà bảo vệ ở các lớp khác nhau</span>. Biến đổi đặc trưng ở lớp đặc trưng, hệ mật ở lớp khoá, HE ở lớp tính toán, mật mã thị giác ở lớp lưu trữ. Hệ thống thật xếp nhiều lớp, gọi là <b>phòng thủ theo chiều sâu</b>.</p>
-    <p>Lý thuyết là vậy, còn thực tế thì sao? Sang chương 4, nhóm sẽ thử BioHashing trên dữ liệu khuôn mặt thật và đo xem điều gì xảy ra khi khoá bị lộ.</p>
+    <p>Ý chính là các họ phương pháp <span class="key">không cạnh tranh nhau mà bảo vệ ở những lớp khác nhau</span>: đặc trưng, khoá, tính toán, lưu trữ. Vì vậy có thể chồng chúng lên nhau, như ví dụ lai Tú đã nói. Gọi là <b>phòng thủ theo chiều sâu</b>: một lớp bị phá vẫn còn lớp khác.</p>
+    <p class="bridge">Xuyên suốt chương 3, ta thấy BioHashing chỉ an toàn khi khoá còn bí mật. Chương 4 sẽ kiểm chứng đúng điều đó trên dữ liệu khuôn mặt thật.</p>
   </section>
 
   <section class="part" id="meo">
@@ -274,7 +324,7 @@ dd { margin: 2px 0 0; color: var(--ink-2); }
     <div class="box">
       <ul>
         <li>Slide 2 và slide 5 dễ bị hỏi nhất. Thuộc các số <b>32, 31, 82, 10</b>; ở bảng so sánh chỉ chọn 2–3 ô nổi bật.</li>
-        <li>Thiếu thời gian: slide 4 chỉ nói cột "Điểm yếu", slide 7 rút gọn.</li>
+        <li>Thiếu thời gian: bỏ các câu in mờ. Câu <b>Ý chính</b> và câu <b>nối sang slide sau</b> thì luôn giữ, vì chúng giữ mạch cho người nghe.</li>
       </ul>
     </div>
     <div class="box warn">
@@ -403,7 +453,7 @@ dd { margin: 2px 0 0; color: var(--ink-2); }
   var ticking = false;
   function mark() {
     ticking = false;
-    var y = 130, cur = 0;
+    var y = Math.max(200, window.innerHeight * 0.3), cur = 0;
     parts.forEach(function (p, i) { if (p && p.getBoundingClientRect().top <= y) cur = i; });
     links.forEach(function (a, i) { a.classList.toggle('cur', i === cur); });
     var c = links[cur], bar = document.getElementById('chips');
