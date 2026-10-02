@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Script 3.3–3.5 · Nhóm 3</title>
+<meta name="theme-color" content="#f6f5f0" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c1016" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%237e22ce'/%3E%3Cpath d='M9 10h14M9 16h14M9 22h9' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f5f0;
+  --surface: #ffffff;
+  --surface-2: #efede6;
+  --ink: #15171c;
+  --ink-2: #414753;
+  --muted: #6f7582;
+  --line: #dcd9cf;
+  --accent: #7e22ce;
+  --accent-soft: #f1e6fb;
+  --cue: #0f766e;
+  --cue-soft: #ddf0ec;
+  --warn: #a16207;
+  --warn-soft: #fbf0d4;
+  --fs: 19px;
+  --font: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c1016; --surface: #141a22; --surface-2: #1b222c; --ink: #e8eaef; --ink-2: #b6bcc8;
+    --muted: #828a98; --line: #29313d; --accent: #c084fc; --accent-soft: rgba(192, 132, 252, .14);
+    --cue: #2dd4bf; --cue-soft: rgba(45, 212, 191, .12); --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, .12);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c1016; --surface: #141a22; --surface-2: #1b222c; --ink: #e8eaef; --ink-2: #b6bcc8;
+  --muted: #828a98; --line: #29313d; --accent: #c084fc; --accent-soft: rgba(192, 132, 252, .14);
+  --cue: #2dd4bf; --cue-soft: rgba(45, 212, 191, .12); --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, .12);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 112px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--fs);
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+b { font-weight: 700; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+
+/* ---------- top bar ---------- */
+.top {
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  padding-top: env(safe-area-inset-top);
+}
+.top-row { display: flex; align-items: center; gap: 8px; padding: 10px 0 6px; }
+.top-title { flex: 1; min-width: 0; font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top-title span { color: var(--muted); font-weight: 500; }
+.tb {
+  flex: none; height: 36px; min-width: 36px; padding: 0 10px;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+  color: var(--ink-2); font: 700 14px var(--font); cursor: pointer;
+}
+.tb[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 10px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chips a {
+  flex: none; text-decoration: none; color: var(--ink-2);
+  font-size: 14px; font-weight: 600; padding: 6px 12px;
+  border-radius: 999px; background: var(--surface-2); border: 1px solid transparent;
+}
+.chips a.cur { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+/* ---------- content ---------- */
+header.intro { padding: 22px 0 6px; }
+header.intro h1 { font-size: 1.5em; line-height: 1.2; margin: 0 0 6px; letter-spacing: -.02em; }
+header.intro p { margin: 0; color: var(--muted); font-size: .8em; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; font-size: .72em; }
+.legend span { padding: 3px 10px; border-radius: 999px; }
+
+section.part { padding: 18px 0 8px; border-bottom: 1px solid var(--line); }
+section.part:last-of-type { border-bottom: 0; }
+.part-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.num {
+  flex: none; font: 700 .7em var(--mono); color: #fff; background: var(--accent);
+  padding: 3px 9px; border-radius: 8px;
+}
+.part h2 { font-size: 1.12em; line-height: 1.3; margin: 0; letter-spacing: -.01em; }
+.time { font-size: .7em; color: var(--muted); margin: 0 0 10px; }
+.part p { margin: 0 0 14px; }
+.cue {
+  display: block; margin: 6px 0 10px; padding: 6px 12px;
+  font-size: .76em; font-weight: 600; line-height: 1.45;
+  color: var(--cue); background: var(--cue-soft); border-radius: 8px;
+}
+.cue::before { content: '▸ '; }
+.key { background: var(--accent-soft); color: var(--accent); padding: 0 4px; border-radius: 4px; font-weight: 700; }
+.num-s { font-family: var(--mono); font-size: .92em; font-weight: 700; }
+.box {
+  margin: 4px 0 16px; padding: 12px 14px; border-radius: 12px;
+  background: var(--surface); border: 1px solid var(--line); font-size: .86em;
+}
+.box h3 { margin: 0 0 6px; font-size: .95em; }
+.box ul { margin: 0; padding-left: 1.1em; }
+.box li { margin-bottom: 6px; }
+.box.warn { border-left: 4px solid var(--warn); }
+
+/* ---------- glossary ---------- */
+details.grp { margin: 0 0 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+details.grp summary {
+  cursor: pointer; list-style: none; padding: 12px 14px; font-weight: 700; font-size: .9em;
+  display: flex; justify-content: space-between; align-items: center;
+}
+details.grp summary::-webkit-details-marker { display: none; }
+details.grp summary::after { content: '+'; font: 700 1.2em var(--mono); color: var(--accent); }
+details.grp[open] summary::after { content: '−'; }
+dl { margin: 0; padding: 0 14px 6px; font-size: .82em; }
+dl > div { padding: 10px 0; border-top: 1px solid var(--line); }
+dt { font-weight: 800; color: var(--accent); }
+dt small { font-weight: 600; color: var(--ink); margin-left: 6px; font-size: .95em; }
+dd { margin: 2px 0 0; color: var(--ink-2); }
+
+.foot { text-align: center; color: var(--muted); font-size: .7em; padding: 24px 0 calc(40px + env(safe-area-inset-bottom)); }
+.foot a { color: var(--accent); }
+</style>
+<script>
+  try {
+    var t = localStorage.getItem('g3script:theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+    var f = localStorage.getItem('g3script:fs'); if (f) document.documentElement.style.setProperty('--fs', f + 'px');
+  } catch (e) {}
+</script>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <div class="top-title">Script 3.3 – 3.5 <span>· Lý Minh Trung</span></div>
+      <button class="tb" id="fs-dn" aria-label="Giảm cỡ chữ">A−</button>
+      <button class="tb" id="fs-up" aria-label="Tăng cỡ chữ">A+</button>
+      <button class="tb" id="theme" aria-label="Sáng / tối">◐</button>
+      <button class="tb" id="wake" aria-pressed="false" aria-label="Giữ màn hình sáng" title="Giữ màn hình sáng">☀︎</button>
+    </div>
+    <nav class="chips" id="chips">
+      <a href="#mo-dau">Mở đầu</a>
+      <a href="#s1">1 · HE</a>
+      <a href="#s2">2 · RSA</a>
+      <a href="#s3">3 · 3 bên</a>
+      <a href="#s4">4 · Thực tế</a>
+      <a href="#s5">5 · So sánh</a>
+      <a href="#s6">6 · Kịch bản</a>
+      <a href="#s7">7 · Hướng khác</a>
+      <a href="#meo">Mẹo</a>
+      <a href="#viet-tat">Viết tắt</a>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap">
+  <header class="intro">
+    <h1>Script trình bày 3.3 → hết chương 3</h1>
+    <p>Mã hoá đồng hình · So sánh &amp; lựa chọn · Các hướng khác — 7 slide, khoảng 5–6 phút</p>
+    <div class="legend">
+      <span style="background:var(--cue-soft);color:var(--cue);font-weight:600">▸ hành động trên slide</span>
+      <span style="background:var(--accent-soft);color:var(--accent);font-weight:700">từ khoá cần nhấn</span>
+    </div>
+  </header>
+
+  <section class="part" id="mo-dau">
+    <div class="part-head"><span class="num">→</span><h2>Chuyển từ phần của Tú</h2></div>
+    <p>Cảm ơn Tú. Tú vừa nói hai hướng đầu, biến đổi đặc trưng và hệ mật sinh trắc, đều phải đánh đổi: hoặc phụ thuộc vào một khoá bí mật, hoặc giảm độ chính xác.</p>
+    <p>Em xin trình bày hướng thứ ba, <span class="key">mã hoá đồng hình</span>. Hướng này đi theo cách khác hẳn: không biến đổi template mà mã hoá luôn, rồi <span class="key">so khớp ngay trên bản mã</span>.</p>
+  </section>
+
+  <section class="part" id="s1">
+    <div class="part-head"><span class="num">1</span><h2>Mã hoá đồng hình — tính trên bản mã, không bao giờ giải mã template</h2></div>
+    <p class="time">≈ 50 giây</p>
+    <span class="cue">Chỉ vào ô đỏ (AES)</span>
+    <p>Trước hết, vì sao mã hoá thông thường như AES không đủ. CSDL được mã hoá khi lưu, nhưng <span class="key">muốn so khớp thì phải giải mã</span>. Như vậy, ở mỗi lần đăng nhập, template gốc đều nằm dạng rõ trong RAM của server, và khoá giải mã cũng nằm trên chính server đó. Kẻ tấn công chiếm được server là có cả hai.</p>
+    <span class="cue">Chỉ vào ô xanh (HE)</span>
+    <p>Mã hoá đồng hình giải quyết đúng chỗ này. Tính trên bản mã cho cùng kết quả như tính trên dữ liệu rõ: giải mã của Enc(a) nhân Enc(b) bằng a nhân b. Nhờ vậy server tính được điểm so khớp mà <span class="key">không cần khoá giải mã</span>.</p>
+    <span class="cue">Chỉ vào bảng PHE → SHE → FHE</span>
+    <p>Mã hoá đồng hình có ba cấp. <b>PHE</b> chỉ làm được một phép, nhân hoặc cộng, ví dụ RSA hay Paillier. <b>SHE</b> làm được cả cộng lẫn nhân, nhưng số phép nhân bị giới hạn vì nhiễu tăng sau mỗi phép nhân. <b>FHE</b> tính được mọi hàm nhờ kỹ thuật bootstrapping của Gentry năm 2009, nhưng chậm nhất.</p>
+    <p>Dòng được tô màu là SHE, vì đó là <span class="key">cấp vừa đủ</span> cho bài toán của chúng ta. Slide sau em sẽ giải thích vì sao.</p>
+  </section>
+
+  <section class="part" id="s2">
+    <div class="part-head"><span class="num">2</span><h2>Ví dụ đồ chơi — nhân trên bản mã (2 × 5 = 10)</h2></div>
+    <p class="time">≈ 50 giây</p>
+    <span class="cue">Đi theo 4 bước bên trái</span>
+    <p>Để thấy tính chất đồng hình, em dùng RSA với số nhỏ: p = <span class="num-s">7</span>, q = <span class="num-s">13</span>, nên n = <span class="num-s">91</span>, khoá công khai e = <span class="num-s">5</span>, khoá bí mật d = <span class="num-s">29</span>.</p>
+    <p>Client mã hoá số 2 thành <span class="num-s">32</span> và số 5 thành <span class="num-s">31</span>. Server chỉ nhân hai bản mã: 32 × 31 = <span class="num-s">992</span>, mod 91 còn <span class="num-s">82</span>. Server <span class="key">không hề biết 2, 5 hay kết quả 10</span>. Bên giữ khoá giải mã 82 và nhận đúng <span class="num-s">10</span>, bằng 2 × 5.</p>
+    <p>Lưu ý: RSA sách giáo khoa là mã hoá tất định, nên không an toàn cho dữ liệu thật. Ví dụ này chỉ để minh hoạ tính đồng hình. Thực tế dùng BFV hoặc CKKS, là mã hoá xác suất.</p>
+    <span class="cue">Chỉ vào ô bên phải</span>
+    <p>Vì sao HE hợp với khuôn mặt? Face embedding được chuẩn hoá L2, nên điểm cosine chính là <span class="key">tích vô hướng</span>: nhân từng cặp rồi cộng dồn. Phép này chỉ cần một tầng nhân, nên <span class="key">SHE là đủ</span>, không cần FHE hay bootstrapping. Thêm kỹ thuật batching, cả vector 512 chiều được đóng gói vào một bản mã và tính song song.</p>
+  </section>
+
+  <section class="part" id="s3">
+    <div class="part-head"><span class="num">3</span><h2>Ai mã hoá, ai tính, ai giữ khoá, ai thấy điểm</h2></div>
+    <p class="time">≈ 50 giây</p>
+    <span class="cue">Đi từ trái sang phải qua 3 ô</span>
+    <p>Một hệ thống thực tế có ba bên. <b>Client</b> chụp mặt, trích embedding rồi mã hoá bằng khoá công khai. <b>Server CSDL</b> lưu bản mã và tính điểm trên bản mã; server <span class="key">chỉ thấy bản mã</span>. <b>Bên giữ khoá bí mật</b> giải mã điểm và so với ngưỡng để quyết định chấp nhận hay từ chối.</p>
+    <span class="cue">Chỉ vào ô bên trái phía dưới</span>
+    <p>Điều kiện an toàn là server CSDL và bên giữ khoá phải <span class="key">tách biệt, không thông đồng</span>.</p>
+    <span class="cue">Chỉ vào ô cam</span>
+    <p>Có một điểm khó: phép so ngưỡng. HE chỉ làm được cộng và nhân, còn "s ≥ τ" là hàm bậc thang. Có hai cách. Cách thứ nhất là xấp xỉ bằng đa thức bậc cao, nhưng tốn nhiều tầng nhân. Cách thứ hai là dùng giao thức hai bên như <b>garbled circuit</b>, để chỉ lộ đúng một bit chấp nhận/từ chối.</p>
+    <p>Nếu để lộ điểm s dạng rõ, kẻ tấn công có thể dò dần, gọi là <span class="key">hill-climbing</span>, để tìm ra mẫu được chấp nhận.</p>
+  </section>
+
+  <section class="part" id="s4">
+    <div class="part-head"><span class="num">4</span><h2>HE trong thực tế</h2></div>
+    <p class="time">≈ 50 giây · thiếu giờ thì chỉ nói cột "Điểm yếu"</p>
+    <span class="cue">Cột trái — ba công trình</span>
+    <p>Ba công trình tiêu biểu. <b>Boddeti 2018</b>: template mã hoá <span class="num-s">16 KB</span>, so một cặp mất khoảng <span class="num-s">0,01 giây</span>, độ chính xác gần như không đổi. <b>HERS 2022</b> đưa bài toán lên 1:N: tìm trong <span class="num-s">100 triệu</span> template mã hoá mất khoảng <span class="num-s">500 giây</span>, nhanh hơn trước <span class="num-s">275 lần</span>. <b>IDFace</b> ở ICCV 2025: tìm trong <span class="num-s">1 triệu</span> template chỉ <span class="num-s">126 mili-giây</span>, chậm hơn dữ liệu rõ khoảng 2 lần.</p>
+    <span class="cue">Cột giữa — ISO/IEC 24745</span>
+    <p>Đối chiếu với bốn yêu cầu của ISO/IEC 24745. Không liên kết, thu hồi được và giữ độ chính xác: HE đạt cả ba. Không đảo ngược thì <span class="key">chỉ đạt một nửa</span>: an toàn với server và với kẻ trộm CSDL, nhưng không an toàn với người giữ khoá bí mật.</p>
+    <span class="cue">Cột phải — điểm yếu</span>
+    <p>Đó cũng là điểm yếu lớn nhất: <span class="key">ai có khoá bí mật là giải mã ra embedding gốc</span>, lộ khoá là lộ cả CSDL. Ngoài ra, chi phí lớn: template phình từ 2 KB lên 16 KB, trong demo của nhóm là <span class="num-s">324 KB</span>. Và mở rộng sang bài toán 1:N cần kỹ thuật chuyên biệt.</p>
+  </section>
+
+  <section class="part" id="s5">
+    <div class="part-head"><span class="num">5</span><h2>So sánh các phương pháp theo ISO/IEC 24745</h2></div>
+    <p class="time">≈ 50 giây · chỉ nhấn 2–3 ô, không đọc hết bảng</p>
+    <p>Bây giờ em đặt cả năm phương pháp lên cùng một bảng, dùng bốn yêu cầu ở chương 2 cộng thêm tốc độ.</p>
+    <span class="cue">Đi theo từng hàng, chỉ vào ô đáng chú ý</span>
+    <p><b>Salting</b>, tức BioHashing, nhanh, thu hồi được, nhưng chỉ không đảo ngược được <span class="key">khi khoá còn bí mật</span>; lộ khoá thì độ chính xác tụt.</p>
+    <p><b>Biến đổi không khả nghịch</b> không phụ thuộc bí mật, nhưng độ chính xác thường giảm.</p>
+    <p><b>Key binding</b>, tức Fuzzy Commitment và Fuzzy Vault, dễ bị ghép nhiều bản ghi để liên kết.</p>
+    <p><b>Key generation</b> khó vừa ổn định vừa có entropy cao.</p>
+    <p><b>HE</b> giữ độ chính xác và không liên kết, nhưng chậm và template lớn.</p>
+    <p>Nhìn cả bảng, <span class="key">không hàng nào toàn dấu tích xanh</span>. Không có phương pháp nào thắng ở mọi tiêu chí.</p>
+  </section>
+
+  <section class="part" id="s6">
+    <div class="part-head"><span class="num">6</span><h2>Khuyến nghị theo kịch bản</h2></div>
+    <p class="time">≈ 45 giây</p>
+    <p>Vì vậy, câu hỏi đúng không phải là "phương pháp nào tốt nhất" mà là <span class="key">"dùng ở đâu"</span>.</p>
+    <span class="cue">Đi nhanh từng dòng của bảng</span>
+    <p><b>ATM</b>: người dùng đã có thẻ và PIN, nên dùng salting với khoá sinh từ PIN. Theo Jain, như vậy là đủ nếu template và PIN không cùng bị lộ.</p>
+    <p><b>Danh sách theo dõi ở sân bay</b>: người bị nhận dạng không hợp tác và không mang khoá, nên dùng biến đổi không khả nghịch với khoá của hệ thống.</p>
+    <p><b>Thẻ thông minh</b>: dùng key binding, vì khớp thì giải phóng khoá để thẻ báo kết quả.</p>
+    <p><b>Điện thoại</b>: biến đổi nhẹ như PolyProtect hoặc BioHashing, cộng với vùng bảo mật phần cứng.</p>
+    <p><b>Cloud không tin cậy</b>: mã hoá đồng hình.</p>
+    <span class="cue">Chỉ vào ô kết luận</span>
+    <p>Câu chốt của phần này: lựa chọn phụ thuộc vào <span class="key">ai giữ khoá, bài toán 1:1 hay 1:N, tài nguyên tính toán và mức rủi ro chấp nhận được</span>. Hệ thống thực tế thường xếp nhiều lớp bảo vệ.</p>
+  </section>
+
+  <section class="part" id="s7">
+    <div class="part-head"><span class="num">7</span><h2>Các hướng khác — và cách các họ phương pháp ghép với nhau</h2></div>
+    <p class="time">≈ 40 giây · có thể rút gọn nếu thiếu giờ</p>
+    <p>Cuối chương 3, em nhắc nhanh hai hướng còn lại. <b>Mật mã thị giác</b> chia ảnh sinh trắc thành hai "share" lưu ở hai server khác nhau; một share riêng lẻ không lộ gì. <b>Phương pháp học sâu</b> thì để mạng nơ-ron tự học ra template đã được bảo vệ. Tuy nhiên, tính an toàn của nhánh này chủ yếu mới được lập luận lý thuyết, ít được kiểm chứng.</p>
+    <span class="cue">Chỉ vào cột các lớp bên trái</span>
+    <p>Ý quan trọng nhất của slide này: các họ phương pháp <span class="key">không loại trừ nhau mà bảo vệ ở các lớp khác nhau</span>. Biến đổi đặc trưng ở lớp đặc trưng, hệ mật ở lớp khoá, HE ở lớp tính toán, mật mã thị giác ở lớp lưu trữ. Hệ thống thật xếp nhiều lớp, gọi là <b>phòng thủ theo chiều sâu</b>.</p>
+    <p>Lý thuyết là vậy, còn thực tế thì sao? Sang chương 4, nhóm sẽ thử BioHashing trên dữ liệu khuôn mặt thật và đo xem điều gì xảy ra khi khoá bị lộ.</p>
+  </section>
+
+  <section class="part" id="meo">
+    <div class="part-head"><span class="num">!</span><h2>Mẹo khi trình bày</h2></div>
+    <div class="box">
+      <ul>
+        <li>Slide 2 và slide 5 dễ bị hỏi nhất. Thuộc các số <b>32, 31, 82, 10</b>; ở bảng so sánh chỉ chọn 2–3 ô nổi bật.</li>
+        <li>Thiếu thời gian: slide 4 chỉ nói cột "Điểm yếu", slide 7 rút gọn.</li>
+      </ul>
+    </div>
+    <div class="box warn">
+      <h3>Câu hỏi có thể gặp</h3>
+      <ul>
+        <li><b>"HE có an toàn tuyệt đối không?"</b> Không. Người giữ khoá bí mật vẫn giải mã ra embedding gốc, nên phải tách bên giữ khoá khỏi server CSDL và giả định hai bên không thông đồng.</li>
+        <li><b>"Sao không dùng FHE cho chắc?"</b> Điểm cosine chỉ cần một tầng nhân, SHE là đủ. FHE thêm bootstrapping, chậm hơn nhiều mà không được thêm gì cho bài toán này.</li>
+        <li><b>"Vậy nên chọn phương pháp nào?"</b> Tuỳ kịch bản: ai giữ được khoá, 1:1 hay 1:N, tài nguyên và rủi ro. Thực tế thường kết hợp nhiều lớp.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="part" id="viet-tat">
+    <div class="part-head"><span class="num">A–Z</span><h2>Từ viết tắt</h2></div>
+    <p class="time">Lần đầu nói thì đọc tên đầy đủ, lần sau dùng tên tắt. Bấm vào nhóm để mở.</p>
+
+    <details class="grp" open>
+      <summary>Mã hoá đồng hình (3.3)</summary>
+      <dl>
+        <div><dt>HE <small>Homomorphic Encryption</small></dt><dd>Mã hoá đồng hình: tính toán được ngay trên bản mã</dd></div>
+        <div><dt>PHE <small>Partially Homomorphic Encryption</small></dt><dd>Đồng hình một phần: chỉ một loại phép tính (cộng <i>hoặc</i> nhân)</dd></div>
+        <div><dt>SHE <small>Somewhat Homomorphic Encryption</small></dt><dd>Đồng hình hạn chế: cộng và nhân được, số phép nhân có giới hạn</dd></div>
+        <div><dt>FHE <small>Fully Homomorphic Encryption</small></dt><dd>Đồng hình hoàn toàn: tính được mọi hàm, không giới hạn số phép</dd></div>
+        <div><dt>AES <small>Advanced Encryption Standard</small></dt><dd>Chuẩn mã hoá đối xứng thông dụng, không có tính đồng hình</dd></div>
+        <div><dt>RSA <small>Rivest–Shamir–Adleman</small></dt><dd>Hệ mã khoá công khai, đặt theo tên 3 tác giả; đồng hình với phép nhân</dd></div>
+        <div><dt>BFV <small>Brakerski / Fan–Vercauteren</small></dt><dd>Hệ HE trên số nguyên, kết quả chính xác</dd></div>
+        <div><dt>BGV <small>Brakerski–Gentry–Vaikuntanathan</small></dt><dd>Hệ HE trên số nguyên, cùng họ với BFV</dd></div>
+        <div><dt>CKKS <small>Cheon–Kim–Kim–Song</small></dt><dd>Hệ HE trên số thực xấp xỉ; nhóm dùng trong demo</dd></div>
+        <div><dt>TFHE <small>Fast Fully Homomorphic Encryption over the Torus</small></dt><dd>Hệ FHE có bootstrapping rất nhanh</dd></div>
+        <div><dt>BGN <small>Boneh–Goh–Nissim</small></dt><dd>Hệ SHE năm 2005: cộng tuỳ ý, chỉ nhân được một lần</dd></div>
+        <div><dt>Ring-LWE <small>Ring Learning With Errors</small></dt><dd>Bài toán khó (trên lattice) làm nền an toàn cho BFV/CKKS</dd></div>
+        <div><dt>SIMD <small>Single Instruction, Multiple Data</small></dt><dd>Một lệnh xử lý nhiều dữ liệu; trong HE gọi là batching, đóng gói cả vector vào một bản mã</dd></div>
+        <div><dt>pk / sk <small>public key / secret key</small></dt><dd>Khoá công khai (để mã hoá) / khoá bí mật (để giải mã)</dd></div>
+        <div><dt>Enc / Dec <small>Encrypt / Decrypt</small></dt><dd>Mã hoá / giải mã</dd></div>
+        <div><dt>mod <small>modulo</small></dt><dd>Phép lấy số dư, ví dụ 992 mod 91 = 82</dd></div>
+        <div><dt>L2 <small>Euclidean norm</small></dt><dd>Độ dài vector; chuẩn hoá L2 xong thì cosine = tích vô hướng</dd></div>
+        <div><dt>RAM <small>Random Access Memory</small></dt><dd>Bộ nhớ trong của máy</dd></div>
+        <div><dt>CSDL <small>Cơ sở dữ liệu</small></dt><dd>Database</dd></div>
+        <div><dt>KB / ms <small>kilobyte / millisecond</small></dt><dd>Đơn vị dung lượng / mili-giây</dd></div>
+      </dl>
+    </details>
+
+    <details class="grp">
+      <summary>Tên phương pháp &amp; bộ dữ liệu</summary>
+      <dl>
+        <div><dt>HERS <small>Homomorphically Encrypted Representation Search</small></dt><dd>Tìm kiếm trên biểu diễn đã mã hoá đồng hình (Engelsma, Jain, Boddeti 2022)</dd></div>
+        <div><dt>IDFace <small>tên phương pháp</small></dt><dd>Không phải viết tắt chuẩn; nhận dạng khuôn mặt trên template mã hoá (ICCV 2025)</dd></div>
+        <div><dt>PolyProtect <small>tên phương pháp</small></dt><dd>Biến đổi đặc trưng nhẹ cho khuôn mặt trên di động</dd></div>
+        <div><dt>LFW <small>Labeled Faces in the Wild</small></dt><dd>Bộ dữ liệu ảnh khuôn mặt (nhóm dùng trong demo)</dd></div>
+        <div><dt>IJB-A / IJB-B <small>IARPA Janus Benchmark A / B</small></dt><dd>Bộ dữ liệu đánh giá nhận dạng khuôn mặt</dd></div>
+        <div><dt>CASIA <small>Chinese Academy of Sciences, Institute of Automation</small></dt><dd>Viện Tự động hoá, Viện Hàn lâm KH Trung Quốc; bộ dữ liệu CASIA-WebFace</dd></div>
+        <div><dt>NN / non-NN <small>Neural Network</small></dt><dd>Có / không dùng mạng nơ-ron để tạo template bảo vệ</dd></div>
+      </dl>
+    </details>
+
+    <details class="grp">
+      <summary>Tiêu chuẩn &amp; khái niệm (3.4)</summary>
+      <dl>
+        <div><dt>ISO/IEC <small>International Organization for Standardization / International Electrotechnical Commission</small></dt><dd>Hai tổ chức ban hành tiêu chuẩn quốc tế; ISO/IEC 24745 là chuẩn bảo vệ thông tin sinh trắc</dd></div>
+        <div><dt>ECC <small>Error-Correcting Code</small></dt><dd>Mã sửa lỗi (dùng trong Fuzzy Commitment / Vault)</dd></div>
+        <div><dt>PIN <small>Personal Identification Number</small></dt><dd>Mã PIN của thẻ ATM</dd></div>
+        <div><dt>1:1 / 1:N <small>Verification / Identification</small></dt><dd>Xác minh (so với một template) / nhận dạng (tìm trong N template)</dd></div>
+        <div><dt>FAR <small>False Accept Rate</small></dt><dd>Tỉ lệ chấp nhận nhầm</dd></div>
+        <div><dt>FRR <small>False Reject Rate</small></dt><dd>Tỉ lệ từ chối nhầm</dd></div>
+        <div><dt>EER <small>Equal Error Rate</small></dt><dd>Tỉ lệ lỗi tại ngưỡng mà FAR = FRR</dd></div>
+        <div><dt>GAR <small>Genuine Accept Rate</small></dt><dd>Tỉ lệ chấp nhận đúng người thật (= 1 − FRR)</dd></div>
+      </dl>
+    </details>
+
+    <details class="grp">
+      <summary>Hội nghị &amp; tạp chí (dòng nguồn)</summary>
+      <dl>
+        <div><dt>IEEE <small>Institute of Electrical and Electronics Engineers</small></dt></div>
+        <div><dt>ACM <small>Association for Computing Machinery</small></dt></div>
+        <div><dt>BTAS <small>IEEE Int. Conf. on Biometrics: Theory, Applications and Systems</small></dt></div>
+        <div><dt>TBIOM <small>IEEE Trans. on Biometrics, Behavior, and Identity Science</small></dt></div>
+        <div><dt>TIFS <small>IEEE Trans. on Information Forensics and Security</small></dt></div>
+        <div><dt>ICCV <small>International Conference on Computer Vision</small></dt></div>
+        <div><dt>STOC <small>ACM Symposium on Theory of Computing</small></dt></div>
+        <div><dt>ICB <small>International Conference on Biometrics</small></dt></div>
+        <div><dt>CVPRW <small>Computer Vision and Pattern Recognition Workshops</small></dt></div>
+        <div><dt>MTAP <small>Multimedia Tools and Applications (tạp chí)</small></dt></div>
+      </dl>
+    </details>
+  </section>
+
+  <p class="foot"><a href="./#ch3">Mở slide chương 3</a> · Nhóm 3 · CO5157</p>
+</main>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  function save(k, v) { try { localStorage.setItem('g3script:' + k, v); } catch (e) {} }
+
+  // font size
+  function fs() { return parseFloat(getComputedStyle(root).getPropertyValue('--fs')) || 19; }
+  function setFs(v) { v = Math.max(15, Math.min(28, v)); root.style.setProperty('--fs', v + 'px'); save('fs', v); }
+  document.getElementById('fs-up').onclick = function () { setFs(fs() + 1); };
+  document.getElementById('fs-dn').onclick = function () { setFs(fs() - 1); };
+
+  // theme
+  document.getElementById('theme').onclick = function () {
+    var cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var next = cur === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next; save('theme', next);
+  };
+
+  // keep the screen awake while reading
+  var lock = null, wakeBtn = document.getElementById('wake');
+  if (!('wakeLock' in navigator)) wakeBtn.hidden = true;
+  async function wake(on) {
+    try {
+      if (on) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', function () { if (!document.hidden) wakeBtn.setAttribute('aria-pressed', 'false'); }); }
+      else if (lock) { await lock.release(); lock = null; }
+      wakeBtn.setAttribute('aria-pressed', String(on));
+    } catch (e) { wakeBtn.setAttribute('aria-pressed', 'false'); }
+  }
+  wakeBtn.onclick = function () { wake(wakeBtn.getAttribute('aria-pressed') !== 'true'); };
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && wakeBtn.getAttribute('aria-pressed') === 'true' && (!lock || lock.released)) wake(true);
+  });
+
+  // highlight the section being read
+  var links = Array.prototype.slice.call(document.querySelectorAll('#chips a'));
+  var parts = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+  var ticking = false;
+  function mark() {
+    ticking = false;
+    var y = 130, cur = 0;
+    parts.forEach(function (p, i) { if (p && p.getBoundingClientRect().top <= y) cur = i; });
+    links.forEach(function (a, i) { a.classList.toggle('cur', i === cur); });
+    var c = links[cur], bar = document.getElementById('chips');
+    if (c && (c.offsetLeft < bar.scrollLeft || c.offsetLeft + c.offsetWidth > bar.scrollLeft + bar.clientWidth)) bar.scrollTo({ left: c.offsetLeft - 16, behavior: 'smooth' });
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(mark); } }, { passive: true });
+  mark();
+})();
+</script>
+</body>
+</html>
