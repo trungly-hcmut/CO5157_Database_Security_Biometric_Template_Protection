@@ -459,3 +459,49 @@
 
   window.Quiz = { reveal, pick, reset, data: QUIZ };
 })();
+
+/* ---------- Kahoot join card on the quiz intro slide ----------
+   PIN priority: ?pin=… in the URL › PIN typed with the ✎ button (saved in this browser) › data-pin in index.html */
+(function () {
+  'use strict';
+  const box = document.getElementById('kahoot');
+  if (!box) return;
+  const KEY = 'g3btp:kahoot-pin';
+  const DEFAULT = box.dataset.pin;
+  const qrBox = box.querySelector('.kh-qr');
+  const staticQr = qrBox.innerHTML;
+  const joinUrl = (pin) => `https://kahoot.it/?pin=${pin}&refer_method=link`;
+  const pretty = (pin) => pin.replace(/^(\d{3})(\d{3,4})$/, '$1 $2');
+  const clean = (v) => String(v || '').replace(/\D/g, '');
+  const valid = (pin) => /^\d{6,8}$/.test(pin);
+  const load = () => { try { return localStorage.getItem(KEY); } catch (e) { return null; } };
+  const save = (pin) => { try { pin === DEFAULT ? localStorage.removeItem(KEY) : localStorage.setItem(KEY, pin); } catch (e) { /* storage unavailable */ } };
+
+  function render(pin) {
+    box.querySelector('.kh-pin').textContent = pretty(pin);
+    box.querySelector('.kh-pin').classList.toggle('long', pin.length > 6);
+    box.querySelector('.kh-url').href = joinUrl(pin);
+    if (pin === DEFAULT || typeof window.qrcode !== 'function') { qrBox.innerHTML = staticQr; return; }
+    const qr = window.qrcode(0, 'M');
+    qr.addData(joinUrl(pin));
+    qr.make();
+    qrBox.innerHTML = qr.createSvgTag({ cellSize: 1, margin: 2, scalable: true });
+  }
+
+  const fromUrl = clean(new URLSearchParams(location.search).get('pin'));
+  let pin = valid(fromUrl) ? fromUrl : (valid(clean(load())) ? clean(load()) : DEFAULT);
+  render(pin);
+
+  box.querySelector('.kh-edit').addEventListener('click', (e) => {
+    e.preventDefault();
+    const lang = document.documentElement.lang;
+    const v = window.prompt(lang === 'vi' ? 'Nhập mã PIN Kahoot mới (để trống để quay về mã gốc):' : 'New Kahoot PIN (leave empty to restore the original):', pin);
+    if (v === null) return;
+    const next = clean(v) || DEFAULT;
+    if (!valid(next)) return;
+    pin = next;
+    save(pin);
+    render(pin);
+    e.currentTarget.blur();
+  });
+})();

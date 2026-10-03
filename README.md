@@ -35,6 +35,8 @@ Bút trình chiếu (clicker) dùng được luôn, vì nó gửi phím `PageDow
 
 **Tham số URL:** `?lang=vi`, `?theme=dark`, `#/12` (tới slide 12), `#quiz` (tới phần quiz), `?reveal` (hiện sẵn mọi đáp án), `?check` (báo slide bị tràn chữ, xem trong console).
 
+**Kahoot:** slide mở đầu quiz có QR và mã PIN Kahoot. Mỗi lần mở phòng chơi mới, Kahoot cấp PIN mới: bấm nút ✎ cạnh mã PIN để nhập PIN mới (trình duyệt sẽ nhớ), hoặc mở link với `?pin=123456`. QR tự tạo lại theo PIN. PIN mặc định nằm ở `data-pin` của thẻ `#kahoot` trong `index.html`.
+
 **Xuất PDF:** bấm nút tải xuống trên thanh công cụ (hoặc `Ctrl/Cmd + P`), chọn *Save as PDF*, khổ giấy tự đặt 16:9. Trong bản PDF, đáp án quiz được hiện sẵn.
 
 **Điện thoại:** tự chuyển sang chế độ cuộn dọc. Nút ▭▭ trên thanh công cụ cũng bật/tắt chế độ này trên máy tính.
