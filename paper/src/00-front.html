@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fuzzy Extractors are Practical · Group 3</title>
+<meta name="description" content="Group 3 paper presentation — Shukla et al., Fuzzy Extractors are Practical: Cryptographic Strength Key Derivation from the Iris (ACM CCS '25). Bilingual EN/VI slide deck with a question review.">
+<meta name="theme-color" content="#f6f7fb">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%231b2130'/%3E%3Ccircle cx='16' cy='16' r='9' fill='none' stroke='%23f5f1e6' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3.5' fill='%23e0787a'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400..800;1,8..60,400..700&family=Inter:wght@400..800&family=JetBrains+Mono:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/paper.css">
+<script>
+  (function () {
+    try {
+      var p = new URLSearchParams(location.search), d = document.documentElement;
+      var l = p.get('lang') || localStorage.getItem('g3fe:lang');
+      if (l === 'vi' || l === 'en') d.lang = l;
+      var t = p.get('theme') || localStorage.getItem('g3fe:theme');
+      if (t === 'dark' || t === 'light') d.dataset.theme = t;
+      var m = localStorage.getItem('g3fe:mode');
+      if (m === 'doc' || (!m && matchMedia('screen and (max-width: 860px)').matches)) d.classList.add('doc-mode');
+    } catch (e) {}
+  })();
+</script>
+</head>
+<body>
+<div class="viewport" id="viewport">
+<main class="stage" id="stage">
+
+<!-- ================= TITLE PAGE ================= -->
+<section class="slide slide-title" data-ch="0" id="home" data-toc-en="Title page" data-toc-vi="Trang bìa">
+  <div class="iris-art" id="iris-art" aria-hidden="true"></div>
+  <div class="tp">
+    <div class="venue">ACM CCS ’25 · Taipei · pp. 3605–3619 · doi:10.1145/3719027.3765098</div>
+    <div class="kick">[[Paper presentation · Database Security · Group 3||Trình bày bài báo · Bảo mật Cơ sở dữ liệu · Nhóm 3]]</div>
+    <h1>Fuzzy Extractors are Practical</h1>
+    <div class="subtitle">Cryptographic Strength Key Derivation from the Iris</div>
+    <div class="authors">Amey Shukla, Luke Demarest, Benjamin Fuller, Sohaib Ahmad, Caleb Manicke, Alexander Russell, Sixia Chen</div>
+    <div class="affil">University of Connecticut · Gonzaga University · Adelphi University</div>
+    <div class="abstract"><span class="lbl">[[In one line.||Tóm tắt.]]</span>[[A cryptographic key derived directly from the iris: <b>105 bits</b> of security with a true accept rate of <b>64 %</b> from one reading, or <b>92 %</b> with 3 enrolment and 2 authentication readings.||Sinh khoá mật mã trực tiếp từ mống mắt: mức bảo mật <b>105 bit</b>, TAR <b>64%</b> với 1 ảnh, hoặc <b>92%</b> với 3 ảnh đăng ký và 2 ảnh xác thực.]]</div>
+    <div class="group"><span class="lbl">[[Presented by||Trình bày]]</span><b>Ngô Nhất Toàn</b><span class="dot">·</span><b>Lê Công Tú</b><span class="dot">·</span><b>Lý Minh Trung</b></div>
+    <div class="cta">
+      <button class="btn primary" data-go="next">[[Start||Bắt đầu]] →</button>
+      <button class="btn quiz" data-go="#quiz">[[Question review||Câu hỏi ôn tập]]</button>
+      <a class="btn" href="https://github.com/whyamey/feap" target="_blank" rel="noopener">[[Code||Mã nguồn]] · whyamey/feap</a>
+      <div class="lang" role="group" aria-label="Language"><button data-act="lang" data-lang="en" aria-pressed="true">EN</button><button data-act="lang" data-lang="vi" aria-pressed="false">VI</button></div>
+    </div>
+    <p class="hint"><kbd>←</kbd> <kbd>→</kbd> [[navigate||chuyển slide]] · <kbd>L</kbd> EN/VI · <kbd>T</kbd> [[theme||giao diện]] · <kbd>M</kbd> [[contents||mục lục]] · <kbd>F</kbd> [[fullscreen||toàn màn hình]]</p>
+  </div>
+</section>
+
+<!-- ================= CONTENTS ================= -->
+<section class="slide" data-ch="0" data-sec="toc" id="contents">
+  <h2>[[Contents||Nội dung]]</h2>
+  <div class="s-body contents">
+    <a href="#ch1" data-go="#ch1"><b>1</b><span><span class="t">[[Introduction & research context||Giới thiệu và bối cảnh nghiên cứu]]</span><span class="d">[[Headline result · the problem · limits of prior work · contributions||Kết quả nổi bật · đặt vấn đề · hạn chế của cách cũ · đóng góp]]</span></span><span class="p">§1</span></a>
+    <a href="#ch2" data-go="#ch2"><b>2</b><span><span class="t">[[System overview||Tổng quan hệ thống]]</span><span class="d">[[Block A (feature extractor) and Block B (fuzzy extractor)||Khối A (feature extractor) và Khối B (fuzzy extractor)]]</span></span><span class="p">§2</span></a>
+    <a href="#ch3" data-go="#ch3"><b>3</b><span><span class="t">[[Block B — fuzzy extractor||Khối B — Fuzzy extractor]]</span><span class="d">[[Two baselines, then four improvements, seen from the attacker and the honest user||Hai baseline, rồi bốn cải tiến, nhìn từ kẻ tấn công và người dùng thật]]</span></span><span class="p">§3–4</span></a>
+    <a href="#ch4" data-go="#ch4"><b>4</b><span><span class="t">[[Block A — feature extractor||Khối A — Feature extractor]]</span><span class="d">[[ThirdEye → VersionOne → VersionTwoR||ThirdEye → VersionOne → VersionTwoR]]</span></span><span class="p">§6</span></a>
+    <a href="#ch5" data-go="#ch5"><b>5</b><span><span class="t">[[Experiments & results||Thực nghiệm và kết quả]]</span><span class="d">[[Attacker side · honest-user side · final operating point · comparison||Phía kẻ tấn công · phía người dùng thật · điểm vận hành · so sánh]]</span></span><span class="p">§5, §7</span></a>
+    <a href="#ch6" data-go="#ch6"><b>6</b><span><span class="t">Demo</span><span class="d">[[The authors' code, re-run on synthetic iris embeddings||Chạy lại code của tác giả trên embedding iris tổng hợp]]</span></span><span class="p">feap</span></a>
+    <a href="#ch7" data-go="#ch7"><b>7</b><span><span class="t">[[Discussion & conclusion||Thảo luận và kết luận]]</span><span class="d">[[What the 105 bits depend on · is it practical?||105 bit dựa trên điều gì · đã practical chưa?]]</span></span><span class="p">§8</span></a>
+    <a href="#quiz" data-go="#quiz"><b>?</b><span><span class="t">[[Question review||Câu hỏi ôn tập]]</span><span class="d">[[Six questions, one per idea||Sáu câu hỏi, mỗi ý chính một câu]]</span></span><span class="p">Q1–6</span></a>
+  </div>
+</section>
+
+<!-- ================= PART 1 ================= -->
+<section class="slide divider" data-ch="1" id="ch1" data-toc-en="Part 1 — Introduction & context" data-toc-vi="Phần 1 — Giới thiệu và bối cảnh">
+  <div class="num-big">1</div>
+  <div class="part">[[Part 1||Phần 1]]</div>
+  <h2>[[Introduction & research context||Giới thiệu và bối cảnh nghiên cứu]]</h2>
+  <div class="toc-list">
+    <div><b>1.1</b>[[The paper at a glance||Giới thiệu bài báo]]</div>
+    <div><b>1.2</b>[[Problem statement||Đặt vấn đề]]</div>
+    <div><b>1.3</b>[[Limits of prior work||Hạn chế của phương pháp trước]]</div>
+    <div><b>1.4</b>[[Contributions||Đóng góp của nghiên cứu]]</div>
+  </div>
+</section>
+
+<!-- 1.1 -->
+<section class="slide" data-ch="1" data-sec="1.1">
+  <h2>[[105 bits of security, up to 92 % true accept rate||Mức bảo mật 105 bit, TAR đến 92%]]</h2>
+  <div class="s-body g-5-7">
+    <div class="stack">
+      <div class="g2" style="gap:18px">
+        <div class="stat rise" style="--i:0"><span class="v">105<small>bit</small></span><span class="l">[[estimated security level of the key||mức bảo mật ước lượng của khoá]]</span></div>
+        <div class="stat rise" style="--i:1"><span class="v">92<small>%</small></span><span class="l">[[TAR of ClearEyes-M (3 enrolment + 2 authentication readings)||TAR của ClearEyes-M (3 ảnh đăng ký + 2 ảnh xác thực)]]</span></div>
+      </div>
+      <table class="tbl sm">
+        <thead><tr><th>[[System||Hệ thống]]</th><th class="c">[[Enrol||Ảnh đăng ký]]</th><th class="c">[[Auth||Ảnh xác thực]]</th><th class="c">[[Security||Bảo mật]]</th><th class="c">TAR</th></tr></thead>
+        <tbody>
+          <tr><td class="k">ClearEyes</td><td class="c">1</td><td class="c">1</td><td class="c">105 bit</td><td class="c">64%</td></tr>
+          <tr class="hl"><td class="k">ClearEyes-M</td><td class="c">3</td><td class="c">2</td><td class="c">105 bit</td><td class="c"><b>92%</b></td></tr>
+        </tbody>
+      </table>
+      <div class="card flat small"><div class="kicker">[[128 bits ≠ 105 bits||128 bit ≠ 105 bit]]</div>[[The algorithm outputs a <b>128-bit key string</b>; <b>105 bits</b> is the analysed, estimated security level. They are two different quantities.||Thuật toán tạo <b>chuỗi khoá 128 bit</b>; <b>105 bit</b> là mức bảo mật được phân tích/ước lượng. Đây là hai đại lượng khác nhau.]]</div>
+    </div>
+    <div class="stack">
+      <ul class="b small">
+        <li>[[The paper builds a system that derives a cryptographic key <b>directly from the iris</b>, using a <b>fuzzy extractor</b> to absorb the differences between captures.||Paper xây dựng hệ thống <b>sinh khoá mật mã từ mống mắt</b>, dùng <b>fuzzy extractor</b> để xử lý khác biệt giữa các lần chụp.]]</li>
+        <li>[[<b>TAR</b> (True Accept Rate): the share of genuine users that are accepted, under the paper's evaluation protocol.||<b>TAR</b> (True Accept Rate): tỉ lệ chấp nhận thành công người dùng thật, theo giao thức đánh giá của paper.]]</li>
+        <li>[[In BTP terms: <i>biometric cryptosystem → key generation → fuzzy extractor</i>.||Trong phân loại BTP: <i>biometric cryptosystem → key generation → fuzzy extractor</i>.]]</li>
+        <li>[[The 105 bits rest on an accurate min-entropy estimate and on the system's cryptographic assumptions. Part 5 explains how it is measured (EntTest).||Con số 105 bit dựa trên ước lượng min-entropy chính xác và các giả định mật mã của hệ thống. Phần 5 giải thích cách đo (EntTest).]]</li>
+      </ul>
+      <div class="note">[[105 bits is above the 80-bit mark used here for comparison, but below the ideal 128 bits of AES-128. A 128-bit output does not make the system equivalent to AES-128.||105 bit cao hơn mốc 80 bit dùng để đối chiếu, nhưng thấp hơn mức lý tưởng 128 bit của AES-128. Đầu ra dài 128 bit không có nghĩa hệ thống tương đương AES-128.]]</div>
+    </div>
+  </div>
+  <p class="take">[[The headline is 105 bits with TAR 92 % — but that TAR needs the multi-reading configuration.||Kết quả nổi bật là 105 bit cùng TAR 92% — nhưng TAR này cần cấu hình nhiều ảnh.]]</p>
+  <p class="src">[P, Abstract, §1.2, Table 1]</p>
+</section>
+
+<!-- 1.2 -->
+<section class="slide" data-ch="1" data-sec="1.2">
+  <h2>[[The gap between biometric matching and secure key derivation||Khoảng cách giữa xác thực sinh trắc và sinh khoá an toàn]]</h2>
+  <div class="s-body g-6-6">
+    <ul class="b small">
+      <li>[[A biometric system stores enrolment data to compare with new readings — and that data can leak information about the user's biometric.||Hệ thống sinh trắc lưu dữ liệu đăng ký để so với lần đo mới — dữ liệu này có thể làm lộ thông tin sinh trắc của người dùng.]]</li>
+      <li>[[A biometric cannot be changed like a password: a leaked iris cannot simply be "reset". Prior work recovers iris information and images from templates (P-ref 1, 3, 4), so a template is not harmless data.||Sinh trắc khó thay đổi như mật khẩu: lộ thông tin mống mắt thì không thể "đổi mống mắt". Các công trình trước đã khôi phục thông tin/ảnh iris từ template (P-ref 1, 3, 4), nên template không phải dữ liệu vô hại.]]</li>
+      <li>[[Deployed systems add protection such as a <b>TEE</b> (Trusted Execution Environment), which needs dedicated hardware and a secure implementation.||Hệ thống triển khai thường thêm cơ chế như <b>TEE</b> (Trusted Execution Environment) — đòi hỏi phần cứng và triển khai an toàn.]]</li>
+      <li>[[Two captures of one eye give <b>different vectors</b>, so hashing a vector directly does not reproduce the same key.||Hai ảnh của một mắt cho <b>các vector khác nhau</b>, nên băm trực tiếp từng vector không bảo đảm ra cùng khoá.]]</li>
+      <li>[[<b>Fuzzy extractor:</b> create a key and helper data at enrolment; a close-enough sample plus the helper data rebuild the key. Security should hold even when the helper data is public, under the system's model and assumptions.||<b>Fuzzy extractor:</b> tạo khoá và helper data khi đăng ký; mẫu đủ gần cùng helper data tái tạo khoá. Bảo mật vẫn giữ khi helper data công khai, dưới mô hình và giả định của hệ thống.]]</li>
+    </ul>
+    <div class="stack">
+      <div class="card flat rise" style="--i:0">
+        <div class="kicker">[[Template matching||So khớp template]]</div>
+        <div class="flow"><div class="node">[[New reading||Lần đo mới]]</div><div class="arr"></div><div class="node">[[Matcher||So khớp]]<small>[[+ stored template||+ template đã lưu]]</small></div><div class="arr"></div><div class="node">[[score / yes–no||điểm / có–không]]</div></div>
+        <p class="xs ink2 mt-s" style="margin-bottom:0">[[Stores reference data → must protect the biometric information inside it.||Lưu dữ liệu tham chiếu → phải bảo vệ thông tin sinh trắc trong dữ liệu đăng ký.]]</p>
+      </div>
+      <div class="card flat rise" style="--i:1;border-color:var(--hon)">
+        <div class="kicker" style="color:var(--hon)">Fuzzy extractor</div>
+        <div class="flow"><div class="node">[[Noisy reading||Mẫu có nhiễu]] w′</div><div class="arr"></div><div class="node hon">Rep<small>+ helper data P</small></div><div class="arr"></div><div class="node">Key [[or||hoặc]] ⊥</div></div>
+        <p class="xs ink2 mt-s" style="margin-bottom:0">[[Stores helper data → must be both recoverable for the owner and secure against everyone else.||Lưu helper data → phải vừa khôi phục được cho chủ nhân, vừa an toàn trước người khác.]]</p>
+      </div>
+      <div class="note">[[The output is a cryptographic key, usable for cryptographic authentication. A fuzzy extractor does not solve every biometric problem — e.g. spoof/liveness detection or protecting the sensor.||Đầu ra là khoá mật mã, có thể phục vụ xác thực bằng mật mã. FE không tự giải quyết mọi vấn đề sinh trắc như phát hiện ảnh giả, liveness hay bảo vệ cảm biến.]]</div>
+    </div>
+  </div>
+  <p class="take">[[The task: rebuild the same key from noisy data, while staying secure when the helper data leaks.||Bài toán là tái tạo được cùng khoá từ dữ liệu có nhiễu, đồng thời giữ bảo mật khi dữ liệu hỗ trợ bị lộ.]]</p>
+  <p class="src">[P, Abstract, §1] · [P-ref 1, 3, 4]</p>
+</section>
+
+<!-- 1.3a -->
+<section class="slide" data-ch="1" data-sec="1.3">
+  <h2>[[Code-offset is capped by entropy and the cost of error correction||Code-offset bị giới hạn bởi entropy và chi phí sửa lỗi]]</h2>
+  <div class="s-body g-5-7">
+    <div class="stack">
+      <div class="eq"><span class="f">FEQual = max{0, ent − err},&nbsp; err = n · H<sub>2</sub>(μ)</span><span class="n">(1)</span></div>
+      <ul class="b small tight">
+        <li>[[<b>ent</b>: entropy of the input; <b>n</b>: vector length; <b>μ</b>: bit error rate; <b>H₂</b>: binary entropy.||<b>ent</b>: entropy của đầu vào; <b>n</b>: độ dài vector; <b>μ</b>: tỉ lệ lỗi bit; <b>H₂</b>: hàm entropy nhị phân.]]</li>
+        <li>[[Intuition: after paying for error correction, enough entropy must remain to make a key.||Trực giác: sau khi trả chi phí sửa lỗi, phải còn đủ entropy để sinh khoá.]]</li>
+        <li>[[Example: n = 1,024, μ = 0.10 → H₂(0.10) ≈ 0.469 → err ≈ 1,024 × 0.469 ≈ <b>480 bits</b>.||Ví dụ: n = 1.024, μ = 0,10 → H₂(0,10) ≈ 0,469 → err ≈ 1.024 × 0,469 ≈ <b>480 bit</b>.]]</li>
+      </ul>
+    </div>
+    <div class="stack">
+      <table class="tbl">
+        <thead><tr><th>[[Quantity||Đại lượng]]</th><th class="c">[[Bits assumed i.i.d. uniform||Giả định các bit i.i.d. đều]]</th><th class="c">[[Realistic estimate||Ước lượng thực tế]]</th></tr></thead>
+        <tbody>
+          <tr><td>[[Vector length||Độ dài vector]]</td><td class="c">1,024</td><td class="c">1,024</td></tr>
+          <tr><td>[[Entropy||Entropy]]</td><td class="c">1,024</td><td class="c">&lt; 250</td></tr>
+          <tr><td>[[Error-correction cost||Chi phí sửa lỗi]]</td><td class="c">≈ 480</td><td class="c">≈ 480</td></tr>
+          <tr class="hl"><td class="k">FEQual</td><td class="c"><b>≈ 544</b></td><td class="c"><b class="bad-t">0</b></td></tr>
+        </tbody>
+      </table>
+      <ul class="b small tight">
+        <li>[[<b>i.i.d.</b> = independent and identically distributed. Iris bits depend on each other, so vector length ≠ real entropy.||<b>i.i.d.</b> = độc lập và cùng phân phối. Bit iris phụ thuộc nhau, nên độ dài vector không bằng entropy thực.]]</li>
+        <li>[[PCA/ICA only reduce <i>pairwise</i> correlation; higher-order dependence can remain.||PCA/ICA chỉ giảm tương quan <i>theo cặp</i>; phụ thuộc bậc cao vẫn có thể tồn tại.]]</li>
+        <li>[[Code-offset is the mechanism behind fuzzy commitment from our previous talk.||Code-offset chính là cơ chế của fuzzy commitment ở bài trước.]]</li>
+      </ul>
+      <div class="note">[[FEQual = 0 here shows the limit of this approach with these parameters — it does not prove that every fuzzy extractor fails on the iris.||FEQual bằng 0 cho thấy giới hạn của cách tiếp cận và tham số đang xét — không chứng minh mọi fuzzy extractor đều không hoạt động với iris.]]</div>
+    </div>
+  </div>
+  <p class="take">[[A 1,024-bit vector need not carry 1,024 bits of entropy; dependence between bits can eat the entropy a key needs.||Vector 1.024 bit chưa chắc chứa 1.024 bit entropy; phụ thuộc giữa các bit có thể làm mất phần entropy cần cho sinh khoá.]]</p>
+  <p class="src">[P, §1.0.1]</p>
+</section>
+
+<!-- 1.3b -->
+<section class="slide" data-ch="1" data-sec="1.3">
+  <h2>[[What the earlier security numbers rest on||Giả định và cách đo bảo mật của các công trình trước]]</h2>
+  <div class="s-body g-7-5">
+    <div class="stack">
+      <table class="tbl sm">
+        <thead><tr><th>[[Work||Công trình]]</th><th>[[Biometric||Sinh trắc]]</th><th>[[Reported||Kết quả báo cáo]]</th><th>[[Main issue||Vấn đề chính]]</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Zhang et al.</td><td>[[Face||Khuôn mặt]]</td><td>45 bit, TAR 30%</td><td>[[Assumes independence between the nearest codeword and the coset — hard to verify||Giả định độc lập giữa codeword gần nhất và coset — khó kiểm chứng]]</td></tr>
+          <tr><td class="k">Simhadri et al.</td><td>Iris</td><td>[[32 bits self-reported, TAR 60 %||Tự báo 32 bit, TAR 60%]]</td><td>[[Averages over a few (10) subsets; re-measured by the paper: 26 bits (still an average)||Đo trung bình trên ít (10) tập con; paper đo lại còn 26 bit (vẫn theo trung bình)]]</td></tr>
+          <tr><td class="k">Zhu et al.</td><td>Iris</td><td>[[Attack on sample-then-lock||Tấn công sample-then-lock]]</td><td>[[Exploits the lowest-entropy subset||Khai thác tập con có entropy thấp nhất]]</td></tr>
+        </tbody>
+      </table>
+      <ul class="b small tight">
+        <li>[[In sample-then-lock, many lockers protect <b>one</b> key — the attacker can concentrate on the easiest subset.||Trong sample-then-lock, nhiều locker cùng bảo vệ <b>một</b> khoá — kẻ tấn công có thể tập trung vào tập con dễ đoán.]]</li>
+        <li>[[A high average entropy does not remove a weak subset.||Entropy trung bình cao không loại bỏ một tập con yếu.]]</li>
+        <li>[[The paper fixes a step in the <i>proof</i> of Canetti et al. — it does not claim the theorem or all earlier results are wrong.||Paper sửa một bước trong <i>chứng minh</i> của Canetti et al. — không khẳng định toàn bộ định lý hay mọi kết quả trước đều sai.]]</li>
+      </ul>
+    </div>
+    <div class="stack">
+      <div class="card flat">
+        <div class="kicker">[[An average hides the weakest subset||Trung bình che đi tập con yếu nhất]]</div>
+        <div class="bars3 mt-s"><div style="height:100%">110</div><div style="height:93%">106</div><div class="weak" style="height:82%">100</div></div>
+        <p class="xs ink2 mt-s" style="margin-bottom:0">[[Three subsets: the average is ≈ 105 bits, but the attacker aims at the 100-bit one. (A teaching example — not the formal definition of average min-entropy.)||Ba tập con: trung bình ≈ 105 bit, nhưng kẻ tấn công nhắm tập 100 bit. (Ví dụ sư phạm — không đồng nhất với định nghĩa average min-entropy.)]]</p>
+      </div>
+      <div class="note">[[These works use different biometrics, data and protocols. The table shows research limits; it is not enough to rank the systems directly by TAR.||Các công trình dùng sinh trắc, dữ liệu và giao thức khác nhau. Bảng chỉ ra giới hạn nghiên cứu, không đủ để xếp hạng trực tiếp hệ thống qua TAR.]]</div>
+    </div>
+  </div>
+  <p class="take">[[A security figure must account for the weakest subset and the distribution assumptions — the reported bit count alone is not enough.||Đánh giá bảo mật phải tính đến tập con yếu nhất và giả định phân phối — chỉ nhìn số bit được báo cáo là chưa đủ.]]</p>
+  <p class="src">[P, §1.1, Table 1] · [P-ref 45, 47–49]</p>
+</section>
+
+<!-- 1.4 -->
+<section class="slide" data-ch="1" data-sec="1.4">
+  <h2>[[Four contributions — and where we cover them||Bốn đóng góp và vị trí trong bài trình bày]]</h2>
+  <div class="s-body">
+    <table class="tbl">
+      <thead><tr><th style="width:26%">[[Contribution||Đóng góp]]</th><th>[[Core idea||Nội dung chính]]</th><th class="c" style="width:14%">[[Covered in||Trình bày ở]]</th></tr></thead>
+      <tbody>
+        <tr class="rise" style="--i:0"><td class="k">[[Security analysis||Phân tích bảo mật]]</td><td>[[Fixes the proof, tightens the bound and supports choosing global subsets||Sửa chứng minh, siết bound và hỗ trợ việc chọn tập con toàn cục]]</td><td class="c">§3.4c</td></tr>
+        <tr class="rise" style="--i:1"><td class="k">ζ-sampling</td><td>[[Chooses subsets with a preference for bit quality; also evaluates sampling pairs of bits||Chọn tập con có ưu tiên theo chất lượng bit; đánh giá cả cách lấy mẫu theo cặp]]</td><td class="c">§3.4d, §5.3</td></tr>
+        <tr class="rise" style="--i:2"><td class="k">[[New feature extractor||Feature extractor mới]]</td><td>[[Features designed for key derivation, with fewer bit errors||Thiết kế đặc trưng phù hợp hơn cho sinh khoá, giảm lỗi bit]]</td><td class="c">[[Part 4||Phần 4]]</td></tr>
+        <tr class="rise" style="--i:3"><td class="k">[[Parameter study & experiments||Phân tích tham số và thực nghiệm]]</td><td>[[Picks the ClearEyes / ClearEyes-M configurations||Xác định các cấu hình ClearEyes / ClearEyes-M]]</td><td class="c">[[Part 5||Phần 5]]</td></tr>
+      </tbody>
+    </table>
+    <div class="g3 mt">
+      <div class="card flat small"><div class="kicker">[[vs Simhadri — security||So với Simhadri — bảo mật]]</div>[[<b>+73 bits</b> against the self-reported 32, or <b>+79 bits</b> against the re-measured 26.||<b>+73 bit</b> so với con số tự báo 32, hoặc <b>+79 bit</b> so với con số đo lại 26.]]</div>
+      <div class="card flat small"><div class="kicker">[[vs Simhadri — TAR||So với Simhadri — TAR]]</div>[[ClearEyes reaches 64 % vs 60 %; ClearEyes-M uses several readings to reach 92 %.||ClearEyes đạt 64% so với 60%; ClearEyes-M dùng nhiều ảnh để đạt 92%.]]</div>
+      <div class="card flat small"><div class="kicker">[[vs Zhang||So với Zhang]]</div>[[+60 bits against 45 — but the biometric and the protocol differ.||+60 bit so với 45 — cần lưu ý khác biệt về sinh trắc và giao thức.]]</div>
+    </div>
+    <div class="note mt">[[Do not credit the whole security gain to ζ-sampling. The experiments show the new extractor is the key factor; how much ζ helps depends on how stable and how different the bit statistics are.||Không quy toàn bộ mức tăng bảo mật cho ζ-sampling. Thực nghiệm cho thấy extractor mới là yếu tố quan trọng; tác dụng của ζ phụ thuộc chất lượng và độ ổn định của thống kê bit.]]</div>
+  </div>
+  <p class="take">[[The paper improves the security analysis, the choice of subsets and the quality of the input features.||Paper cải thiện cả cách phân tích bảo mật, cách chọn tập con và chất lượng đặc trưng đầu vào.]]</p>
+  <p class="src">[P, Abstract, §1.2, §2.1]</p>
+</section>
+
+<!-- ================= PART 2 ================= -->
+<section class="slide divider" data-ch="2" id="ch2" data-toc-en="Part 2 — System overview" data-toc-vi="Phần 2 — Tổng quan hệ thống">
+  <div class="num-big">2</div>
+  <div class="part">[[Part 2||Phần 2]]</div>
+  <h2>[[System overview||Tổng quan hệ thống]]</h2>
+  <div class="toc-list">
+    <div><b>2.1</b>[[Iris image → feature vector → key||Ảnh iris → vector đặc trưng → khoá]]</div>
+    <div><b>2.2</b>[[Where the paper improves||Paper cải thiện ở đâu]]</div>
+  </div>
+</section>
+
+<!-- 2.1 -->
+<section class="slide" data-ch="2" data-sec="2.1">
+  <h2>[[Iris image → feature vector → cryptographic key||Ảnh mống mắt, vector đặc trưng và khoá mật mã]]</h2>
+  <div class="s-body g-7-5 ai-s">
+    <figure class="fig">
+      <div class="fig-img" style="--fh:430px"><img src="assets/img/fig2-1-system.png" alt="ClearEyes system: Setup, Block A, Block B"></div>
+      <figcaption><b>[[Figure 2.1.||Hình 2.1.]]</b> [[ClearEyes: Setup, Block A, Block B and where the paper improves (group drawing, after [P, §2]).||Sơ đồ ClearEyes: Setup, Khối A, Khối B và nơi paper cải tiến (nhóm vẽ lại theo [P, §2]).]]</figcaption>
+    </figure>
+    <div class="stack">
+      <table class="tbl sm">
+        <thead><tr><th>[[Procedure||Thủ tục]]</th><th>[[When||Khi nào]]</th><th>[[Role||Vai trò]]</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Setup</td><td>[[System set-up||Khởi tạo hệ thống]]</td><td>[[Choose and publish the shared subsets||Chọn/công bố bộ tập con dùng chung]]</td></tr>
+          <tr><td class="k">Gen</td><td>[[Enrolment||Đăng ký]]</td><td>[[Take w, output Key and helper data P||Nhận w, tạo Key và helper data P]]</td></tr>
+          <tr><td class="k">Rep</td><td>[[Authentication||Xác thực]]</td><td>[[Take w′ and P, rebuild Key or fail (⊥)||Nhận w′ và P, tái tạo Key hoặc thất bại ⊥]]</td></tr>
+        </tbody>
+      </table>
+      <ul class="b xs tight">
+        <li>[[Block A (CNN) turns the image into a <b>512-bit</b> vector w (final version); Block B outputs a <b>128-bit</b> Key.||Khối A (CNN) biến ảnh thành vector w dài <b>512 bit</b> (bản cuối); Khối B xuất Key dài <b>128 bit</b>.]]</li>
+        <li>[[w′ may differ from w because every capture is noisy.||w′ có thể khác w vì ảnh chụp có nhiễu.]]</li>
+        <li>[[What is kept for later authentication: the helper data and parameters. Rep needs no long-term copy of the raw template or the Key (they still exist while processing).||Dữ liệu lưu để xác thực về sau: helper data và tham số. Rep không cần lưu lâu dài template thô hay Key (chúng vẫn tồn tại khi xử lý).]]</li>
+        <li>[[128 bits is the output length; 105 bits is the estimated security of the reported configuration.||128 bit là độ dài đầu ra; 105 bit là mức bảo mật ước lượng của cấu hình báo cáo.]]</li>
+      </ul>
+    </div>
+  </div>
+  <p class="take">[[Block A produces low-error features; Block B uses them with the helper data to rebuild the key.||Khối A tạo đặc trưng ít lỗi; khối B dùng đặc trưng đó và helper data để tái tạo khoá.]]</p>
+  <p class="src">[P, §2, Fig. 1]</p>
+</section>
+
+<!-- 2.2 -->
+<section class="slide" data-ch="2" data-sec="2.2">
+  <h2>[[What changes in Block A and Block B||Các thay đổi ở Khối A và Khối B]]</h2>
+  <div class="s-body g-7-5">
+    <div class="stack">
+      <table class="tbl">
+        <thead><tr><th>[[Component||Thành phần]]</th><th>[[Prior system (as compared)||Hệ thống trước (trong so sánh)]]</th><th>[[The paper||Cải thiện của paper]]</th></tr></thead>
+        <tbody>
+          <tr class="rise" style="--i:0"><td class="k" style="color:var(--c4)">[[Block A — features||Khối A — đặc trưng]]</td><td>[[Bit error rate ≈ 0.32||Tỉ lệ lỗi bit ≈ 0,32]]</td><td>[[≈ 0.08 with the new extractor||≈ 0,08 với extractor mới]]</td></tr>
+          <tr class="rise" style="--i:1"><td class="k" style="color:var(--c3)">[[Block B — analysis||Khối B — phân tích]]</td><td>[[Average-based metric||Cách đo dựa trên trung bình]]</td><td>[[Weakest subset, tighter bound||Xét tập con yếu nhất, bound chặt hơn]]</td></tr>
+          <tr class="rise" style="--i:2"><td class="k" style="color:var(--c3)">[[Block B — subsets||Khối B — tập con]]</td><td>[[Per-user subsets at enrolment||Tập con riêng khi đăng ký]]</td><td>[[Global subsets chosen at Setup||Tập con toàn cục, chọn tại Setup]]</td></tr>
+          <tr class="rise" style="--i:3"><td class="k">[[Gen running time||Hiệu năng Gen]]</td><td>[[≈ 204 s||≈ 204 giây]]</td><td>[[≈ 0.2 s in the paper's table||≈ 0,2 giây trong bảng của paper]]</td></tr>
+        </tbody>
+      </table>
+      <ul class="b small tight">
+        <li>[[ζ-sampling sits in Block B's subset choice and uses statistics on how stable each bit is.||ζ-sampling nằm ở bước chọn tập con của Khối B, tận dụng thống kê độ ổn định bit.]]</li>
+        <li>[[The new extractor sits in Block A and reduces noise before the fuzzy extractor sees it.||Extractor mới nằm ở Khối A, giảm nhiễu trước khi fuzzy extractor xử lý.]]</li>
+      </ul>
+    </div>
+    <div class="stack">
+      <div class="card flat small"><div class="kicker">[[Careful with the timings||Lưu ý về thời gian]]</div>[[They come from the configurations and implementations the paper compares; no single change explains the whole speed-up.||Số thời gian là kết quả của cấu hình và cài đặt được paper so sánh; không khẳng định một thay đổi đơn lẻ gây ra toàn bộ mức tăng tốc.]]</div>
+      <div class="card ch">
+        <div class="kicker">[[Next: Block B seen from two sides||Tiếp theo: Khối B nhìn từ hai phía]]</div>
+        <p class="small" style="margin:6px 0 4px"><span class="side atk"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>[[Attacker||Kẻ tấn công]]</span> [[why the key is hard to guess||vì sao khó đoán được khoá]]</p>
+        <p class="small" style="margin:0"><span class="side hon"><svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>[[Honest user||Người dùng thật]]</span> [[why the owner can still open it||vì sao chủ nhân vẫn mở được]]</p>
+        <p class="xs muted mt-s" style="margin-bottom:0">[[Then back to Block A to see how the input itself improves.||Sau đó quay lại Khối A để xem đầu vào được cải thiện thế nào.]]</p>
+      </div>
+    </div>
+  </div>
+  <p class="src">[P, §2.1, Table 1]</p>
+</section>

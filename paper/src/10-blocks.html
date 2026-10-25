@@ -1,0 +1,369 @@
+
+<!-- ================= PART 3 ================= -->
+<section class="slide divider" data-ch="3" id="ch3" data-toc-en="Part 3 — Block B: fuzzy extractor" data-toc-vi="Phần 3 — Khối B: fuzzy extractor">
+  <div class="num-big">3</div>
+  <div class="part">[[Part 3 · Block B||Phần 3 · Khối B]]</div>
+  <h2>[[The fuzzy extractor||Fuzzy extractor]]</h2>
+  <div class="toc-list">
+    <div><b>3.1</b>[[What a fuzzy extractor is||Fuzzy extractor là gì]]</div>
+    <div><b>3.2</b>[[Baseline 1 — correct the errors (code-offset)||Baseline 1 — hướng sửa lỗi (code-offset)]]</div>
+    <div><b>3.3</b>[[Baseline 2 — sample, then lock||Baseline 2 — lấy mẫu rồi khoá (sample-then-lock)]]</div>
+    <div><b>3.4</b>[[Four improvements: subsets · correctness · security metric · ζ-sampling||Bốn cải tiến: tập con · tính đúng · thước đo bảo mật · ζ-sampling]]</div>
+  </div>
+</section>
+
+<!-- 3.1 -->
+<section class="slide" data-ch="3" data-sec="3.1">
+  <h2>[[A fuzzy extractor tolerates noise without leaking the key||Fuzzy extractor: chịu được nhiễu mà không lộ khoá]]</h2>
+  <div class="s-body g-6-6 ai-s">
+    <figure class="fig">
+      <div class="fig-img"><img src="assets/img/fig3-1-fe-interface.png" alt="Fuzzy extractor interface: Gen and Rep"></div>
+      <figcaption><b>[[Figure 3.1.||Hình 3.1.]]</b> [[Gen creates Key + P at enrolment; Rep uses w′ + P to get the Key back (group drawing, after [P, §3] and P-ref 14).||Gen tạo Key + P lúc đăng ký; Rep dùng w′ + P để lấy lại Key (nhóm vẽ, theo [P, §3] và P-ref 14).]]</figcaption>
+    </figure>
+    <ul class="b small tight">
+      <li>[[<b>Interface:</b> Gen(w) → (Key, P); Rep(w′, P) → Key. P (helper data) is public, the Key stays secret.||<b>Giao diện:</b> Gen(w) → (Key, P); Rep(w′, P) → Key. P (helper data) công khai, Key giữ bí mật.]]</li>
+      <li>[[<b>Two requirements:</b> (1) <i>correct</i> — a similar-enough new image gives back the same Key; (2) <i>secure</i> — knowing P, the Key still looks random [P, Def. 2].||<b>Hai yêu cầu:</b> (1) <i>đúng</i> — ảnh mới đủ giống thì tái tạo đúng Key; (2) <i>an toàn</i> — biết P vẫn không đoán được Key, Key trông như ngẫu nhiên [P, Def. 2].]]</li>
+      <li>[[<b>Classic construction</b> (DRS 2004): a secure sketch (recover w from w′ and P) + a randomness extractor (turn a non-uniform w into a uniform Key).||<b>Cấu trúc kinh điển</b> (DRS 2004): secure sketch (khôi phục w từ w′ và P) + randomness extractor (biến w không đều thành Key đều).]]</li>
+      <li>[[<b>Entropy loss:</b> to correct errors, P must reveal part of w → remaining security ≈ entropy of w minus what P leaks. This is exactly the FEQual of §1.3.||<b>Entropy loss:</b> muốn sửa lỗi thì P phải tiết lộ một phần w → bảo mật còn lại ≈ entropy của w trừ phần P làm lộ. Đây chính là FEQual ở §1.3.]]</li>
+      <li>[[<b>Two kinds of guarantee:</b> information-theoretic (no assumptions, but always loses entropy to error correction) vs computational (relies on cryptographic assumptions and can beat that limit — Fuller, Meng, Reyzin 2013). This paper is computational.||<b>Hai kiểu bảo đảm:</b> information-theoretic (không cần giả định, nhưng luôn mất entropy cho sửa lỗi) và computational (dựa vào giả định mật mã, có thể vượt giới hạn đó — Fuller, Meng, Reyzin 2013). Paper này theo hướng computational.]]</li>
+      <li>[[<b>Extra properties</b> [P, §3.0.1]: <i>reusable</i> — enrolling several times stays secure (ClearEyes-M needs it); <i>private</i> — P reveals nothing about the iris; <i>robust</i> — detects a tampered P (not handled by the paper).||<b>Thuộc tính mở rộng</b> [P, §3.0.1]: <i>reusable</i> — đăng ký nhiều lần vẫn an toàn (ClearEyes-M cần); <i>private</i> — P không lộ thông tin về mống mắt; <i>robust</i> — phát hiện P bị sửa (paper không xử lý).]]</li>
+    </ul>
+  </div>
+  <p class="take">[[Fuzzy extractor = tolerate noise without leaking the key; the usual price is entropy.||Fuzzy extractor = chịu được nhiễu mà không lộ khoá; cái giá thường là entropy.]]</p>
+  <p class="src">[P, §3, Def. 2, §3.0.1] · [P-ref 14] · Fuller, Meng, Reyzin, ASIACRYPT 2013 [P-ref 18]</p>
+</section>
+
+<!-- 3.2 -->
+<section class="slide" data-ch="3" data-sec="3.2">
+  <h2>[[Baseline 1 — correct the errors: code-offset / fuzzy commitment||Baseline 1 — hướng sửa lỗi: code-offset / fuzzy commitment]]</h2>
+  <div class="s-body g-6-6 ai-s">
+    <div class="stack">
+      <figure class="fig">
+        <div class="fig-img"><img src="assets/img/fig3-2-code-offset.png" alt="Code-offset: secure sketch, extractor and the leak"></div>
+        <figcaption><b>[[Figure 3.2.||Hình 3.2.]]</b> [[Code-offset: secure sketch + extractor, and where it leaks (group drawing, after P-ref 14 and [P, §1.0.1]).||Code-offset: secure sketch + extractor và chỗ rò rỉ (nhóm vẽ, theo P-ref 14 và [P, §1.0.1]).]]</figcaption>
+      </figure>
+      <div class="card flat xs"><div class="kicker">[[Worked example — 3-bit repetition code||Ví dụ tay — mã lặp 3 bit]]</div><span class="mono">w = 110, c = 111 → P = w ⊕ c = 001</span><br><span class="mono">w′ = 100 (1 bit off) → w′ ⊕ P = 101 → [[majority||đa số]] = 111 = c ✓</span></div>
+    </div>
+    <ul class="b small tight">
+      <li>[[<b>Origin:</b> fuzzy commitment (Juels & Wattenberg, ACM CCS 1999), generalised by DRS 2004 into code-offset / secure sketch.||<b>Nguồn gốc:</b> fuzzy commitment (Juels & Wattenberg, ACM CCS 1999), được DRS 2004 tổng quát hoá thành code-offset / secure sketch.]]</li>
+      <li>[[<b>Mechanism:</b> pick a random codeword c, store P = w ⊕ c; at authentication Dec(w′ ⊕ P) = Dec(c ⊕ errors) = c, then w = P ⊕ c.||<b>Cơ chế:</b> chọn codeword ngẫu nhiên c, lưu P = w ⊕ c; khi xác thực Dec(w′ ⊕ P) = Dec(c ⊕ lỗi) = c, rồi w = P ⊕ c.]]</li>
+      <li>[[<b>The leak:</b> P says w sits exactly P away from a codeword → the attacker only has to guess c. The more errors the code can fix, the more it leaks (≈ err bits).||<b>Chỗ rò rỉ:</b> P cho biết w cách một codeword đúng bằng P → kẻ tấn công chỉ còn phải đoán c. Mã sửa được càng nhiều lỗi thì càng lộ nhiều (≈ err bit).]]</li>
+      <li>[[<b>On the iris</b> — Hao, Anderson, Daugman 2006: Hadamard + Reed–Solomon on a 2,048-bit iris code; keys up to 140 bits, 99.5 % correct (70 eyes). Later work estimates only ≈ 44 bits of real entropy and a high FRR on NIST-ICE.||<b>Áp dụng cho iris</b> — Hao, Anderson, Daugman 2006: Hadamard + Reed–Solomon trên iris code 2.048 bit; khoá tới 140 bit, tái tạo đúng 99,5% (70 mắt). Nghiên cứu sau ước lượng entropy thực chỉ khoảng 44 bit, và FRR rất cao trên NIST-ICE.]]</li>
+      <li>[[<b>Lesson:</b> key length ≠ security. For the iris (ent &lt; 250, err ≈ 480) error correction gives FEQual = 0.||<b>Bài học:</b> độ dài khoá ≠ mức bảo mật. Với iris (ent &lt; 250, err ≈ 480), hướng sửa lỗi cho FEQual = 0.]]</li>
+    </ul>
+  </div>
+  <p class="take">[[Baseline 1 shows why correcting errors fails on the iris. The paper drops it and builds on baseline 2, changing four places.||Baseline 1 cho thấy vì sao không thể sửa lỗi trên iris. Paper bỏ hẳn hướng đó, chọn baseline 2 làm nền rồi cải tiến ở 4 chỗ.]]</p>
+  <p class="src">[P-ref 14] · [P, §1.0.1] · Juels & Wattenberg, CCS 1999 · Hao, Anderson, Daugman, IEEE Trans. Computers 2006 [P-ref 16]</p>
+</section>
+
+<!-- 3.3 -->
+<section class="slide" data-ch="3" data-sec="3.3">
+  <h2>[[Baseline 2 — sample, then lock: the base of ClearEyes||Baseline 2 — lấy mẫu rồi khoá: nền của ClearEyes]]</h2>
+  <div class="s-body g-6-6 ai-s">
+    <figure class="fig">
+      <div class="fig-img"><img src="assets/img/fig3-3-sample-then-lock.png" alt="Sample-then-lock: Gen and Rep"></div>
+      <figcaption><b>[[Figure 3.3.||Hình 3.3.]]</b> [[Sample-then-lock: Gen and Rep (redrawn after [P, Fig. 1]).||Sample-then-lock: Gen và Rep (vẽ lại theo [P, Fig. 1]).]]</figcaption>
+    </figure>
+    <div class="stack">
+      <ul class="b small tight">
+        <li>[[<b>Idea</b> (Canetti et al. 2016/2021): stop correcting. Lock the same Key into <b>β lockers</b>, each opened by <b>k sampled bits</b>. One error-free subset is enough.||<b>Ý tưởng</b> (Canetti et al. 2016/2021): không sửa lỗi nữa. Khoá cùng một Key vào <b>β locker</b>, mỗi locker mở bằng <b>k bit lấy mẫu</b>. Chỉ cần một tập con không dính lỗi.]]</li>
+        <li>[[<b>Digital locker = HMAC-SHA256</b> [P, §4.0.1]: a box that returns the Key only for the right input; a 0¹²⁸ prefix tells a correct opening.||<b>Digital locker = HMAC-SHA256</b> [P, §4.0.1]: hộp chỉ trả Key khi đưa đúng giá trị; dấu 0¹²⁸ để nhận biết mở đúng.]]</li>
+        <li>[[<b>Gen:</b> cᵢ = HMAC(hᵢ, w<sub>Iᵢ</sub>); pᵢ = (0¹²⁸ ‖ Key) ⊕ cᵢ; store P = {pᵢ, hᵢ}.||<b>Gen:</b> cᵢ = HMAC(hᵢ, w<sub>Iᵢ</sub>); pᵢ = (0¹²⁸ ‖ Key) ⊕ cᵢ; lưu P = {pᵢ, hᵢ}.]]</li>
+        <li>[[<b>Rep:</b> recompute cᵢ with w′; if the first 128 bits of cᵢ ⊕ pᵢ are 0 → return the last 128 (the Key). No locker opens → ⊥.||<b>Rep:</b> tính lại cᵢ với w′; nếu 128 bit đầu của cᵢ ⊕ pᵢ bằng 0 → trả 128 bit sau (Key). Thử hết β locker mà không mở → ⊥.]]</li>
+      </ul>
+      <div class="eq sm"><span class="f">Pr&#91;[[open one locker||mở 1 locker]]&#93; = (1 − μ)<sup>k</sup></span><span class="n">(2)</span></div>
+      <ul class="b small tight">
+        <li>[[Large k → hard to guess, but hard to open too → needs a large β.||k lớn → khó đoán nhưng cũng khó mở → cần β lớn.]]</li>
+        <li>[[Simhadri et al. 2019 used this on the iris with <b>k = 43, μ = 0.32</b> — the system the paper compares against directly.||Simhadri et al. 2019 áp dụng cho iris với <b>k = 43, μ = 0,32</b> — bản triển khai mà paper so sánh trực tiếp.]]</li>
+      </ul>
+    </div>
+  </div>
+  <p class="take">[[The paper keeps this mechanism intact — and changes four places.||Paper giữ nguyên cơ chế này nhưng thay 4 chỗ.]]</p>
+  <p class="src">[P, §2.0.1, §2.1.2, §4.0.1, Fig. 1] · [P-ref 19, 45, 48]</p>
+</section>
+
+<!-- 3.4 overview -->
+<section class="slide" data-ch="3" data-sec="3.4">
+  <h2>[[Four improvements on sample-then-lock||Bốn cải tiến của paper trên sample-then-lock]]</h2>
+  <div class="s-body">
+    <div class="imp">
+      <div class="card ch rise" style="--i:0"><div class="tag">(a)</div><div class="kicker">[[Choosing subsets||Chọn tập con]]</div><div class="old">[[each user draws subsets in Gen||mỗi người tự rút trong Gen]]</div><div class="new">[[chosen once at Setup, measured and filtered||chọn một lần ở Setup, đo và lọc]]</div></div>
+      <div class="card ch rise" style="--i:1"><div class="tag">(b)</div><div class="kicker">Correctness</div><div class="old">[[every w′ with Hamming ≤ t||mọi w′ có Hamming ≤ t]]</div><div class="new">[[over the real noise distribution → TAR||theo phân phối nhiễu thật → TAR]]</div></div>
+      <div class="card ch rise" style="--i:2"><div class="tag">(c)</div><div class="kicker">[[Security metric||Thước đo bảo mật]]</div><div class="old">[[average of 10 subsets, bound q(q+1)/2^ν||trung bình 10 tập, cận q(q+1)/2^ν]]</div><div class="new">[[minimum over all subsets, bound q/2^ν||min trên mọi tập, cận q/2^ν]]</div></div>
+      <div class="card ch rise" style="--i:3"><div class="tag">(d)</div><div class="kicker">[[Choosing bits||Chọn bit]]</div><div class="old">[[uniform||chọn đều]]</div><div class="new">[[ζ-sampling favours good bits||ζ-sampling ưu tiên bit tốt]]</div></div>
+    </div>
+    <div class="card flat mt">
+      <div class="kicker">[[How they connect||Quan hệ nhân quả]]</div>
+      <div class="flow small"><div class="node ch">[[(a) subsets move to Setup||(a) tập con lên Setup]]</div><div class="arr"></div><div class="node">[[the old "correct" definition no longer fits → (b)||định nghĩa "đúng" cũ không còn hợp → (b)]]</div></div>
+      <div class="flow small mt-s"><div class="node ch">[[(a) subsets move to Setup||(a) tập con lên Setup]]</div><div class="arr"></div><div class="node">[[each subset can be measured → take the min (c)||đo được từng tập → lấy min (c)]]</div><div class="arr"></div><div class="node">[[and bits can be weighted → (d)||và chọn bit có trọng số → (d)]]</div></div>
+    </div>
+    <ul class="b small tight mt">
+      <li>[[All four improve <b>baseline 2</b> (§3.3) — they are not four baselines.||Cả 4 điểm đều sửa trên <b>baseline 2</b> (§3.3) — không phải 4 baseline.]]</li>
+      <li>[[Each slide follows the same shape: <i>old way → problem → the paper's way → why it is sound</i>. Measured numbers come in Part 5.||Mỗi slide cùng khuôn: <i>cách cũ → vấn đề → cách của paper → vì sao hợp lý</i>. Số liệu thực nghiệm để dành cho Phần 5.]]</li>
+    </ul>
+  </div>
+  <p class="src">[P, §2.1]</p>
+</section>
+
+<!-- 3.4a -->
+<section class="slide" data-ch="3" data-sec="3.4a">
+  <h2>[[(a) Choosing subsets: from Gen to Setup||(a) Chọn tập con: từ Gen sang Setup]]</h2>
+  <div class="s-body">
+    <figure class="fig" style="max-width:900px;margin:0 auto">
+      <div class="fig-img"><img src="assets/img/fig3-4-subset-selection.png" alt="Subset selection: baseline vs paper"></div>
+      <figcaption><b>[[Figure 3.4.||Hình 3.4.]]</b> [[Choosing subsets: baseline (grey) and the paper (green) (group drawing, after [P, §2.0.1, §2.1]).||Chọn tập con: baseline (xám) và paper (xanh) (nhóm vẽ, theo [P, §2.0.1, §2.1]).]]</figcaption>
+    </figure>
+    <div class="oldnew mt">
+      <div class="o"><span class="lbl">[[Old — Canetti, Simhadri||Cách cũ — Canetti, Simhadri]]</span>[[Each user draws random subsets at enrolment and stores them in P → nobody can check in advance which subset is weak.||Mỗi người rút tập con ngẫu nhiên khi đăng ký và lưu vào P → không ai kiểm tra trước được tập nào yếu.]]</div>
+      <div class="n"><span class="lbl">[[The paper||Cách của paper]]</span>[[Chosen once at Setup on a separate dataset (stats_W, 40 eyes): measure each subset's entropy, drop the 50K weakest, publish 200K shared subsets.||Chọn một lần ở Setup trên tập dữ liệu riêng (stats_W, 40 mắt): đo entropy từng tập, bỏ 50K tập yếu nhất, công bố 200K tập dùng chung.]]</div>
+    </div>
+    <ul class="b small tight mt">
+      <li>[[<b>Why it stays secure:</b> the subsets only need to be independent of the enrolee's iris [P, §2.0.1, Lemma 1].||<b>Vì sao vẫn an toàn:</b> tập con chỉ cần độc lập với mống mắt của người đăng ký [P, §2.0.1, Lemma 1].]]</li>
+      <li>[[<b>Benefit:</b> weak subsets are removed before anyone uses them, and Gen gets lighter — no subsets to draw per user.||<b>Lợi ích:</b> tập yếu bị loại trước khi có ai dùng; Gen nhẹ hơn vì không phải rút tập con cho từng người.]]</li>
+    </ul>
+  </div>
+  <p class="src">[P, §2.0.1, §2.1.1–2.1.2, Lemma 1]</p>
+</section>
+
+<!-- 3.4b -->
+<section class="slide" data-ch="3" data-sec="3.4b">
+  <h2>[[(b) Correctness: from a Hamming threshold to a probability over real readings||(b) Tính đúng: từ ngưỡng Hamming sang xác suất trên ảnh thật]]</h2>
+  <div class="s-body g-5-7 ai-s">
+    <div class="stack">
+      <figure class="fig">
+        <div class="fig-img"><img src="assets/img/fig3-5-error-position.png" alt="Error position decides, not error count"></div>
+        <figcaption><b>[[Figure 3.5.||Hình 3.5.]]</b> [[Where the errors fall decides, not how many (group drawing; definition after [P, §3, Def. 2]).||Vị trí lỗi quyết định, không phải số lỗi (nhóm vẽ; định nghĩa theo [P, §3, Def. 2]).]]</figcaption>
+      </figure>
+      <p class="xs ink2">[[w′<sub>A</sub> is 4 bits off but every subset is hit → ⊥. w′<sub>B</sub> is 5 bits off but I₄ is clean → it opens.||w′<sub>A</sub> lệch 4 bit nhưng tập con nào cũng dính lỗi → ⊥. w′<sub>B</sub> lệch 5 bit nhưng I₄ sạch → mở được.]]</p>
+      <div class="note">[[No longer a per-person guarantee: someone with unusual noise (e.g. eyelashes always over the same region) may be rejected again and again.||Đổi lại không còn đảm bảo cho từng người: ai có kiểu nhiễu bất thường (ví dụ lông mi luôn che cùng một vùng) có thể bị từ chối lặp lại.]]</div>
+    </div>
+    <div class="stack">
+      <div class="oldnew">
+        <div class="o"><span class="lbl">[[Old — DRS, Canetti||Cách cũ — DRS, Canetti]]</span>[[Fix a threshold t on dis(w, w′) = |{i : wᵢ ≠ w′ᵢ}|; <i>every</i> w′ with dis ≤ t must open → a worst-case promise that costs err = n·H₂(μ) bits.||Chọn ngưỡng t trên dis(w, w′) = |{i : wᵢ ≠ w′ᵢ}|; <i>mọi</i> w′ có dis ≤ t phải mở được → đảm bảo trường hợp xấu nhất, phải trả err = n·H₂(μ) bit.]]</div>
+        <div class="n"><span class="lbl">[[The paper — Def. 2||Cách của paper — Def. 2]]</span>[[The pair (w, w′) is drawn from the real distribution of two captures of the same eye; the success probability 1 − δ <i>is</i> the TAR.||Cặp (w, w′) lấy từ phân phối thật của hai lần chụp cùng mắt; xác suất thành công 1 − δ <i>chính là</i> TAR.]]</div>
+      </div>
+      <div class="eq sm"><span class="f">Pr[ Rep(w′, p) = key | (w, w′) ← W*, (key, p) ← Gen ] ≥ 1 − δ</span><span class="n">(3)</span></div>
+      <ul class="b small tight">
+        <li>[[<b>Correctness</b> means the genuine user gets the Key back — not error correction. The paper fixes no bit; it changes the <i>promise</i>.||<b>Correctness</b> = người thật lấy lại được Key, không phải error correction. Paper không sửa bit nào, chỉ sửa <i>"lời hứa"</i>.]]</li>
+        <li>[[The paper itself flags this as a change from the usual definition, which guarantees every close-enough w, w′ and has no noise variable W′ [P, §2.1.1].||Paper tự nêu đây là thay đổi so với định nghĩa thông thường — vốn đảm bảo cho mọi w, w′ đủ gần và không có biến nhiễu W′ [P, §2.1.1].]]</li>
+        <li>[[<b>Why change:</b> (1) subsets are fixed at Setup, so whether a pair opens is essentially decided in advance; (2) ζ-sampling only makes sense over the real distribution (good bits tend to err less); (3) it is directly measurable as TAR.||<b>Vì sao phải đổi:</b> (1) tập con đã cố định ở Setup nên một cặp mở hay không gần như đã định sẵn; (2) ζ-sampling chỉ có nghĩa khi xét phân phối thật (bit tốt thường ít lỗi); (3) đo được trực tiếp bằng TAR.]]</li>
+      </ul>
+    </div>
+  </div>
+  <p class="src">[P, §2.1.1, §3, Def. 2]</p>
+</section>
+
+<!-- 3.4c -->
+<section class="slide" data-ch="3" data-sec="3.4c">
+  <h2>[[(c) Security metric: from average to minimum, and a tighter bound||(c) Thước đo bảo mật: trung bình → min, và siết cận]]</h2>
+  <div class="s-body g-5-7 ai-s">
+    <div class="stack">
+      <figure class="fig">
+        <div class="fig-img"><img src="assets/img/fig3-6-bound.png" alt="Old and new bound on the attacker's advantage"></div>
+        <figcaption><b>[[Figure 3.6.||Hình 3.6.]]</b> [[Old bound q(q+1)/2^ν vs new bound q/2^ν at ν = 105 (group drawing, after [P, §4.1.2]).||Cận cũ q(q+1)/2^ν và cận mới q/2^ν với ν = 105 (nhóm vẽ, theo [P, §4.1.2]).]]</figcaption>
+      </figure>
+      <p class="xs muted">[[Q&A backup: knowing only the average, the bound becomes (β + q)·2^(−ν_avg/2) [P, §4.1, (3)] — half the bits.||Dự phòng Q&A: nếu chỉ biết trung bình thì cận là (β + q)·2^(−ν_avg/2) [P, §4.1, (3)] — mất một nửa số bit.]]</p>
+    </div>
+    <div class="stack">
+      <div class="oldnew">
+        <div class="o"><span class="lbl">[[Old||Cách cũ]]</span>[[Canetti's proof assumes every subset has the average entropy [P, §4.1.1]; Simhadri averages 10 subsets → 32 bits; bound q(q + 1)/2^ν.||Chứng minh của Canetti giả định mọi tập con có entropy bằng trung bình [P, §4.1.1]; Simhadri đo trung bình 10 tập → 32 bit; cận q(q + 1)/2^ν.]]</div>
+        <div class="n"><span class="lbl">[[The paper||Cách của paper]]</span>[[ν = minᵢ H∞(W<sub>Iᵢ</sub> | Setup) — the entropy of the <b>weakest</b> subset [P, §4.1].||ν = minᵢ H∞(W<sub>Iᵢ</sub> | Setup) — entropy của tập con <b>yếu nhất</b> [P, §4.1].]]</div>
+      </div>
+      <div class="eq sm"><span class="f">Adv ≤ q · 2<sup>−ν</sup></span><span class="n">(Lemma 1)</span></div>
+      <ul class="b small tight">
+        <li>[[<b>Min-entropy</b> H∞(X) = −log₂ maxₓ Pr[X = x]: the bit count equivalent to guessing right in one try.||<b>Min-entropy</b> H∞(X) = −log₂ maxₓ Pr[X = x]: số bit tương đương xác suất đoán trúng trong một lần.]]</li>
+        <li>[[<b>Why Lemma 1 holds:</b> a wrong guess only returns ⊥, so nothing is learnt; each try wins with at most 2^−ν, summed over q tries.||<b>Ý chính Lemma 1:</b> thử sai chỉ nhận ⊥ nên không học thêm được gì; mỗi lần thử trúng tối đa 2^−ν, cộng dồn q lần.]]</li>
+        <li>[[<b>Tighter:</b> with ν = 105 and q = 2⁵³ the old bound is ≥ 1 (useless), the new one is 2^−52 → almost twice as many certified bits [P, §4.1.2].||<b>Siết cận:</b> với ν = 105, q = 2⁵³ cận cũ ≥ 1 (vô dụng), cận mới = 2^−52 → gần gấp đôi số bit được chứng nhận [P, §4.1.2].]]</li>
+        <li>[[<b>Why it is sound:</b> the attacker chooses the easiest subset, so the figure that represents security must be the weakest one, not the average.||<b>Vì sao hợp lý:</b> kẻ tấn công tự chọn tập dễ đoán nhất, nên con số đại diện cho bảo mật phải là tập yếu nhất, không phải trung bình.]]</li>
+        <li>[[<b>Consequence:</b> FAR := total unlocks · 2^−ν [P, §2.1.2] — Lemma 1 applied in practice; numbers in Part 5.||<b>Hệ quả:</b> FAR := tổng lượt mở · 2^−ν [P, §2.1.2] — chính là Lemma 1 áp vào thực tế; con số cụ thể ở Phần 5.]]</li>
+      </ul>
+    </div>
+  </div>
+  <p class="src">[P, §2.1.2, §3, §4.1, §4.1.1–4.1.2, Lemma 1]</p>
+</section>
+
+<!-- 3.4d (1) -->
+<section class="slide" data-ch="3" data-sec="3.4d">
+  <h2>[[(d) Choosing bits: from uniform to ζ-sampling||(d) Chọn bit: từ chọn đều sang ζ-sampling]]</h2>
+  <div class="s-body g-5-7 ai-s">
+    <figure class="fig">
+      <div class="fig-img"><img src="assets/img/fig3-7-zeta-sampling.png" alt="ζ-sampling procedure"></div>
+      <figcaption><b>[[Figure 3.7.||Hình 3.7.]]</b> [[The ζ-sampling procedure (redrawn after [P, §2.1.3, Fig. 2]). Statistics come from stats_W.||Quy trình ζ-sampling (vẽ lại theo [P, §2.1.3, Fig. 2]). Thống kê tính trên stats_W.]]</figcaption>
+    </figure>
+    <div class="stack">
+      <div class="oldnew">
+        <div class="o"><span class="lbl">[[Old||Cách cũ]]</span>[[Draw bits uniformly — implicitly every bit is equally good.||Rút bit đều — ngầm coi mọi bit tốt như nhau.]]</div>
+        <div class="n"><span class="lbl">[[The paper||Cách của paper]]</span>[[Weight each bit by a score sᵢ raised to ζ. ζ = 0 → uniform; a large ζ → concentrate on good bits.||Đánh trọng số mỗi bit bằng điểm sᵢ mũ ζ. ζ = 0 → chọn đều; ζ lớn → dồn vào bit tốt.]]</div>
+      </div>
+      <div class="eq sm"><span class="f">Pr&#91;[[choose bit i||chọn bit i]]&#93; = s<sub>i</sub><sup>ζ</sup> / Σ<sub>j</sub> s<sub>j</sub><sup>ζ</sup></span><span class="n">(4)</span></div>
+      <table class="tbl sm">
+        <thead><tr><th>[[Worked example: p_same =||Ví dụ: p_same =]]</th><th class="c">0.99</th><th class="c">0.95</th><th class="c">0.80</th><th class="c">0.60</th></tr></thead>
+        <tbody>
+          <tr><td>ζ = 0 ([[uniform||chọn đều]])</td><td class="c">25%</td><td class="c">25%</td><td class="c">25%</td><td class="c">25%</td></tr>
+          <tr><td>ζ = 2</td><td class="c">34%</td><td class="c">31%</td><td class="c">22%</td><td class="c">12.5%</td></tr>
+          <tr class="hl"><td>ζ = 10</td><td class="c"><b>56%</b></td><td class="c">37%</td><td class="c">6.6%</td><td class="c">0.4%</td></tr>
+        </tbody>
+      </table>
+      <ul class="b small tight">
+        <li>[[<b>Trade-off:</b> a large ζ makes each locker easier to open, but the subsets overlap more.||<b>Đánh đổi:</b> ζ lớn → mỗi locker dễ mở hơn nhưng các tập con trùng nhau nhiều hơn.]]</li>
+        <li>[[ζ only helps when the bits really differ in quality.||ζ chỉ có ích khi các bit thật sự chênh lệch chất lượng.]]</li>
+      </ul>
+    </div>
+  </div>
+  <p class="src">[P, §2.1.3, Fig. 2]</p>
+</section>
+
+<!-- 3.4d (2) -->
+<section class="slide" data-ch="3" data-sec="3.4d">
+  <h2>[[The ζ-sampling vocabulary used in Part 5||Bộ thuật ngữ ζ-sampling dùng ở Phần 5]]</h2>
+  <div class="s-body g-8-4 ai-s">
+    <table class="tbl sm">
+      <thead><tr><th style="width:24%">[[Term||Thuật ngữ]]</th><th>[[Meaning||Ý nghĩa]]</th></tr></thead>
+      <tbody>
+        <tr><td class="k">Like / Unlike</td><td>[[Pairs of readings of the same eye / of different eyes (Daugman's naming — hence μ<sub>Unlike</sub> in EntTest).||Cặp ảnh cùng mắt / khác mắt (cách gọi của Daugman — nên EntTest có μ<sub>Unlike</sub>).]]</td></tr>
+        <tr><td class="k">p<sub>same,i</sub></td><td>[[Pr[wᵢ = w′ᵢ | same eye] — how <b>stable</b> bit i is.||Pr[wᵢ = w′ᵢ | cùng mắt] — độ <b>ổn định</b> của bit i.]]</td></tr>
+        <tr><td class="k">p<sub>diff,i</sub></td><td>[[Pr[wᵢ ≠ w*ᵢ | different eyes] — how <b>hard to guess</b> bit i is. Both computed on stats_W.||Pr[wᵢ ≠ w*ᵢ | khác mắt] — độ <b>khó đoán</b> của bit i. Cả hai tính trên stats_W.]]</td></tr>
+        <tr><td class="k">Uniform</td><td>[[ζ = 0, every bit gets the same weight.||ζ = 0, mọi bit cùng trọng số.]]</td></tr>
+        <tr><td class="k">LikeOnly</td><td>[[sᵢ = p<sub>same,i</sub> — stability only.||sᵢ = p<sub>same,i</sub> — chỉ xét độ ổn định.]]</td></tr>
+        <tr><td class="k">UnlikeRatio</td><td>[[sᵢ = p<sub>same,i</sub> / max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>} — stability divided by how guessable the bit is.||sᵢ = p<sub>same,i</sub> / max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>} — ổn định chia cho mức dễ đoán.]]</td></tr>
+        <tr><td class="k">UnlikeExp</td><td>[[p<sub>same,i</sub>^(ζ / H∞(p<sub>diff,i</sub>)), with H∞(p) = −log₂ max{p, 1 − p} — punishes guessable bits exponentially.||p<sub>same,i</sub>^(ζ / H∞(p<sub>diff,i</sub>)), với H∞(p) = −log₂ max{p, 1 − p} — phạt bit dễ đoán theo hàm mũ.]]</td></tr>
+        <tr><td class="k">Single / Pairs</td><td>[[Score each bit, or each pair of bits (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].||Chấm điểm từng bit hay từng cặp bit (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].]]</td></tr>
+      </tbody>
+    </table>
+    <div class="stack">
+      <div class="note">[[Fig. 2 writes UnlikeRatio = (p_same / p_diff)^ζ and the UnlikeExp exponent ζ / (−log p_diff), which differs from §2.1.3 — the slides follow §2.1.3. §6.3 defines p_same with "≠", most likely a typo.||Fig. 2 viết UnlikeRatio = (p_same / p_diff)^ζ và số mũ UnlikeExp = ζ / (−log p_diff), khác §2.1.3 — slide dùng bản §2.1.3. §6.3 định nghĩa p_same bằng "≠", nhiều khả năng là lỗi đánh máy.]]</div>
+      <div class="card ch small"><div class="kicker">[[Bridge to Part 4||Câu nối sang Phần 4]]</div>[[ζ can only choose among the bits we already have. To do better, fix the input — Block A.||ζ chỉ chọn được trong số bit có sẵn; muốn tốt hơn phải sửa từ đầu vào — Khối A.]]</div>
+    </div>
+  </div>
+  <p class="src">[P, §2.1.3, §5.2.1, §6.3, Fig. 2, Table 2]</p>
+</section>
+
+<!-- ================= PART 4 ================= -->
+<section class="slide divider" data-ch="4" id="ch4" data-toc-en="Part 4 — Block A: feature extractor" data-toc-vi="Phần 4 — Khối A: feature extractor">
+  <div class="num-big">4</div>
+  <div class="part">[[Part 4 · Block A||Phần 4 · Khối A]]</div>
+  <h2>[[The feature extractor||Feature extractor]]</h2>
+  <div class="toc-list">
+    <div><b>4.1</b>[[Why fix Block A||Vì sao phải sửa Khối A]]</div>
+    <div><b>4.2</b>[[One baseline, two designs||Một baseline, hai thiết kế]]</div>
+    <div><b>4.3</b>[[ThirdEye → VersionOne||ThirdEye → VersionOne]]</div>
+    <div><b>4.5</b>[[VersionTwo → VersionTwoR||VersionTwo → VersionTwoR]]</div>
+    <div><b>4.6</b>[[The versions side by side||So sánh các phiên bản]]</div>
+  </div>
+</section>
+
+<!-- 4.1 -->
+<section class="slide" data-ch="4" data-sec="4.1">
+  <h2>[[Why fix Block A: opening a locker is exponential in μ||Vì sao phải sửa Khối A: xác suất mở locker giảm theo hàm mũ của μ]]</h2>
+  <div class="s-body g-6-6 ai-s">
+    <figure class="fig">
+      <div class="fig-img"><img src="assets/img/fig4-1-open-prob.png" alt="(1 − μ)^k against k for μ = 0.1 and 0.3"></div>
+      <figcaption><b>[[Figure 4.1.||Hình 4.1.]]</b> [[(1 − μ)^k against k for μ = 0.3 and 0.1 (group calculation, illustration only).||(1 − μ)^k theo k với μ = 0,3 và 0,1 (nhóm tự tính, chỉ để minh hoạ).]]</figcaption>
+    </figure>
+    <div class="stack">
+      <div class="card ch">
+        <div class="kicker">[[Three wishes for the bits||3 điều ước cho bit]]</div>
+        <ol class="n small" style="margin-top:4px">
+          <li>[[<b>Stable</b> — the same eye differs little (low μ).||<b>Ổn định</b> — cùng mắt ít lệch (μ thấp).]]</li>
+          <li>[[<b>Hard to guess</b> — different eyes agree ≈ 50 % of the time.||<b>Khó đoán</b> — khác mắt trùng ≈ 50%.]]</li>
+          <li>[[<b>Uniform quality</b> — every bit is as good as the others.||<b>Đều chất lượng</b> — bit nào cũng tốt như nhau.]]</li>
+        </ol>
+      </div>
+      <ul class="b small tight">
+        <li>[[Bridge from Part 3: ζ-sampling only chooses among existing bits; to do better, make better bits.||Cầu nối từ Phần 3: ζ-sampling chỉ chọn được trong số bit có sẵn; muốn tốt hơn phải làm ra bit tốt hơn.]]</li>
+        <li>[[Example, k = 100: μ = 0.3 → 0.7¹⁰⁰ ≈ 2^−51; μ = 0.1 → 0.9¹⁰⁰ ≈ 2^−15. A small drop in μ makes lockers <b>exponentially</b> easier to open.||Ví dụ k = 100: μ = 0,3 → 0,7¹⁰⁰ ≈ 2^−51; μ = 0,1 → 0,9¹⁰⁰ ≈ 2^−15. Giảm μ một chút → locker dễ mở hơn <b>theo hàm mũ</b>.]]</li>
+        <li>[[<b>Why not PCA/ICA:</b> they only remove pairwise correlation, while iris bits correlate in larger groups [P, §1.0.1] → the paper trains a CNN aimed directly at the three wishes.||<b>Vì sao không dùng PCA/ICA:</b> chỉ xoá tương quan theo cặp, còn tương quan giữa các bit iris nằm ở nhóm nhiều bit [P, §1.0.1] → paper huấn luyện CNN nhắm thẳng vào 3 điều ước.]]</li>
+      </ul>
+    </div>
+  </div>
+  <p class="src">[P, §1.0.1, §2.1.2]</p>
+</section>
+
+<!-- 4.2 -->
+<section class="slide" data-ch="4" data-sec="4.2">
+  <h2>[[One baseline, two designs||Bức tranh chung: một baseline, hai thiết kế]]</h2>
+  <div class="s-body g-5-7 ai-c">
+    <figure class="fig" style="max-width:430px;justify-self:center">
+      <div class="fig-img"><img src="assets/img/fig4-2-chain.png" alt="Development chain from ThirdEye to VersionTwoR"></div>
+      <figcaption><b>[[Figure 4.2.||Hình 4.2.]]</b> [[The development chain: what each step fixes and what still blocks it (group drawing, after [P, §2.1.4, §6]).||Chuỗi phát triển: mỗi bước sửa gì, còn vướng gì (nhóm vẽ, theo [P, §2.1.4, §6]).]]</figcaption>
+    </figure>
+    <div class="stack">
+      <ul class="b">
+        <li>[[The paper has <b>two</b> extractors, not three [P, §2.1.4, §6].||Paper có <b>2</b> extractor, không phải 3 [P, §2.1.4, §6].]]</li>
+        <li>[[VersionTwo and VersionTwoR are <b>two stages of one pipeline</b>; ClearEyes uses VersionTwoR.||VersionTwo và VersionTwoR là <b>2 giai đoạn của cùng một pipeline</b>; ClearEyes dùng VersionTwoR.]]</li>
+        <li>[[Same goal — high TAR, low FAR. They differ in <b>where the burden of picking good bits</b> sits:||Cùng mục tiêu — TAR cao, FAR thấp. Khác ở <b>chỗ đặt gánh nặng chọn bit tốt</b>:]]
+          <ul>
+            <li>[[VersionOne → Block B (ζ-sampling).||VersionOne → Khối B (ζ-sampling).]]</li>
+            <li>[[VersionTwoR → the network itself.||VersionTwoR → chính mạng nơ-ron.]]</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <p class="src">[P, §2.1.4, §6]</p>
+</section>
+
+<!-- 4.3-4.4 -->
+<section class="slide" data-ch="4" data-sec="4.4">
+  <h2>[[ThirdEye → VersionOne: adding an angle to the triplet loss||ThirdEye → VersionOne: thêm góc vào triplet loss]]</h2>
+  <div class="s-body g2 ai-s">
+    <div class="stack">
+      <div class="kicker">[[Baseline — ThirdEye (P-ref 42)||Baseline — ThirdEye (P-ref 42)]]</div>
+      <figure class="fig">
+        <div class="fig-img" style="--fh:170px"><img src="assets/img/fig4-3-triplet.png" alt="Triplet loss"></div>
+        <figcaption><b>[[Figure 4.3.||Hình 4.3.]]</b> [[Triplet loss: pull the positive towards the anchor, push the negative at least m away (group drawing, after [P, §6.1.2]).||Triplet loss: kéo positive lại gần anchor, đẩy negative ra xa ít nhất m (nhóm vẽ, theo [P, §6.1.2]).]]</figcaption>
+      </figure>
+      <ul class="b small tight">
+        <li>[[ResNet-50 (ImageNet pre-trained) → trained as a classifier → head replaced by a 1,024-dim layer trained with triplet loss [P, §6.1–6.1.2].||ResNet-50 (pre-train ImageNet) → học phân loại → thay đầu ra bằng lớp 1.024 chiều, huấn luyện bằng triplet loss [P, §6.1–6.1.2].]]</li>
+        <li>[[<b>Limitation:</b> built for recognition (same person or not); it does not ask each bit to be stable or of uniform quality.||<b>Hạn chế:</b> thiết kế cho nhận dạng (đúng người hay không), không đòi từng bit ổn định hay đều chất lượng.]]</li>
+      </ul>
+    </div>
+    <div class="stack">
+      <div class="kicker">[[Design 1 — VersionOne (§6.1)||Thiết kế 1 — VersionOne (§6.1)]]</div>
+      <figure class="fig">
+        <div class="fig-img" style="--fh:170px"><img src="assets/img/fig4-4-versionone.png" alt="VersionOne additions to the triplet loss"></div>
+        <figcaption><b>[[Figure 4.4.||Hình 4.4.]]</b> [[VersionOne: weight c₁ on same-eye pairs and an angle penalty between different irises (group drawing, after [P, §6.1]).||VersionOne: trọng số c₁ cho cặp cùng mắt và phạt góc giữa các iris khác nhau (nhóm vẽ, theo [P, §6.1]).]]</figcaption>
+      </figure>
+      <ul class="b small tight">
+        <li>[[DenseNet-169; c₁ = 1.1 punishes same-eye pairs that drift apart; μ<sub>IP</sub> = mean inner product between different irises, c₂ = 2 → push them towards orthogonal (the angular-margin idea).||DenseNet-169; c₁ = 1,1 phạt nặng cặp cùng mắt lệch nhau; μ<sub>IP</sub> = tích vô hướng trung bình giữa các iris khác nhau, c₂ = 2 → ép chúng gần vuông góc (ý của angular margin).]]</li>
+        <li>[[Bits are <b>not</b> of uniform quality — the paper: "produces features of different quality", hence "benefits from ζ-sampling". The choice of good bits is pushed to Block B, and the L2 and angle objectives pull against each other.||Bit <b>không</b> đều chất lượng — paper: "produces features of different quality", vì thế "benefits from ζ-sampling". Việc chọn bit tốt bị đẩy sang Khối B; hai mục tiêu L2 và góc kéo ngược nhau.]]</li>
+      </ul>
+      <div class="note xs">[[§6.1 gives the margin as m = 0.8 and then m = 0.4 in the same paragraph — inconsistent.||§6.1 ghi m = 0,8 rồi m = 0,4 trong cùng đoạn — không nhất quán.]]</div>
+    </div>
+  </div>
+  <p class="src">[P, §6.1–6.1.2] · ThirdEye, BTAS 2019 [P-ref 42]</p>
+</section>
+
+<!-- 4.5 -->
+<section class="slide" data-ch="4" data-sec="4.5">
+  <h2>[[VersionTwo → VersionTwoR: two stages, trained directly on the bits||VersionTwo → VersionTwoR: hai giai đoạn, tối ưu thẳng trên bit]]</h2>
+  <div class="s-body g-6-6 ai-s">
+    <figure class="fig">
+      <div class="fig-img"><img src="assets/img/fig4-5-versiontwor.png" alt="VersionTwoR pipeline"></div>
+      <figcaption><b>[[Figure 4.5.||Hình 4.5.]]</b> [[The VersionTwoR pipeline: two training stages and voting at inference (redrawn after [P, §6.2]).||Pipeline VersionTwoR: huấn luyện 2 giai đoạn và suy luận bằng bỏ phiếu (vẽ lại theo [P, §6.2]).]]</figcaption>
+    </figure>
+    <ul class="b small tight">
+      <li>[[<b>New goal:</b> bits of uniform quality — it "incorporates ideas from ζ-sampling" [P, §2.1.4]. Built from scratch, not a patch on VersionOne.||<b>Mục tiêu mới:</b> bit đều chất lượng — "incorporates ideas from ζ-sampling" [P, §2.1.4]. Làm lại từ đầu, không sửa tiếp VersionOne.]]</li>
+      <li>[[<b>Stage 1 — VersionTwo:</b> EfficientNet-B0, 1,024 dims; L = L<sub>uce-m</sub> + 0.5·L<sub>hnm</sub> — same-eye pairs must beat different-eye pairs by a margin, plus a penalty on the most similar different eye (hard negative); augmentation: flips, rotation, blur, sharpening, occlusion, contrast.||<b>Giai đoạn 1 — VersionTwo:</b> EfficientNet-B0, 1.024 chiều; L = L<sub>uce-m</sub> + 0,5·L<sub>hnm</sub> — cặp cùng mắt phải giống hơn cặp khác mắt một margin, cộng phạt iris khác mắt giống nhất (hard negative); augmentation: lật, xoay, mờ, nét, che khuất, tương phản.]]</li>
+      <li>[[<b>Stage 2 — VersionTwoR:</b> refinement → 512 dims → tanh (soft bits in [−1, 1]); d<sub>H</sub> = ½(1 − cos); L = L<sub>pos</sub> + λ<sub>neg</sub>·L<sub>neg</sub> pulls the same eye → 0 and different eyes → 0.5.||<b>Giai đoạn 2 — VersionTwoR:</b> refinement → 512 chiều → tanh (bit mềm trong [−1, 1]); d<sub>H</sub> = ½(1 − cos); L = L<sub>pos</sub> + λ<sub>neg</sub>·L<sub>neg</sub> kéo cùng mắt → 0, khác mắt → 0,5.]]</li>
+      <li>[[<b>Why stage 2:</b> binarisation has no gradient → tanh + soft Hamming let the network optimise the very bits the lockers see.||<b>Vì sao cần giai đoạn 2:</b> nhị phân hoá không lấy đạo hàm được → tanh + soft Hamming cho phép tối ưu ngay trên bit, thứ locker thật sự thấy.]]</li>
+      <li>[[<b>At inference:</b> original + horizontal/vertical flips + rotations of ±5° → per-bit vote, keep the most stable value.||<b>Khi chạy:</b> ảnh gốc + lật ngang/dọc + xoay ±5° → bỏ phiếu theo từng bit, giữ giá trị ổn định nhất.]]</li>
+    </ul>
+  </div>
+  <p class="take">[[Part 3 selects good bits; VersionTwoR makes good bits.||Phần 3 chọn bit tốt; VersionTwoR làm ra bit tốt.]]</p>
+  <p class="src">[P, §2.1.4, §6.2]</p>
+</section>
+
+<!-- 4.6 -->
+<section class="slide" data-ch="4" data-sec="4.6">
+  <h2>[[The versions side by side||So sánh các phiên bản]]</h2>
+  <div class="s-body">
+    <figure class="fig" style="max-width:1000px;margin:0 auto">
+      <div class="fig-img" style="--fh:350px"><img src="assets/img/fig4-6-versions-table.png" alt="Comparison of the four extractor versions"></div>
+      <figcaption><b>[[Figure 4.6.||Hình 4.6.]]</b> [[Comparison of the four versions (group compilation from [P, §6]).||So sánh 4 phiên bản (nhóm tổng hợp từ [P, §6]).]]</figcaption>
+    </figure>
+    <div class="note mt xs" style="max-width:1000px;margin-left:auto;margin-right:auto">[[VersionTwo is not evaluated on its own in §7 (only its histogram in Fig. 3b), so its "still stuck" row is our remark. The paper does not say which extractor Simhadri et al. used.||VersionTwo không được đánh giá riêng ở §7 (chỉ có histogram Fig. 3b), nên dòng "còn vướng" của nó là nhận xét của nhóm. Paper không nói Simhadri dùng extractor nào.]]</div>
+  </div>
+  <p class="take">[[How do the two extractors compare on real numbers? → Part 5.||Hai extractor này khác nhau thế nào trên số liệu thật? → Phần 5.]]</p>
+  <p class="src">[P, §6, §7, Fig. 3]</p>
+</section>

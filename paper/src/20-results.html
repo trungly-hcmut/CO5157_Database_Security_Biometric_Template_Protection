@@ -1,0 +1,601 @@
+
+<!-- ================= PART 5 ================= -->
+<section class="slide divider" data-ch="5" id="ch5" data-toc-en="Part 5 — Experiments & results" data-toc-vi="Phần 5 — Thực nghiệm và kết quả">
+  <div class="num-big">5</div>
+  <div class="part">[[Part 5||Phần 5]]</div>
+  <h2>[[Experiments & results||Thực nghiệm và kết quả]]</h2>
+  <div class="toc-list">
+    <div><b>5.1</b>[[Experimental setup: data, EntTest, TAR||Thiết lập: dữ liệu, EntTest, TAR]]</div>
+    <div><b>5.2</b>[[Results — attacker side||Kết quả phía kẻ tấn công]]<span class="sides"><span class="side atk">[[attacker||kẻ tấn công]]</span></span></div>
+    <div><b>5.3</b>[[Results — honest-user side||Kết quả phía người dùng thật]]<span class="sides"><span class="side hon">[[honest user||người dùng thật]]</span></span></div>
+    <div><b>5.4</b>[[Final operating point||Điểm vận hành cuối]]</div>
+    <div><b>5.5</b>[[Comparison & performance||So sánh và hiệu năng]]</div>
+  </div>
+</section>
+
+<!-- 5.1a -->
+<section class="slide" data-ch="5" data-sec="5.1">
+  <h2>[[Data and split: train on left eyes, test on right eyes||Dữ liệu và cách chia: huấn luyện mắt trái, đo trên mắt phải]]</h2>
+  <div class="s-body g-6-6 ai-s">
+    <ul class="b small">
+      <li>[[<b>IIT Delhi (IITD)</b> [P, §5.1]: 224 people (176 men, 48 women), aged 14–55; 2,240 near-infrared images, 320×240. Left and right eyes count as two independent biometrics → <b>435 biometrics</b> (224 left, 211 right).||<b>IIT Delhi (IITD)</b> [P, §5.1]: 224 người (176 nam, 48 nữ), 14–55 tuổi; 2.240 ảnh hồng ngoại gần, 320×240. Mắt trái và phải là 2 sinh trắc độc lập → <b>435 sinh trắc</b> (224 mắt trái, 211 mắt phải).]]</li>
+      <li>[[Images are segmented (iris separated from background) following Hofbauer et al.; duplicates and featureless images removed as the dataset author advises.||Ảnh được phân đoạn (tách vùng mống mắt khỏi nền) theo Hofbauer et al.; loại ảnh trùng và ảnh không có đặc trưng theo hướng dẫn của người tạo dataset.]]</li>
+      <li>[[<b>Class-disjoint split</b> — no eye appears in two sets:||<b>Chia tách lớp</b> — không mắt nào xuất hiện ở 2 tập:]]
+        <ul>
+          <li>[[<b>Train</b>: all left eyes (as in ThirdEye) → trains the feature extractor.||<b>Train</b>: toàn bộ mắt trái (giống ThirdEye) → huấn luyện feature extractor.]]</li>
+          <li>[[<b>stats_W</b>: 40 of the 202 right eyes (20 %) → only for the per-bit statistics p_same, p_diff used by ζ-sampling.||<b>stats_W</b>: 40 trong 202 mắt phải (20%) → chỉ dùng để tính thống kê từng bit p_same, p_diff cho ζ-sampling.]]</li>
+          <li>[[<b>Test</b>: the remaining 162 right eyes → every table and figure of results (except the Fig. 3 histograms, which pool stats_W and test).||<b>Test</b>: 162 mắt phải còn lại → mọi bảng và hình kết quả (trừ histogram Fig. 3 gộp stats_W + test).]]</li>
+        </ul>
+      </li>
+    </ul>
+    <div class="stack">
+      <table class="tbl">
+        <thead><tr><th>[[Set||Tập]]</th><th>[[Eyes||Mắt]]</th><th>[[Used for||Dùng để]]</th></tr></thead>
+        <tbody>
+          <tr class="rise" style="--i:0"><td class="k">Train</td><td>[[224 left eyes||224 mắt trái]]</td><td>[[Train the CNN (VersionOne / VersionTwoR)||Huấn luyện CNN (VersionOne / VersionTwoR)]]</td></tr>
+          <tr class="rise" style="--i:1"><td class="k">stats_W</td><td>[[40 right eyes (20 %)||40 mắt phải (20%)]]</td><td>[[p<sub>same,i</sub>, p<sub>diff,i</sub> → ζ-sampling at Setup||Tính p<sub>same,i</sub>, p<sub>diff,i</sub> → ζ-sampling ở Setup]]</td></tr>
+          <tr class="rise hl" style="--i:2"><td class="k">Test</td><td>[[162 right eyes||162 mắt phải]]</td><td>[[Entropy (EntTest), TAR, FAR||Đo entropy (EntTest), TAR, FAR]]</td></tr>
+        </tbody>
+      </table>
+      <div class="note">[[IITD has 211 right eyes, but the paper splits 202 = 40 + 162 — 9 eyes were probably dropped by the image filtering; the paper does not say.||IITD có 211 mắt phải nhưng paper chia 202 = 40 + 162; nhiều khả năng 9 mắt bị loại ở bước lọc ảnh, paper không nói rõ.]]</div>
+    </div>
+  </div>
+  <p class="take">[[The model learns from left eyes, subsets are chosen with 40 right eyes, and every number we will see is measured on the other 162 right eyes.||Mô hình được huấn luyện trên mắt trái, tập con được chọn bằng 40 mắt phải, và mọi con số sắp xem đều đo trên 162 mắt phải còn lại.]]</p>
+  <p class="src">[P, §5.1]</p>
+</section>
+
+<!-- 5.1b -->
+<section class="slide" data-ch="5" data-sec="5.1">
+  <h2>[[Measuring security: EntTest, Daugman's test turned into min-entropy||Đo bảo mật: EntTest — phép đo của Daugman chuyển sang min-entropy]]</h2>
+  <div class="s-body g-7-5 ai-s">
+    <div class="stack">
+      <ol class="n small" style="margin-top:2px">
+        <li>[[Histogram of the fractional Hamming distance between readings of <b>different</b> eyes (the red histogram of [P, Fig. 3]).||Histogram khoảng cách Hamming phân số giữa ảnh của các mắt <b>khác nhau</b> (histogram đỏ trong [P, Fig. 3]).]]</li>
+        <li>[[Its mean μ and standard deviation σ.||Tính trung bình μ và độ lệch chuẩn σ của histogram đó.]]</li>
+        <li>[[Degrees of freedom — treat the distance as a binomial of dF coin flips:||Bậc tự do — coi khoảng cách như phân phối nhị thức của dF lần tung đồng xu:]]</li>
+      </ol>
+      <div class="eq sm"><span class="f">dF = μ(1 − μ) / σ²,&nbsp;&nbsp; e = min{−log₂ μ, −log₂(1 − μ)} · dF</span><span class="n">(5)</span></div>
+      <ol class="n small" start="4"><li>[[Apply it <b>to each subset Iᵢ separately</b> (only the bits in Iᵢ).||Áp dụng <b>riêng cho từng tập con Iᵢ</b> (chỉ dùng các bit trong Iᵢ).]]</li></ol>
+      <div class="card flat xs"><div class="kicker">[[Worked example||Ví dụ tính tay]]</div>[[μ = 0.5, σ = 0.046 → dF = 0.25 / 0.046² ≈ 118 → e = 1 × 118 ≈ <b>118 bits</b>. A narrower histogram closer to 0.5 means the bits behave more like independent coin flips → more entropy.||μ = 0,5, σ = 0,046 → dF = 0,25 / 0,046² ≈ 118 → e = 1 × 118 ≈ <b>118 bit</b>. Histogram càng hẹp và càng sát 0,5 thì các bit càng giống tung đồng xu độc lập → càng nhiều entropy.]]</div>
+      <ul class="b xs tight">
+        <li>[[<b>Assumption 2</b> [P, §5.2.1]: EntTest measures the min-entropy of the biometric distribution correctly — the paper's only statistical assumption.||<b>Assumption 2</b> [P, §5.2.1]: EntTest đo đúng min-entropy của phân phối sinh trắc — giả định thống kê duy nhất của paper.]]</li>
+        <li>[[<b>Limits</b> [P, §5.2.2]: every entropy test is a heuristic; EntTest uses only two moments (μ, σ). NIST SP 800-22 always gave <i>higher</i> numbers, so the paper reports the lower, more cautious one.||<b>Hạn chế</b> [P, §5.2.2]: mọi entropy test đều là heuristic; EntTest chỉ dùng 2 moment (μ, σ). NIST SP 800-22 luôn cho số <i>cao hơn</i>, nên paper báo con số thấp hơn (thận trọng).]]</li>
+      </ul>
+    </div>
+    <div class="stack-s">
+      <figure class="fig">
+        <div class="fig-img" style="--fh:205px"><img src="assets/img/paper-fig3a-v1.png" alt="Fig. 3a VersionOne distance histograms"></div>
+        <figcaption><b>[P, Fig. 3a]</b> VersionOne — [[red (different eyes) is wide and centred near 0.3 → little entropy.||đỏ (khác mắt) rộng, lệch về 0,3 → ít entropy.]]</figcaption>
+      </figure>
+      <figure class="fig">
+        <div class="fig-img" style="--fh:205px"><img src="assets/img/paper-fig3c-v2r.png" alt="Fig. 3c VersionTwoR distance histograms"></div>
+        <figcaption><b>[P, Fig. 3c]</b> VersionTwoR — [[red is narrow and centred at 0.5 → much more entropy. Blue = same eye.||đỏ hẹp, nằm đúng 0,5 → nhiều entropy hơn hẳn. Xanh = cùng mắt.]]</figcaption>
+      </figure>
+    </div>
+  </div>
+  <p class="src">[P, §5.2.1–5.2.2, Fig. 3] · Daugman 2004 [P-ref 43]</p>
+</section>
+
+<!-- 5.1c -->
+<section class="slide" data-ch="5" data-sec="5.1">
+  <h2>[[Measuring the honest side: TAR and the parameter grid||Đo phía người dùng thật: TAR và lưới tham số]]</h2>
+  <div class="s-body g-6-6 ai-s">
+    <div class="stack">
+      <div class="card hon">
+        <div class="kicker" style="color:var(--hon)">[[Computing TAR (§5.2.3)||Cách tính TAR (§5.2.3)]]</div>
+        <ol class="n small" style="margin-top:4px">
+          <li>[[For each eye, pick one reading at random as the enrolment w*; the other readings are queries.||Với mỗi mắt, chọn ngẫu nhiên 1 ảnh làm ảnh đăng ký w*; các ảnh còn lại làm truy vấn.]]</li>
+          <li>[[A query succeeds if <b>at least one subset Iᵢ</b> matches w* exactly on its bits.||Truy vấn thành công nếu <b>có ít nhất 1 tập con Iᵢ</b> trùng hoàn toàn với w* trên các bit của nó.]]</li>
+          <li>[[TAR = successful queries / all queries.||TAR = số truy vấn thành công / tổng số truy vấn.]]</li>
+        </ol>
+        <p class="xs ink2" style="margin:6px 0 0">[[It compares bits directly, without HMAC (ignoring HMAC-SHA256 collisions) → far faster to sweep the parameter grid.||Phép tính so trực tiếp bit, không chạy HMAC (bỏ qua khả năng va chạm HMAC-SHA256) → quét lưới tham số nhanh hơn nhiều.]]</p>
+      </div>
+      <div class="card ch">
+        <div class="kicker">[[Parameter grid (§7)||Lưới tham số (§7)]]</div>
+        <ul class="b small tight" style="margin-top:4px">
+          <li>[[k from 40 to 140, step 5.||k từ 40 đến 140, bước 5.]]</li>
+          <li>[[ζ ∈ {0, 0.5, 1, 2, 3, 5, 8, 10, 15, 20} (ζ = 0 is uniform).||ζ ∈ {0; 0,5; 1; 2; 3; 5; 8; 10; 15; 20} (ζ = 0 là chọn đều).]]</li>
+          <li>[[Three scores: LikeOnly / UnlikeRatio / UnlikeExp.||Ba cách chọn: LikeOnly / UnlikeRatio / UnlikeExp.]]</li>
+          <li>[[Promising settings run with <b>β = 250K</b> subsets, then keep the <b>200K</b> with the highest entropy.||Cấu hình hứa hẹn chạy với <b>β = 250K</b> tập con, rồi giữ <b>200K</b> tập có entropy cao nhất.]]</li>
+        </ul>
+      </div>
+    </div>
+    <div class="note">
+      <ul class="b">
+        <li>[[The test set has only <b>162 eyes</b>: where TAR is counted per eye (multi-reading settings), one eye ≈ <b>0.6 points</b> of TAR → gaps of 1–2 points between settings are within statistical noise.||Tập test chỉ có <b>162 mắt</b>: ở cấu hình nhiều ảnh (TAR tính theo mắt), 1 mắt ≈ <b>0,6 điểm %</b> TAR → chênh 1–2 điểm % giữa hai cấu hình nằm trong sai số thống kê.]]</li>
+        <li>[[TAR is computed without HMAC: reasonable, since an HMAC-SHA256 collision is negligible — but it also means TAR says nothing about real running time (measured separately in §5.5).||TAR tính không qua HMAC: hợp lý vì xác suất HMAC-SHA256 va chạm không đáng kể, nhưng con số TAR không phản ánh thời gian chạy thật (đo riêng ở §5.5).]]</li>
+      </ul>
+    </div>
+  </div>
+  <p class="take">[[105 bits is EntTest on the weakest subset; TAR is the share of genuine readings that open at least one locker.||105 bit là con số của EntTest trên tập con yếu nhất; TAR là tỉ lệ ảnh thật mở được ít nhất một locker.]]</p>
+  <p class="src">[P, §5.2.3, §7]</p>
+</section>
+
+<!-- 5.2 -->
+<section class="slide" data-ch="5" data-sec="5.2">
+  <h2>[[Attacker side: the minimum costs ~5 bits — filtering wins them back||Phía kẻ tấn công: đo bằng min mất ~5 bit, lọc tập yếu lấy lại]]</h2>
+  <div class="s-body">
+    <table class="tbl sm">
+      <thead>
+        <tr><th rowspan="2">k</th><th rowspan="2">ζ</th><th class="grp" colspan="3">[[entropy of single subsets (250K)||entropy từng tập con (250K)]]</th><th class="grp" colspan="2">[[keep all 250K||giữ cả 250K]]</th><th class="grp" colspan="2">[[keep best 200K||giữ 200K tốt nhất]]</th><th rowspan="2" class="c">[[Observed FAR||FAR quan sát]]</th></tr>
+        <tr><th class="c">Min</th><th class="c">Avg</th><th class="c">Max</th><th class="c">Ent</th><th class="c">−log FAR</th><th class="c">Ent</th><th class="c">−log FAR</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>70</td><td>3</td><td class="c">62</td><td class="c">66</td><td class="c">70</td><td class="c">62</td><td class="c">41</td><td class="c">65</td><td class="c">44</td><td class="c">0</td></tr>
+        <tr><td>90</td><td>8</td><td class="c">79</td><td class="c">84</td><td class="c">88</td><td class="c">79</td><td class="c">58</td><td class="c">83</td><td class="c">62</td><td class="c">0</td></tr>
+        <tr><td>110</td><td>3</td><td class="c">95</td><td class="c">101</td><td class="c">107</td><td class="c">95</td><td class="c">74</td><td class="c">100</td><td class="c">79</td><td class="c">0</td></tr>
+        <tr class="hl"><td><b>115</b></td><td><b>2</b></td><td class="c">100</td><td class="c">106</td><td class="c">112</td><td class="c">100</td><td class="c">79</td><td class="c hl">105</td><td class="c hl">84</td><td class="c">0</td></tr>
+      </tbody>
+    </table>
+    <p class="cap"><b>[P, Table 4]</b> [[(retyped). All rows use UnlikeExp. −log FAR = Ent − 20.5 because ClearEyes-M uses 2^20.5 lockers in total; observed FAR over all 250K lockers.||(gõ lại). Mọi dòng dùng UnlikeExp. −log FAR = Ent − 20,5 vì ClearEyes-M dùng tổng cộng 2^20,5 locker; FAR quan sát đo trên toàn bộ 250K locker.]]</p>
+    <div class="g-7-5 mt-s">
+      <ul class="b small tight">
+        <li>[[<b>Trend 1:</b> larger k → more entropy (min 62 → 100 as k goes 70 → 115): the attacker must guess more bits per locker.||<b>Xu hướng 1:</b> k tăng thì entropy tăng (min 62 → 100 khi k từ 70 lên 115): kẻ tấn công phải đoán đúng nhiều bit hơn trong mỗi locker.]]</li>
+        <li>[[<b>Trend 2 — why the minimum:</b> Min is 4–6 bits below Avg on every row (k = 115: average 106, weakest 100). Reporting the average, like Simhadri, would overstate security by ~5 bits.||<b>Xu hướng 2 — vì sao đo bằng min:</b> Min thấp hơn Avg 4–6 bit ở mọi dòng (k = 115: trung bình 106, tập yếu nhất 100). Báo trung bình như Simhadri sẽ thổi phồng ~5 bit.]]</li>
+        <li>[[<b>Trend 3 — filtering:</b> dropping the 50K weakest subsets lifts the min by 3–5 bits (62→65, 79→83, 95→100, 100→105) while TAR drops only ~0.01–0.02 [P, Table 5].||<b>Xu hướng 3 — lọc tập yếu:</b> bỏ 50K tập yếu nhất tăng min thêm 3–5 bit (62→65, 79→83, 95→100, 100→105) trong khi TAR chỉ giảm ~0,01–0,02 [P, Table 5].]]</li>
+        <li>[[<b>Result:</b> 105 bits; FAR = unlocks × 2^−105 → −log FAR ≈ 105 − 17.6 ≈ <b>87</b> (ClearEyes), ≈ <b>84</b> (ClearEyes-M).||<b>Kết luận:</b> 105 bit; FAR = số lượt mở × 2^−105 → −log FAR ≈ 105 − 17,6 ≈ <b>87</b> (ClearEyes), ≈ <b>84</b> (ClearEyes-M).]]</li>
+      </ul>
+      <div class="note xs">
+        <ul class="b">
+          <li>[[The best 200K are picked by entropy measured on the <i>test</i> set itself → 105 may be slightly optimistic. (Our demo: the published subsets still give 105.4 bits on other data.)||Giữ 200K tập tốt nhất dựa trên entropy đo trên <i>chính tập test</i> → 105 có thể hơi lạc quan. (Demo của nhóm: tập con công bố vẫn cho 105,4 bit trên dữ liệu khác.)]]</li>
+          <li>[[Observed FAR = 0 on ≈ 26,000 impostor pairs only bounds FAR ≲ 2^−13 (rule of three); the 84 bits come from EntTest, not from observation.||FAR quan sát = 0 trên ≈ 26.000 cặp khác mắt chỉ cho cận FAR ≲ 2^−13 (quy tắc 3); 84 bit đến từ EntTest, không đến từ quan sát.]]</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <p class="src">[P, §2.1.2, §7.1, §7.1.1, Table 4, Table 5]</p>
+</section>
+
+<!-- 5.3a -->
+<section class="slide" data-ch="5" data-sec="5.3">
+  <h2>[[Honest side, VersionOne: ζ-sampling helps||Phía người dùng thật, VersionOne: ζ-sampling có ích]]</h2>
+  <div class="s-body g-6-6 ai-s">
+    <div class="stack-s">
+      <div class="g2" style="gap:12px">
+        <figure class="fig"><div class="fig-img"><img src="assets/img/paper-fig4.png" alt="Fig. 4 VersionOne TAR vs entropy"></div><figcaption><b>[P, Fig. 4]</b> [[TAR vs min entropy, 4 methods.||TAR theo min entropy, 4 cách chọn.]]</figcaption></figure>
+        <figure class="fig"><div class="fig-img"><img src="assets/img/paper-fig5.png" alt="Fig. 5 effect of β"></div><figcaption><b>[P, Fig. 5]</b> [[β from 2⁶ to 2¹⁷, UnlikeRatio.||β từ 2⁶ đến 2¹⁷, UnlikeRatio.]]</figcaption></figure>
+      </div>
+      <table class="tbl xs compact">
+        <thead><tr><th>[[Entropy ≥||Entropy ≥]]</th><th>Uniform (k, TAR)</th><th>LikeOnly (k, ζ, TAR)</th><th>UnlikeRatio (k, ζ, TAR)</th><th>UnlikeExp (k, ζ, TAR)</th></tr></thead>
+        <tbody>
+          <tr><td>20</td><td>105, 0.64</td><td>105, 3, 0.72</td><td>105, 0.5, 0.57</td><td>110, 5, 0.65</td></tr>
+          <tr><td>26</td><td>140, 0.29</td><td>130, 0.5, 0.37</td><td>105, 1, 0.52</td><td>130, 0.5, 0.34</td></tr>
+          <tr class="hl"><td>28</td><td>150, 0.22</td><td>160, 1, 0.18</td><td><b>105, 2, 0.47</b></td><td>155, 2, 0.21</td></tr>
+          <tr><td>30</td><td>160, 0.13</td><td>–</td><td><b>105, 3, 0.37</b></td><td>–</td></tr>
+          <tr><td>40</td><td>–</td><td>–</td><td>115, 10, 0.14</td><td>–</td></tr>
+        </tbody>
+      </table>
+      <p class="cap"><b>[P, Table 2]</b> [[(excerpt) — VersionOne, single bits, best TAR per entropy level. "–": no setting reaches it.||(trích) — VersionOne, bit đơn, TAR tốt nhất ở mỗi mức entropy. "–": không cấu hình nào đạt.]]</p>
+    </div>
+    <ul class="b small">
+      <li>[[<b>Reading Fig. 4:</b> x = min entropy over 1,000 subsets, y = TAR; each dot is one (k, ζ). All dots lie on a falling band — more security bits, lower TAR.||<b>Đọc Fig. 4:</b> trục x = min entropy trên 1.000 tập con, trục y = TAR; mỗi điểm là một cặp (k, ζ). Mọi điểm nằm trên một dải đi xuống — càng nhiều bit bảo mật, TAR càng thấp.]]</li>
+      <li>[[<b>UnlikeRatio</b> (green) sits to the right → at the same TAR it reaches more entropy than uniform; LikeOnly keeps TAR high but gives up entropy.||<b>UnlikeRatio</b> (xanh lá) lệch phải → ở cùng TAR đạt entropy cao hơn chọn đều; LikeOnly giữ TAR cao nhưng mất entropy.]]</li>
+      <li>[[<b>Fig. 5:</b> as β grows, uniform sampling meets weak subsets more often, so its min entropy falls fast; ζ-sampling keeps entropy better. The effect is clearest for small β — but the very highest TARs still need a small ζ for subset diversity.||<b>Fig. 5:</b> β tăng thì chọn đều càng dễ gặp tập yếu nên min entropy tụt nhanh; ζ-sampling giữ entropy tốt hơn. Hiệu quả rõ nhất khi β nhỏ — nhưng TAR lớn nhất vẫn cần ζ nhỏ để tập con đa dạng.]]</li>
+      <li>[[<b>Negative result:</b> sampling <i>pairs</i> of bits is no better than single bits (higher-order correlation), and needs 1M parameters instead of 2K.||<b>Kết quả âm:</b> lấy mẫu theo <i>cặp</i> bit không tốt hơn bit đơn (tương quan bậc cao), lại tốn 1M tham số thay vì 2K.]]</li>
+    </ul>
+  </div>
+  <p class="src">[P, §7, Fig. 4, Fig. 5, Table 2]</p>
+</section>
+
+<!-- 5.3b -->
+<section class="slide" data-ch="5" data-sec="5.3">
+  <h2>[[Honest side, VersionTwoR: the new extractor changes the picture||Phía người dùng thật, VersionTwoR: extractor mới thay đổi bức tranh]]</h2>
+  <div class="s-body g-5-7 ai-s">
+    <figure class="fig">
+      <div class="fig-img"><img src="assets/img/paper-fig6.png" alt="Fig. 6 VersionTwoR TAR vs entropy"></div>
+      <figcaption><b>[P, Fig. 6]</b> [[VersionTwoR: the four methods fall on one curve; the x-axis now reaches ~120 bits (VersionOne: ~45).||VersionTwoR: 4 cách chọn chồng lên cùng một đường; trục x kéo tới ~120 bit (VersionOne chỉ ~45).]]</figcaption>
+    </figure>
+    <div class="stack">
+      <table class="tbl xs compact">
+        <thead><tr><th>[[Entropy ≥||Entropy ≥]]</th><th>LikeOnly (k, ζ, TAR)</th><th>UnlikeRatio (k, ζ, TAR)</th><th>UnlikeExp (k, ζ, TAR)</th></tr></thead>
+        <tbody>
+          <tr><td>20</td><td>40, 0.5, 0.93</td><td>40, 3, 0.92</td><td>40, 8, 0.93</td></tr>
+          <tr><td>60</td><td>70, 8, 0.86</td><td>70, 2, 0.87</td><td>70, 3, 0.86</td></tr>
+          <tr><td>80</td><td>90, 8, 0.77</td><td>90, 1, 0.77</td><td>90, 2, 0.77</td></tr>
+          <tr><td>90</td><td>105, 0.5, 0.71</td><td>105, 2, 0.70</td><td>105, 5, 0.70</td></tr>
+          <tr class="hl"><td>100</td><td>115, 2, 0.64</td><td>115, 3, 0.65</td><td><b>115, 0, 0.66</b></td></tr>
+        </tbody>
+      </table>
+      <p class="cap" style="margin-top:0"><b>[P, Table 3]</b> [[(excerpt) — the three methods are almost equal at every entropy level.||(trích) — ba cách chọn gần như bằng nhau ở mọi mức entropy.]]</p>
+      <ul class="b small tight">
+        <li>[[<b>The paper's explanation:</b> the Pearson correlation of per-bit p_same between stats_W and test is only <b>0.14</b> for VersionTwoR vs <b>0.83</b> for VersionOne → the bits are of uniform quality; a bit that looks good on stats_W need not stay good on test, so ζ has nothing to prefer.||<b>Giải thích của paper:</b> tương quan Pearson của p_same từng bit giữa stats_W và test chỉ <b>0,14</b> với VersionTwoR, so với <b>0,83</b> với VersionOne → bit "đều chất lượng"; bit trông tốt ở stats_W chưa chắc còn tốt ở test, nên ζ không còn gì để ưu tiên.]]</li>
+        <li>[[<b>Two extractors compared:</b> VersionOne reaches at most ~40 bits (TAR 0.14); VersionTwoR reaches ≥ 100 bits at TAR 0.64–0.66, and ≥ 40 bits at 0.92–0.93.||<b>So sánh 2 extractor:</b> VersionOne tối đa ~40 bit (TAR 0,14); VersionTwoR đạt ≥ 100 bit với TAR 0,64–0,66, và ≥ 40 bit với 0,92–0,93.]]</li>
+      </ul>
+      <div class="note xs">[[On the ≥ 100-bit row the best setting is UnlikeExp with <b>ζ = 0</b> — i.e. uniform (0.66), slightly above LikeOnly ζ = 2 (0.64). At the final point ζ-sampling adds almost nothing; most of the gain comes from the extractor. Our demo agrees: Pearson −0.05 on synthetic data, where ζ even lowers TAR.||Ở dòng ≥ 100 bit, cấu hình tốt nhất là UnlikeExp với <b>ζ = 0</b> — tức chọn đều (0,66), nhỉnh hơn LikeOnly ζ = 2 (0,64). Ở cấu hình cuối ζ-sampling gần như không đóng góp; phần lớn cải thiện đến từ extractor. Demo của nhóm cũng vậy: Pearson −0,05 trên dữ liệu tổng hợp, ζ còn làm giảm TAR.]]</div>
+    </div>
+  </div>
+  <p class="take">[[ζ-sampling rescues a weak extractor; with a good one, uniform is enough — what makes 105 bits is the extractor.||ζ-sampling cứu được extractor yếu; với extractor tốt thì chọn đều cũng đủ — cái làm nên 105 bit là extractor.]]</p>
+  <p class="src">[P, §7, Fig. 6, Table 3]</p>
+</section>
+
+<!-- 5.4 -->
+<section class="slide" data-ch="5" data-sec="5.4">
+  <h2>[[Final operating point: 105 bits, 92 % with 3 + 2 readings||Điểm vận hành cuối: 105 bit, 92% với 3 + 2 ảnh]]</h2>
+  <div class="s-body">
+    <table class="tbl sm">
+      <thead>
+        <tr><th rowspan="2">k</th><th rowspan="2">ζ</th><th class="grp" colspan="5">[[all 250K subsets||cả 250K tập con]]</th><th class="grp" colspan="5">[[best 200K subsets||200K tập tốt nhất]]</th></tr>
+        <tr><th class="c">Ent</th><th class="c">1–1</th><th class="c">1–4</th><th class="c">2–3</th><th class="c">3–2</th><th class="c">Ent</th><th class="c">1–1</th><th class="c">1–4</th><th class="c">2–3</th><th class="c">3–2</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>70</td><td>3</td><td class="c">62</td><td class="c">0.85</td><td class="c">0.97</td><td class="c">1.00</td><td class="c">0.99</td><td class="c">65</td><td class="c">0.84</td><td class="c">0.97</td><td class="c">1.00</td><td class="c">0.99</td></tr>
+        <tr><td>90</td><td>8</td><td class="c">79</td><td class="c">0.77</td><td class="c">0.94</td><td class="c">0.98</td><td class="c">0.99</td><td class="c">83</td><td class="c">0.74</td><td class="c">0.93</td><td class="c">0.98</td><td class="c">0.98</td></tr>
+        <tr><td>110</td><td>3</td><td class="c">95</td><td class="c">0.67</td><td class="c">0.85</td><td class="c">0.93</td><td class="c">0.94</td><td class="c">100</td><td class="c">0.64</td><td class="c">0.84</td><td class="c">0.93</td><td class="c">0.92</td></tr>
+        <tr class="hl"><td><b>115</b></td><td><b>2</b></td><td class="c">100</td><td class="c">0.65</td><td class="c">0.84</td><td class="c">0.92</td><td class="c">0.93</td><td class="c"><b>105</b></td><td class="c">0.64</td><td class="c">0.82</td><td class="c">0.91</td><td class="c hl">0.92</td></tr>
+      </tbody>
+    </table>
+    <p class="cap"><b>[P, Table 5]</b> [[(retyped). "1–4" = 1 enrolment reading, 4 authentication readings. Highlighted: the final ClearEyes-M configuration.||(gõ lại). "1–4" = 1 ảnh đăng ký, 4 ảnh xác thực. Ô tô vàng: cấu hình cuối ClearEyes-M.]]</p>
+    <div class="g-7-5 mt-s">
+      <ul class="b small tight">
+        <li>[[<b>TAR–entropy line</b> (Table 3): ≥ 20 bits → TAR ≈ 0.93; ≥ 80 → 0.77; ≥ 100 → 0.64–0.66. Between 60 and 100 bits, every 20 extra bits "cost" ~10 TAR points.||<b>Đường TAR – entropy</b> (Table 3): ≥ 20 bit → TAR ≈ 0,93; ≥ 80 → 0,77; ≥ 100 → 0,64–0,66. Vùng 60–100 bit, mỗi 20 bit thêm "tốn" ~10 điểm % TAR.]]</li>
+        <li>[[<b>Several readings</b> [P, §7.2]: 5 readings split between enrolment and authentication; success if <i>any</i> authentication reading opens a locker of <i>any</i> enrolment reading. Uses reusability: each enrolment reading gets its own 200K lockers with the same Key. Up to <b>+0.28</b> TAR.||<b>Nhiều lần chụp</b> [P, §7.2]: 5 ảnh chia giữa đăng ký và xác thực; thành công nếu <i>bất kỳ</i> ảnh xác thực nào mở được locker của <i>bất kỳ</i> ảnh đăng ký nào. Tận dụng tính reusable: mỗi ảnh đăng ký có 200K locker riêng, cùng Key. TAR tăng tới <b>+0,28</b>.]]</li>
+        <li>[[<b>ClearEyes-M:</b> k = 115, ζ = 2, 200K → <b>105 bits, TAR 0.64 (1–1) → 0.92 (3–2)</b>; cost: Gen ×3 (600K lockers), Rep ×6 (up to 1.2M HMACs).||<b>ClearEyes-M:</b> k = 115, ζ = 2, 200K → <b>105 bit, TAR 0,64 (1–1) → 0,92 (3–2)</b>; cái giá: Gen chậm ×3 (600K locker), Rep chậm ×6 (tới 1,2M lượt HMAC).]]</li>
+        <li>[[<b>(90, 8):</b> 83 bits with TAR 0.98 → meets NIST (95 %) and FIDO (97 %) biometric requirements [P, §8].||<b>(90, 8):</b> 83 bit với TAR 0,98 → vượt ngưỡng NIST (95%) và FIDO (97%) cho xác thực sinh trắc [P, §8].]]</li>
+      </ul>
+      <div class="note xs">
+        <ul class="b">
+          <li>[[Same 5 readings, but enrolling more pays off: 1–4 gives 0.82, 3–2 gives 0.92 (k = 115). 1–4 has 4 pairs and one bad enrolment image ruins them all; 3–2 has 6 pairs and a spare on the enrolment side.||Cùng 5 ảnh nhưng đăng ký nhiều lợi hơn: 1–4 chỉ 0,82, 3–2 đạt 0,92 (k = 115). 1–4 có 4 cặp, ảnh đăng ký xấu là hỏng hết; 3–2 có 6 cặp và có "dự phòng" ở phía đăng ký.]]</li>
+          <li>[[3 captures at enrolment happen once; 2 at every unlock is noticeable, though a phone camera can grab several frames in one look. Not measured on a real phone.||Chụp 3 lần khi đăng ký chỉ làm một lần; 2 lần mỗi lần mở khoá là đáng kể, dù camera điện thoại có thể lấy nhiều khung hình trong một lần nhìn. Paper chưa đo trên điện thoại thật.]]</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <p class="take">[[92 % comes from letting 3 enrolment and 2 authentication readings try together — at the price of a 3× slower Gen and 6× slower Rep.||92% đến từ việc cho 3 ảnh đăng ký và 2 ảnh xác thực cùng thử — đổi lại Gen chậm 3 lần, Rep chậm 6 lần.]]</p>
+  <p class="src">[P, §7.2, §8, Table 1, Table 3, Table 5]</p>
+</section>
+
+<!-- 5.5 -->
+<section class="slide" data-ch="5" data-sec="5.5">
+  <h2>[[From 26 bits and 204 s to 105 bits and 0.2 s||Từ 26 bit, 204 giây lên 105 bit, 0,2 giây]]</h2>
+  <div class="s-body g-7-5 ai-s">
+    <div>
+      <table class="tbl xs compact">
+        <thead><tr><th></th><th class="c">Simhadri et al.</th><th class="c">ClearEyes</th><th class="c">ClearEyes-M</th></tr></thead>
+        <tbody>
+          <tr><td>[[Lockers β||Số locker β]]</td><td class="c">1,000,000</td><td class="c">200,000</td><td class="c">600,000</td></tr>
+          <tr><td>[[Subset size k||Kích thước tập con k]]</td><td class="c">43</td><td class="c">115</td><td class="c">115</td></tr>
+          <tr><td>[[Readings enrol / auth||Ảnh đăng ký / xác thực]]</td><td class="c">1 / 1</td><td class="c">1 / 1</td><td class="c">3 / 2</td></tr>
+          <tr><td>[[Helper data||Dung lượng helper data]]</td><td class="c">96 MB</td><td class="c">7 MB</td><td class="c">19 MB</td></tr>
+          <tr><td>[[Security metric||Thước đo bảo mật]]</td><td class="c">[[avg. of 10 subsets||TB của 10 tập]]</td><td class="c">[[min of all||min mọi tập]]</td><td class="c">[[min of all||min mọi tập]]</td></tr>
+          <tr class="hl"><td><b>[[Security (bits)||Bảo mật (bit)]]</b></td><td class="c">26 ([[claims 32||tự báo 32]])</td><td class="c"><b>105</b></td><td class="c"><b>105</b></td></tr>
+          <tr><td>−log([[est. FAR||FAR ước lượng]])</td><td class="c">6</td><td class="c">87</td><td class="c">84</td></tr>
+          <tr><td>[[Create subsets (Setup)||Tạo tập con (Setup)]]</td><td class="c">412 s</td><td class="c">7 s</td><td class="c">22 s</td></tr>
+          <tr><td>[[Enrol (Gen)||Đăng ký (Gen)]]</td><td class="c">204 s</td><td class="c">0.2 s</td><td class="c">0.5 s</td></tr>
+          <tr><td>[[Authenticate (Rep)||Xác thực (Rep)]]</td><td class="c">17.3 s / 0.8 s*</td><td class="c">0.16 s</td><td class="c">0.98 s</td></tr>
+          <tr><td>[[Mean bit error μ||Tỉ lệ lỗi bit μ]]</td><td class="c">0.32</td><td class="c">0.08</td><td class="c">0.08</td></tr>
+          <tr><td>log₂([[est. TAR per locker||TAR ước lượng / locker]])</td><td class="c">−23.9</td><td class="c">−12.6</td><td class="c">−12.6</td></tr>
+          <tr class="hl"><td><b>TAR</b></td><td class="c">0.60</td><td class="c">0.64</td><td class="c"><b>0.92</b></td></tr>
+        </tbody>
+      </table>
+      <p class="cap"><b>[P, Table 1]</b> [[(retyped, shortened). * 17.3 s with Simhadri's code, 0.8 s with the paper's new code.||(gõ lại, rút gọn). * 17,3 s với code gốc của Simhadri, 0,8 s khi chạy bằng code mới của paper.]]</p>
+    </div>
+    <div class="stack">
+      <ul class="b small tight">
+        <li>[[<b>Timing</b> [P, §2.1.2]: C + OpenSSL HMAC, one thread of an Intel i9-13900H laptop, 200K lockers, 10 runs: Setup 7.12 s (once), Gen 0.203 s, Rep 0.161 s. ClearEyes-M stays under 1 s for both.||<b>Đo thời gian</b> [P, §2.1.2]: C + HMAC của OpenSSL, 1 luồng Intel i9-13900H (laptop), 200K locker, 10 lần chạy: Setup 7,12 s (1 lần), Gen 0,203 s, Rep 0,161 s. ClearEyes-M vẫn dưới 1 s cho cả hai.]]</li>
+        <li>[[<b>Overall gain:</b> +73 bits vs the claimed 32, +79 vs the re-measured 26; TAR rises (0.60 → 0.64, 0.92 with several readings); storage 96 → 7 MB; Gen 204 → 0.2 s.||<b>Tổng kết:</b> +73 bit so với 32 tự báo, +79 so với 26 đo lại; TAR tăng (0,60 → 0,64, 0,92 với nhiều ảnh); dung lượng 96 → 7 MB; Gen 204 → 0,2 s.]]</li>
+        <li>[[<b>Root cause:</b> μ falls from 0.32 to 0.08 thanks to the new extractor → each locker is ~2¹¹ times easier to open (−23.9 → −12.6) although each subset is 2.7× longer (43 → 115 bits).||<b>Gốc của cải thiện:</b> μ giảm từ 0,32 xuống 0,08 nhờ extractor mới → mỗi locker dễ mở hơn ~2¹¹ lần (−23,9 → −12,6) dù mỗi tập con dài gấp 2,7 lần (43 → 115 bit).]]</li>
+      </ul>
+      <div class="note xs">
+        <ul class="b">
+          <li>[[Table 1 predicts 2^17.6 × 2^−12.6 ≈ <b>32</b> openable lockers, yet TAR is only 64 %: errors are not even across captures — one bad image closes every locker (see our demo, §6.2).||Theo Table 1, người thật kỳ vọng mở được 2^17,6 × 2^−12,6 ≈ <b>32</b> locker, vậy mà TAR chỉ 64%: lỗi không đều giữa các lần chụp — một ảnh xấu làm hỏng mọi locker (xem demo, §6.2).]]</li>
+          <li>[[7 MB ≈ 200K × 32 bytes: the code does not store a separate 512-bit hᵢ per locker as Fig. 1 describes (that would be 19.2 MB) — the C code uses one fixed HMAC key + locker index.||7 MB ≈ 200K × 32 byte: bản cài đặt không lưu riêng hᵢ 512 bit cho từng locker như Fig. 1 (nếu lưu sẽ là 19,2 MB) — code C dùng 1 khoá HMAC cố định + chỉ số locker.]]</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <p class="src">[P, §2.1.2, Table 1]</p>
+</section>
+
+<!-- ================= PART 6 ================= -->
+<section class="slide divider" data-ch="6" id="ch6" data-toc-en="Part 6 — Demo" data-toc-vi="Phần 6 — Demo">
+  <div class="num-big">6</div>
+  <div class="part">[[Part 6||Phần 6]]</div>
+  <h2>Demo</h2>
+  <div class="toc-list">
+    <div><b>6.1</b>[[Setup: the authors' code on synthetic irises||Thiết lập: code của tác giả trên iris tổng hợp]]</div>
+    <div><b>6.2</b>[[Demo clip, then scenarios & results — Gen/Rep, attacker side, honest side, our own ζ run||Clip demo, rồi kịch bản và kết quả — Gen/Rep, phía kẻ tấn công, phía người dùng thật, nhóm tự chạy ζ]]</div>
+  </div>
+</section>
+
+<!-- 6.1a -->
+<section class="slide" data-ch="6" data-sec="6.1">
+  <h2>[[Demo setup: the authors' code, re-run on synthetic irises||Thiết lập demo: code của tác giả, chạy lại trên iris tổng hợp]]</h2>
+  <div class="s-body g-6-6 ai-s">
+    <div class="stack">
+      <table class="tbl sm">
+        <thead><tr><th>[[Repo feap (GPL-3.0)||Repo feap (GPL-3.0)]]</th><th>[[What it does||Chức năng]]</th></tr></thead>
+        <tbody>
+          <tr><td class="k mono">feap-fe</td><td>[[Python: train and extract features from segmented iris images → 512-bit vector. <b>Not run</b> — needs the licensed IITD images.||Python: huấn luyện và trích đặc trưng từ ảnh iris đã phân đoạn → vector 512 bit. <b>Không chạy</b> — cần ảnh IITD có license.]]</td></tr>
+          <tr><td class="k mono">lsh-lock</td><td>[[Rust: ζ-sampling, entropy (EntTest, <span class="mono">analyze</span>) and TAR (<span class="mono">tar</span>, <span class="mono">tar-multi</span>).||Rust: ζ-sampling, đo entropy (EntTest, lệnh <span class="mono">analyze</span>) và TAR (<span class="mono">tar</span>, <span class="mono">tar-multi</span>).]]</td></tr>
+          <tr><td class="k mono">sample-lock</td><td>[[C + OpenSSL: real sample-then-lock with HMAC-SHA256 — <span class="mono">store</span> (Gen), <span class="mono">verify</span> (Rep).||C + OpenSSL: sample-then-lock thật bằng HMAC-SHA256 — <span class="mono">store</span> (Gen), <span class="mono">verify</span> (Rep).]]</td></tr>
+          <tr><td class="k mono">params/</td><td>[[The paper's published subsets for (70, 3), (90, 8), (110, 3), (115, 2) — 200K each.||Các tập con đã công bố cho (70, 3), (90, 8), (110, 3), (115, 2) — mỗi cấu hình 200K.]]</td></tr>
+        </tbody>
+      </table>
+      <ul class="b xs tight">
+        <li>[[<b>Data:</b> IITD needs a licence, so the authors publish <b>synthetic iris embeddings</b> made with the same pipeline: 200 eyes × 5 readings = 1,000 vectors of 512 bits (the release note says "400 classes" — it does not match). The authors warn synthetic data scores slightly better than IITD.||<b>Dữ liệu:</b> IITD cần license nên tác giả công bố <b>embedding iris tổng hợp</b> sinh bằng cùng pipeline: 200 mắt × 5 ảnh = 1.000 vector 512 bit (ghi chú release viết "400 classes" — không khớp). Tác giả lưu ý dữ liệu tổng hợp cho kết quả nhỉnh hơn IITD.]]</li>
+        <li>[[<b>Split like the paper:</b> 40 eyes (20 %) stats_W, 160 eyes test, random with seed 2026, class-disjoint.||<b>Chia như paper:</b> 40 mắt (20%) stats_W, 160 mắt test, ngẫu nhiên với seed 2026, tách lớp.]]</li>
+        <li>[[<b>Machine:</b> Apple M5 (10 cores), 16 GB; Rust 1.92, clang 17, OpenSSL 3.6, Python 3.14 + numpy.||<b>Môi trường:</b> Apple M5 (10 nhân), 16 GB; Rust 1.92, clang 17, OpenSSL 3.6, Python 3.14 + numpy.]]</li>
+      </ul>
+    </div>
+    <div class="stack-s">
+      <div class="kicker">[[Demo plan||Sơ đồ demo]]</div>
+      <div class="flow small"><div class="node ch">[[Synthetic embeddings||Embedding tổng hợp]]<small>200 × 5 × 512 bit</small></div><div class="arr"></div><div class="node">[[Split||Chia]]<small>stats_W 40 · test 160</small></div></div>
+      <div class="card flat small"><b>(a)</b> <span class="mono">sample-lock store / verify</span> → [[Scenario 1: real Gen/Rep||Kịch bản 1: Gen/Rep thật]]</div>
+      <div class="card flat small"><span class="side atk">[[attacker||kẻ tấn công]]</span> <b>(b)</b> <span class="mono">lsh-lock analyze</span> [[on the 200K published subsets → vs Table 4||trên 200K tập con công bố → đối chiếu Table 4]]</div>
+      <div class="card flat small"><span class="side hon">[[honest user||người dùng thật]]</span> <b>(c)</b> <span class="mono">lsh-lock tar / tar-multi</span> → [[vs Table 5||đối chiếu Table 5]]</div>
+      <div class="card flat small"><b>(d)</b> [[Our own ζ-sampling with the synthetic stats_W: vary k and ζ, redraw TAR–entropy → vs Fig. 6||Nhóm tự chạy ζ-sampling bằng stats_W tổng hợp: đổi k, ζ, vẽ lại TAR–entropy → đối chiếu Fig. 6]]</div>
+      <p class="xs muted">[[Backup scripts we wrote: <span class="mono">fe_fig1.py</span> (Gen/Rep exactly as Fig. 1), <span class="mono">bit_stats.py</span>, <span class="mono">make_figures.py</span>.||Script dự phòng nhóm viết: <span class="mono">fe_fig1.py</span> (Gen/Rep đúng Fig. 1), <span class="mono">bit_stats.py</span>, <span class="mono">make_figures.py</span>.]]</p>
+    </div>
+  </div>
+  <p class="src">github.com/whyamey/feap [P-ref 59] · commit feap 1d63744, lsh-lock fcf8685, sample-lock c8c2278</p>
+</section>
+
+<!-- 6.1b -->
+<section class="slide" data-ch="6" data-sec="6.1">
+  <h2>[[What we had to fix to make it run||Những gì nhóm phải xử lý để chạy được]]</h2>
+  <div class="s-body">
+    <table class="tbl sm">
+      <thead><tr><th style="width:34%">[[Problem||Vấn đề]]</th><th style="width:38%">[[What we did||Cách nhóm xử lý]]</th><th>[[Meaning||Ý nghĩa]]</th></tr></thead>
+      <tbody>
+        <tr class="rise" style="--i:0"><td>[[Embedding files end with a newline → <span class="mono">lsh-lock analyze</span> panics while parsing numbers||File embedding kết thúc bằng ký tự xuống dòng → <span class="mono">lsh-lock analyze</span> panic khi đọc số]]</td><td>[[Normalise the data (strip whitespace, check 512 bits per reading) — <b>no change</b> to the authors' code||Chuẩn hoá dữ liệu (bỏ khoảng trắng, kiểm tra đủ 512 bit/ảnh) — <b>không sửa</b> code tác giả]]</td><td>[[Release and tool disagree on format||Release và tool không khớp định dạng]]</td></tr>
+        <tr class="rise" style="--i:1"><td>[[README uses <span class="mono">--dimensions 512</span>, which <span class="mono">analyze</span> and <span class="mono">tar-multi</span> do not accept; <span class="mono">-t</span> means both --templates and --tries||README ghi <span class="mono">--dimensions 512</span> nhưng <span class="mono">analyze</span>, <span class="mono">tar-multi</span> không có tuỳ chọn này; <span class="mono">-t</span> dùng cho cả --templates và --tries]]</td><td>[[Use the long option names (<span class="mono">--templates</span>, <span class="mono">--tries</span>)||Dùng đúng tên tuỳ chọn dài (<span class="mono">--templates</span>, <span class="mono">--tries</span>)]]</td><td>[[Docs out of date||Tài liệu chưa cập nhật]]</td></tr>
+        <tr class="rise" style="--i:2"><td>[[<span class="mono">correlate</span> pairs same-eye readings by two independent random draws → sometimes compares a reading with itself||<span class="mono">correlate</span> ghép cặp cùng mắt bằng 2 lần chọn ngẫu nhiên độc lập → đôi khi so 1 ảnh với chính nó]]</td><td>[[Compute p_same, p_diff in Python on <b>distinct</b> pairs only (the definition in [P, §4.2])||Tự tính p_same, p_diff bằng Python chỉ trên các cặp ảnh <b>khác nhau</b> (đúng định nghĩa [P, §4.2])]]</td><td>[[The tool inflates p_same||p_same của tool bị đẩy lên]]</td></tr>
+        <tr class="rise" style="--i:3"><td>[[<span class="mono">sample-lock verify</span> checks against a key read from <span class="mono">crypto_key.bin</span> and uses one fixed HMAC key for every locker||<span class="mono">sample-lock verify</span> so kết quả với khoá đọc từ file <span class="mono">crypto_key.bin</span>; dùng 1 khoá HMAC cố định cho mọi locker]]</td><td>[[Keep the C version for timing; add <span class="mono">fe_fig1.py</span> that follows Fig. 1 (128-bit zero check, own hᵢ)||Giữ bản C để đo tốc độ; viết thêm <span class="mono">fe_fig1.py</span> đúng Fig. 1 (kiểm tra 128 bit 0, hᵢ riêng)]]</td><td>[[Research code — the verifier must already know the key||Code nghiên cứu — bên xác thực cần biết sẵn khoá]]</td></tr>
+        <tr class="rise" style="--i:4"><td>[[Makefile assumes gcc + <span class="mono">-march=native -flto</span> (Linux)||Makefile dùng gcc + <span class="mono">-march=native -flto</span> (Linux)]]</td><td>[[Build with clang + Homebrew OpenSSL||Build bằng clang + OpenSSL của Homebrew]]</td><td>[[Build configuration only||Chỉ là cấu hình build]]</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="take">[[We did not just re-run the code — we checked it against the paper, and wrote our own Fig. 1 implementation where they differ.||Nhóm không chỉ chạy lại code — mà còn đối chiếu với paper, và tự viết bản đúng Fig. 1 ở chỗ hai bên khác nhau.]]</p>
+  <p class="src">README feap, lsh-lock, sample-lock · [P, §4.2, Fig. 1]</p>
+</section>
+
+<!-- 6.2 clip -->
+<section class="slide" data-ch="6" data-sec="6.2">
+  <h2>[[Demo clip: the whole run, replayed from a real recording||Clip demo: toàn bộ lần chạy, phát lại từ bản ghi thật]]</h2>
+  <div class="s-body">
+    <div class="clip"></div>
+  </div>
+  <p class="src">[[Recorded with||Ghi bằng]] <span class="mono">feap-demo/scripts/record_demo.py</span> · [[K = play / pause, click a chapter to jump||K = phát / dừng, bấm vào một chương để nhảy tới]] · [[Video file||File video]]: <a href="assets/video/feap-demo-en.mp4">MP4 EN</a>, <a href="assets/video/feap-demo-vi.mp4">MP4 VI</a></p>
+</section>
+
+<!-- 6.2a -->
+<section class="slide" data-ch="6" data-sec="6.2">
+  <h2>[[Scenario 1 — enrol → Key; same eye → same Key; other eye → ⊥||Kịch bản 1 — đăng ký → Key; cùng mắt → đúng Key; mắt khác → ⊥]]</h2>
+  <div class="s-body g-7-5 ai-s">
+    <div class="term">
+      <div class="term-bar"><i></i><i></i><i></i><span>sample-lock -p 115 -f lockers_115_2.bin · 200K lockers · k = 115</span></div>
+<pre><span class="p">$</span> sample-lock store  -b 70001/sample_1            <span class="c"># Gen</span>
+  Stored 200000 hashes · helper data 6,400,000 bytes
+  <span class="k">key</span> = 63e7fbc40d4c991f148b10973f0fbf98…
+
+<span class="p">$</span> sample-lock verify -b 70001/sample_3            <span class="c"># same eye, HD 0.033</span>
+  <span class="ok">OK (Match found at locker 1)</span>
+  Reproduced Key: 63e7fbc40d4c991f148b10973f0fbf98…
+
+<span class="p">$</span> sample-lock verify -b 70001/sample_2            <span class="c"># same eye, HD 0.162</span>
+  <span class="no">Verification failed - no match found</span>
+
+<span class="p">$</span> sample-lock verify -b 70002/sample_1            <span class="c"># other eye, HD 0.502</span>
+  <span class="no">Verification failed - no match found</span>
+
+<span class="c"># fe_fig1.py, ClearEyes-M style: enrol readings 1–3, authenticate with 4–5</span>
+  enrol: 600000 lockers, 57.6 MB          0.94 s
+  auth : sample_4 opened a locker of enrolment reading 2
+         -> <span class="ok">Key matches</span>                    0.47 s</pre>
+    </div>
+    <div class="stack">
+      <ul class="b small tight">
+        <li>[[Another eye (≈ 50 % of bits differ) <b>always gives ⊥</b>.||Mắt khác (lệch ≈ 50% số bit) <b>luôn ra ⊥</b>.]]</li>
+        <li>[[Reading 3 of the same eye (3.3 % off) opens a locker and returns <b>the same Key</b> ("locker 1" = the 2nd, counting from 0).||Ảnh 3 cùng mắt (lệch 3,3%) mở được và trả về <b>đúng Key</b> ("locker 1" = locker thứ 2, đánh số từ 0).]]</li>
+        <li>[[But readings 2, 4, 5 of the same eye (11–16 % off) open <b>no locker</b> → false reject.||Nhưng ảnh 2, 4, 5 của cùng mắt (lệch 11–16%) <b>không mở được locker nào</b> → từ chối nhầm.]]</li>
+        <li>[[With several readings, like ClearEyes-M, this eye is accepted — exactly the mechanism behind 0.64 → 0.92 in Table 5.||Khi dùng nhiều ảnh như ClearEyes-M, mắt này được chấp nhận — đúng cơ chế làm TAR tăng 0,64 → 0,92 trong Table 5.]]</li>
+        <li>[[Helper data: 200K × 32 bytes = <b>6.4 MB</b> (Table 1: 7 MB); our Fig. 1 version also stores hᵢ → 19.2 MB.||Helper data: 200K × 32 byte = <b>6,4 MB</b> (Table 1: 7 MB); bản Python đúng Fig. 1 lưu thêm hᵢ → 19,2 MB.]]</li>
+      </ul>
+      <div class="card flat xs"><div class="kicker">[[Live in the room (~17 s)||Chạy trực tiếp (~17 giây)]]</div><span class="mono">./scripts/live_demo.sh</span></div>
+    </div>
+  </div>
+  <p class="src">[[Output of our demo (feap-demo/out)||Output demo của nhóm (feap-demo/out)]] · [P, Fig. 1, Table 1, Table 5]</p>
+</section>
+
+<!-- 6.2b -->
+<section class="slide" data-ch="6" data-sec="6.2">
+  <h2>[[Scenario 2, attacker side: the published subsets keep 105 bits on other eyes||Kịch bản 2, phía kẻ tấn công: tập con công bố giữ 105 bit trên mắt khác]]</h2>
+  <div class="s-body g-5-7 ai-s">
+    <div class="stack">
+      <p class="small"><span class="side atk">[[attacker||kẻ tấn công]]</span> <span class="mono xs">lsh-lock analyze -i params/115_2_200.bin -t data/test -n 200000</span></p>
+      <table class="tbl sm">
+        <thead><tr><th>(k, ζ)</th><th class="c">[[Paper (IITD)||Paper (IITD)]]</th><th class="c">[[Ours — min||Nhóm — min]]</th><th class="c">[[avg||TB]]</th><th class="c">max</th><th class="c">Δ</th></tr></thead>
+        <tbody>
+          <tr><td>(70, 3)</td><td class="c">65</td><td class="c">64.9</td><td class="c">68.2</td><td class="c">71.6</td><td class="c">−0.1</td></tr>
+          <tr><td>(90, 8)</td><td class="c">83</td><td class="c">83.2</td><td class="c">87.2</td><td class="c">91.6</td><td class="c">+0.2</td></tr>
+          <tr><td>(110, 3)</td><td class="c">100</td><td class="c">100.5</td><td class="c">106.2</td><td class="c">111.8</td><td class="c">+0.5</td></tr>
+          <tr class="hl"><td><b>(115, 2)</b></td><td class="c"><b>105</b></td><td class="c"><b>105.4</b></td><td class="c">110.9</td><td class="c">115.9</td><td class="c">+0.4</td></tr>
+        </tbody>
+      </table>
+      <p class="cap" style="margin-top:0">[[Paper: "Ent – all 200K" of [P, Table 4] (162 IITD eyes). Ours: EntTest on the same 200K published subsets, 160 synthetic test eyes; 2–4 min per setting.||Paper: cột "Ent – All 200K" của [P, Table 4] (162 mắt IITD). Nhóm: EntTest trên đúng 200K tập con công bố, 160 mắt tổng hợp; 2–4 phút mỗi cấu hình.]]</p>
+      <ul class="b small tight">
+        <li>[[Less than <b>1 bit</b> apart in all four settings.||Chênh <b>dưới 1 bit</b> ở cả 4 cấu hình.]]</li>
+        <li>[[Min vs average gap ≈ 5.5 bits — the effect described in §5.2.||Khoảng cách min–trung bình ≈ 5,5 bit — đúng hiện tượng §5.2.]]</li>
+        <li>[[A good check of Lemma 1: subsets chosen independently of the enrolled value keep their security on a completely different set of eyes.||Kiểm chứng tốt cho Lemma 1: tập con chọn độc lập với giá trị đăng ký vẫn giữ bảo mật trên một tập mắt hoàn toàn khác.]]</li>
+      </ul>
+    </div>
+    <figure class="fig">
+      <div class="fig-img"><img src="assets/img/demo-fig1_entropy_hist_115_2.png" alt="Entropy of all 200,000 published subsets"></div>
+      <figcaption><b>[[Figure N1 (ours).||Hình N1 (nhóm).]]</b> [[Entropy of the 200,000 published subsets (k = 115, ζ = 2) on synthetic data. The system's security is the "min" line — the left tail, not the peak.||Phân bố entropy của 200.000 tập con công bố (k = 115, ζ = 2) trên dữ liệu tổng hợp. Bảo mật của hệ thống là đường "min" — đuôi trái, không phải đỉnh.]]</figcaption>
+    </figure>
+  </div>
+  <p class="src">[[Our demo||Demo của nhóm]] · [P, Table 4, Lemma 1]</p>
+</section>
+
+<!-- 6.2c -->
+<section class="slide" data-ch="6" data-sec="6.2">
+  <h2>[[Scenario 2, honest side: same shape as the paper, higher TAR||Kịch bản 2, phía người dùng thật: cùng xu hướng với paper, TAR cao hơn]]</h2>
+  <div class="s-body">
+    <table class="tbl xs compact">
+      <thead>
+        <tr><th rowspan="2">(k, ζ)</th><th rowspan="2" class="c">Ent ([[paper / ours||paper / nhóm]])</th><th class="grp" colspan="2">1–1</th><th class="grp" colspan="2">1–4</th><th class="grp" colspan="2">2–3</th><th class="grp" colspan="2">3–2</th></tr>
+        <tr><th class="c">paper</th><th class="c">[[ours||nhóm]]</th><th class="c">paper</th><th class="c">[[ours||nhóm]]</th><th class="c">paper</th><th class="c">[[ours||nhóm]]</th><th class="c">paper</th><th class="c">[[ours||nhóm]]</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>(70, 3)</td><td class="c">65 / 65</td><td class="c">0.84</td><td class="c">0.92 ± 0.00</td><td class="c">0.97</td><td class="c">0.99 ± 0.01</td><td class="c">1.00</td><td class="c">1.00 ± 0.01</td><td class="c">0.99</td><td class="c">1.00 ± 0.01</td></tr>
+        <tr><td>(90, 8)</td><td class="c">83 / 83</td><td class="c">0.74</td><td class="c">0.87 ± 0.01</td><td class="c">0.93</td><td class="c">0.98 ± 0.01</td><td class="c">0.98</td><td class="c">1.00 ± 0.01</td><td class="c">0.98</td><td class="c">1.00 ± 0.00</td></tr>
+        <tr><td>(110, 3)</td><td class="c">100 / 100</td><td class="c">0.64</td><td class="c">0.76 ± 0.01</td><td class="c">0.84</td><td class="c">0.97 ± 0.00</td><td class="c">0.93</td><td class="c">0.99 ± 0.01</td><td class="c">0.92</td><td class="c">0.99 ± 0.01</td></tr>
+        <tr class="hl"><td><b>(115, 2)</b></td><td class="c">105 / 105</td><td class="c">0.64</td><td class="c"><b>0.74</b> ± 0.01</td><td class="c">0.82</td><td class="c">0.96 ± 0.01</td><td class="c">0.91</td><td class="c">0.99 ± 0.01</td><td class="c">0.92</td><td class="c"><b>0.98</b> ± 0.01</td></tr>
+      </tbody>
+    </table>
+    <p class="cap"><b>Paper:</b> [P, Table 5], [[200K columns (IITD, 162 eyes). <b>Ours:</b> synthetic data, 160 eyes, 5 runs each (mean ± sd) — <span class="mono">lsh-lock tar</span> (1–1) and <span class="mono">tar-multi --tries 5 --base b</span>.||cột 200K (IITD, 162 mắt). <b>Nhóm:</b> dữ liệu tổng hợp, 160 mắt, 5 lần chạy (trung bình ± độ lệch chuẩn) — <span class="mono">lsh-lock tar</span> (1–1) và <span class="mono">tar-multi --tries 5 --base b</span>.]]</p>
+    <div class="g-7-5 ai-c mt-s">
+      <figure class="fig">
+        <div class="fig-img"><img src="assets/img/demo-fig2_tar_multi.png" alt="TAR by split of readings, paper vs ours"></div>
+        <figcaption><b>[[Figure N2 (ours).||Hình N2 (nhóm).]]</b> [[TAR by how 5 readings are split — grey: paper (IITD), blue: ours (synthetic).||TAR theo cách chia 5 ảnh — xám: paper (IITD), xanh: nhóm (tổng hợp).]]</figcaption>
+      </figure>
+      <ul class="b small tight">
+        <li>[[Same trend: TAR falls as k grows, and rises sharply with more readings. (115, 2): 1–1 = 0.74 (paper 0.64), 3–2 = 0.98 (paper 0.92).||Xu hướng giống paper: TAR giảm khi k tăng, tăng mạnh khi dùng nhiều ảnh. (115, 2): 1–1 = 0,74 (paper 0,64), 3–2 = 0,98 (paper 0,92).]]</li>
+        <li>[[Higher TAR, as the authors warned: mean bit error μ = 0.065 here vs 0.08 on IITD.||TAR cao hơn đúng như tác giả cảnh báo: μ trung bình 0,065 so với 0,08 của IITD.]]</li>
+        <li>[[So our TAR does <b>not</b> re-confirm 92 %; the demo confirms the entropy figures and the <i>shape</i> of the trade-off.||Vì vậy TAR của nhóm <b>không</b> khẳng định lại 92%; demo kiểm chứng con số entropy và <i>hình dạng</i> đánh đổi.]]</li>
+      </ul>
+    </div>
+  </div>
+  <p class="src">[[Our demo||Demo của nhóm]] · [P, §5.2.3, Table 5]</p>
+</section>
+
+<!-- 6.2d -->
+<section class="slide" data-ch="6" data-sec="6.2">
+  <h2>[[Our own ζ-sampling: ζ does not raise entropy — it lowers TAR||Nhóm tự chạy ζ-sampling: ζ không tăng entropy, còn làm giảm TAR]]</h2>
+  <div class="s-body g-6-6 ai-s">
+    <figure class="fig">
+      <div class="fig-img"><img src="assets/img/demo-fig3_tar_vs_entropy.png" alt="TAR vs entropy on synthetic data"></div>
+      <figcaption><b>[[Figure N3 (ours).||Hình N3 (nhóm).]]</b> [[TAR–entropy when varying k and ζ (cf. [P, Fig. 6]). Red stars: the paper's 4 published subset sets on the same data.||Đường TAR–entropy khi đổi k và ζ (so với [P, Fig. 6]). Sao đỏ: 4 bộ tập con công bố của paper trên cùng dữ liệu.]]</figcaption>
+    </figure>
+    <div class="stack">
+      <table class="tbl sm">
+        <thead><tr><th>k</th><th class="c">ζ = 0 ([[uniform||chọn đều]])</th><th class="c">ζ = 2</th><th class="c">ζ = 8</th></tr></thead>
+        <tbody>
+          <tr><td>70</td><td class="c">65.4 bit / <b>0.99</b></td><td class="c">65.6 / 0.93</td><td class="c">65.9 / 0.93</td></tr>
+          <tr><td>90</td><td class="c">84.0 bit / <b>0.92</b></td><td class="c">84.5 / 0.88</td><td class="c">84.4 / 0.88</td></tr>
+          <tr><td>115</td><td class="c">107.3 bit / <b>0.76</b></td><td class="c">107.5 / 0.73</td><td class="c">107.2 / 0.75</td></tr>
+          <tr><td>140</td><td class="c">128.6 bit / <b>0.64</b></td><td class="c">130.4 / 0.61</td><td class="c">130.6 / 0.60</td></tr>
+        </tbody>
+      </table>
+      <p class="cap" style="margin-top:0">[[min entropy over the first 1,000 subsets / TAR 1–1 (mean of 3). UnlikeExp, 200K subsets each.||min entropy trên 1.000 tập con đầu / TAR 1–1 (trung bình 3 lần). UnlikeExp, 200K tập con mỗi cấu hình.]]</p>
+      <ul class="b small tight">
+        <li>[[<b>Entropy does not move with ζ</b> at a fixed k — bits are equally good, so any choice gives the same security.||<b>Entropy không đổi theo ζ</b> ở cùng k — các bit "tốt như nhau" nên chọn bit nào cũng ra cùng mức bảo mật.]]</li>
+        <li>[[<b>ζ lowers TAR:</b> uniform is always equal or better (k = 70: 0.99 vs 0.93). Pearson of p_same between stats_W and test is <b>−0.05</b> (paper: 0.14) → the "good bits" are noise; ζ crowds subsets onto them and they overlap more — the paper's own caveat: "achieving the largest TARs may require small ζ".||<b>ζ làm giảm TAR:</b> chọn đều luôn bằng hoặc cao hơn (k = 70: 0,99 so với 0,93). Pearson của p_same giữa stats_W và test là <b>−0,05</b> (paper: 0,14) → "bit tốt" thực chất là nhiễu; ζ dồn tập con vào đó nên trùng nhau nhiều hơn — đúng lưu ý của paper: "achieving the largest TARs may require small ζ".]]</li>
+        <li>[[The published subsets (stars) sit on our ζ &gt; 0 line.||Tập con công bố (sao đỏ) nằm đúng trên đường ζ &gt; 0 của nhóm.]]</li>
+      </ul>
+    </div>
+  </div>
+  <p class="take">[[ζ-sampling only helps when bit statistics carry over from stats_W to real use (as for VersionOne, Pearson 0.83).||ζ-sampling chỉ có ích khi thống kê bit lặp lại được giữa stats_W và lúc dùng thật (như VersionOne, Pearson 0,83).]]</p>
+  <p class="src">[[Our demo||Demo của nhóm]] · [P, §7, Fig. 6]</p>
+</section>
+
+<!-- 6.2e -->
+<section class="slide" data-ch="6" data-sec="6.2">
+  <h2>[[Paper vs our re-run, at a glance||Paper – nhóm chạy lại – chênh lệch – giải thích]]</h2>
+  <div class="s-body g-8-4 ai-s">
+    <table class="tbl sm">
+      <thead><tr><th>[[Quantity||Đại lượng]]</th><th class="c">[[Paper (IITD)||Paper (IITD)]]</th><th class="c">[[Ours (synthetic)||Nhóm (tổng hợp)]]</th><th class="c">Δ</th><th>[[Why||Giải thích]]</th></tr></thead>
+      <tbody>
+        <tr class="hl"><td>[[Min entropy, (115, 2), 200K||Min entropy, (115, 2), 200K]]</td><td class="c">105 bit</td><td class="c"><b>105.4 bit</b></td><td class="c">+0.4</td><td>[[Subsets independent of enrolment (Lemma 1)||Tập con độc lập với giá trị đăng ký (Lemma 1)]]</td></tr>
+        <tr><td>[[Avg − min entropy||TB − min entropy]]</td><td class="c">≈ 6 bit</td><td class="c">5.5 bit</td><td class="c">≈</td><td>[[The minimum "costs" a few bits||Đo bằng min "mất" vài bit]]</td></tr>
+        <tr><td>TAR 1–1, (115, 2)</td><td class="c">0.64</td><td class="c">0.74</td><td class="c">+0.10</td><td>[[High-quality synthetic images: μ 0.065 vs 0.08||Ảnh tổng hợp chất lượng cao: μ 0,065 vs 0,08]]</td></tr>
+        <tr><td>TAR 3–2, (115, 2)</td><td class="c">0.92</td><td class="c">0.98</td><td class="c">+0.06</td><td>[[Same as above; multi-reading gain matches||Như trên; hiệu ứng nhiều ảnh giống paper]]</td></tr>
+        <tr><td>[[Pearson p_same (stats_W vs test)||Pearson p_same (stats_W vs test)]]</td><td class="c">0.14</td><td class="c">−0.05</td><td class="c">≈</td><td>[[Uniform-quality bits → ζ has little effect||Bit đều chất lượng → ζ ít tác dụng]]</td></tr>
+        <tr><td>[[Gen / Rep (200K lockers)||Gen / Rep (200K locker)]]</td><td class="c">0.203 / 0.161 s</td><td class="c">0.109 / 0.015 s</td><td class="c"></td><td>[[Different CPU; ours includes reading the files||Khác CPU; số của nhóm gồm cả đọc file]]</td></tr>
+        <tr><td>[[Rep that rejects (other eye)||Rep từ chối (mắt khác)]]</td><td class="c">–</td><td class="c">0.108 s</td><td class="c"></td><td>[[Must try all 200K lockers||Phải thử hết 200K locker]]</td></tr>
+        <tr><td>[[Helper data||Dung lượng helper data]]</td><td class="c">7 MB</td><td class="c">6.4 MB</td><td class="c">≈</td><td>200K × 32 byte</td></tr>
+      </tbody>
+    </table>
+    <div class="stack">
+      <div class="note">
+        <ul class="b">
+          <li>[[Synthetic data cannot replace IITD: our TAR is higher, so the demo does not "re-prove" TAR 92 % — it checks the entropy, the shape of the TAR–entropy trade-off and the multi-reading effect.||Dữ liệu tổng hợp không thay thế được IITD: TAR cao hơn paper, nên demo không "chứng minh lại" TAR 92% — mà kiểm chứng entropy, hình dạng đánh đổi TAR–entropy và hiệu ứng nhiều ảnh.]]</li>
+          <li>[[The authors' code is research code (their README says so): fixed HMAC key, the verifier must know the key. Our Fig. 1 version shows the correct mechanism also runs fast (≈ 0.3–0.5 s in Python).||Code của tác giả là code nghiên cứu (README cảnh báo): khoá HMAC cố định, bên xác thực cần biết sẵn khoá. Bản đúng Fig. 1 của nhóm cho thấy cơ chế đúng vẫn chạy nhanh (≈ 0,3–0,5 s bằng Python).]]</li>
+        </ul>
+      </div>
+      <p class="xs muted">[[Timings: mean of 10 runs, one thread, Apple M5.||Thời gian: trung bình 10 lần chạy, 1 luồng, Apple M5.]]</p>
+    </div>
+  </div>
+  <p class="src">[[Our demo||Demo của nhóm]] · [P, Table 1, Table 4, Table 5, §7]</p>
+</section>
+
+<!-- ================= PART 7 ================= -->
+<section class="slide divider" data-ch="7" id="ch7" data-toc-en="Part 7 — Discussion & conclusion" data-toc-vi="Phần 7 — Thảo luận và kết luận">
+  <div class="num-big">7</div>
+  <div class="part">[[Part 7||Phần 7]]</div>
+  <h2>[[Discussion & conclusion||Thảo luận và kết luận]]</h2>
+  <div class="toc-list">
+    <div><b>7.1</b>[[What the 105 bits depend on · BTP criteria & deployment||105 bit dựa trên điều gì · tiêu chí BTP & triển khai]]</div>
+    <div><b>7.2</b>[[Three ideas — and is it practical?||Ba ý chính — và đã practical chưa?]]</div>
+  </div>
+</section>
+
+<!-- 7.1a -->
+<section class="slide" data-ch="7" data-sec="7.1">
+  <h2>[[105 bits is a conditional result||105 bit là kết quả có điều kiện]]</h2>
+  <div class="s-body">
+    <div class="g3 ai-c">
+      <div class="card flat rise" style="--i:1"><div class="kicker">Assumption 1 · [[cryptographic||mật mã]]</div>[[The HMAC-based digital locker must meet the security assumption the analysis uses (behave like an ideal locker).||Digital locker dùng HMAC phải đáp ứng giả định bảo mật mà phân tích sử dụng (hoạt động như locker lý tưởng).]]</div>
+      <div class="center rise" style="--i:0"><div class="stat" style="align-items:center"><span class="v" style="font-size:96px">105<small>bit</small></span><span class="l">[[holds only if both hold||chỉ đúng khi cả hai điều kiện đúng]]</span></div></div>
+      <div class="card flat rise" style="--i:2"><div class="kicker">Assumption 2 · [[statistical||thống kê]]</div>[[EntTest estimates the min-entropy of the biometric distribution correctly — an estimate from finite data, based on distances between different eyes.||EntTest ước lượng đúng min-entropy của phân phối sinh trắc — là ước lượng từ dữ liệu hữu hạn, dựa trên khoảng cách giữa các mắt khác nhau.]]</div>
+    </div>
+    <p class="small center ink2 mt">[[Scope: bit statistics from 40 eyes, results on 162 eyes, all from IITD.||Phạm vi: thống kê chọn bit dùng 40 mắt, kết quả test dùng 162 mắt, đều trong IITD.]]</p>
+    <div class="note mt">
+      <ul class="b">
+        <li>[[105 bits is meaningful inside the model, assumptions and distribution studied. A different device, population or capture condition needs a new measurement.||105 bit có ý nghĩa trong phạm vi mô hình, giả định và phân phối đang xét. Khi đổi thiết bị, dân số hoặc điều kiện thu ảnh, cần đo lại.]]</li>
+        <li>[[An observed FAR of 0 on the dataset does not by itself prove a FAR as tiny as the entropy model implies.||FAR quan sát bằng 0 trên dataset không tự chứng minh FAR cực nhỏ như cận suy ra từ mô hình entropy.]]</li>
+        <li>[[Our synthetic demo illustrates the mechanism and the trends. Measuring entropy close to the paper's is extra evidence — not proof that EntTest is right or that the security carries over to every new distribution.||Demo trên dữ liệu tổng hợp minh hoạ cơ chế và xu hướng. Đo được entropy gần paper là bằng chứng bổ sung — không chứng minh EntTest đúng hay mức bảo mật giữ nguyên trên mọi phân phối mới.]]</li>
+      </ul>
+    </div>
+  </div>
+  <p class="take">[[105 bits is a conditional result: it needs both a fitting cryptographic assumption and a trustworthy entropy estimate.||105 bit là kết quả có điều kiện: cần cả giả định mật mã phù hợp và ước lượng entropy đáng tin cậy.]]</p>
+  <p class="src">[P, §4.1, §5.1, §5.2.1–5.2.2]</p>
+</section>
+
+<!-- 7.1b -->
+<section class="slide" data-ch="7" data-sec="7.1">
+  <h2>[[Against the BTP criteria — and what deployment still needs||Đối chiếu tiêu chí BTP và khả năng triển khai]]</h2>
+  <div class="s-body g-8-4 ai-s">
+    <div>
+      <table class="tbl sm">
+        <thead><tr><th style="width:18%">[[Criterion||Tiêu chí]]</th><th>[[What the work supports||Điều công trình hỗ trợ]]</th><th>[[Be careful about||Điểm cần thận trọng]]</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Irreversibility</td><td>[[Security analysis of the key given the helper data; the paper discusses privacy||Phân tích bảo mật khoá khi biết helper data; paper thảo luận tính private]]</td><td>[[Key security ≠ protection against every way of recovering biometric information||Không đồng nhất bảo mật khoá với mọi dạng chống khôi phục thông tin sinh trắc]]</td></tr>
+          <tr><td class="k">Unlinkability</td><td>[[Related to the private / reusable properties||Có liên hệ với tính private/reusable]]</td><td>[[Check the exact definition and guarantee before concluding||Cần kiểm tra định nghĩa và bảo đảm cụ thể trước khi kết luận]]</td></tr>
+          <tr><td class="k">Renewability</td><td>[[Re-enrolling can produce a new Key||Đăng ký lại có thể tạo Key mới]]</td><td>[[A new key alone does not prove enrolments are unlinkable||Tạo khoá mới chưa tự chứng minh các bản đăng ký không thể liên kết]]</td></tr>
+          <tr><td class="k">Performance</td><td>[[ClearEyes-M reaches TAR 92 %||ClearEyes-M đạt TAR 92%]]</td><td>[[Needs 3 enrolment + 2 authentication readings; not measured on a real phone||Cần 3 ảnh đăng ký, 2 ảnh xác thực; chưa đo trên điện thoại thật]]</td></tr>
+        </tbody>
+      </table>
+      <p class="cap">[[Our assessment (group note), based on [P, §3.0.1, §5.1, §8].||Đánh giá của nhóm (nhóm nhận xét), dựa trên [P, §3.0.1, §5.1, §8].]]</p>
+    </div>
+    <div class="stack">
+      <ul class="b small tight">
+        <li>[[<b>Robustness:</b> no guarantee against tampered helper data yet — needed for deployment.||<b>Robustness:</b> paper chưa có bảo đảm chống sửa helper data — cần xử lý khi triển khai.]]</li>
+        <li>[[<b>Data & devices:</b> near-infrared iris on a limited dataset; wider tests on image quality and users are needed.||<b>Dữ liệu và thiết bị:</b> iris hồng ngoại trên dataset giới hạn; cần thử nghiệm rộng hơn về chất lượng ảnh và người dùng.]]</li>
+        <li>[[<b>Private / reusable:</b> discussed but not fully proven formally — present as discussed, not as a theorem.||<b>Private / reusable:</b> được thảo luận nhưng chưa chứng minh hình thức đầy đủ — trình bày như thảo luận, không như định lý.]]</li>
+      </ul>
+      <div class="card flat xs"><div class="kicker">[[FE vs HE / MPC||FE so với HE / MPC]]</div>[[FE rebuilds a key on the device from a noisy sample. HE/MPC usually protect a matching computation between parties. Interaction and trust depend on each protocol — not every HE/MPC system needs a trusted server.||FE nhắm tái tạo khoá trên thiết bị từ mẫu có nhiễu. HE/MPC thường bảo vệ phép so khớp giữa các bên. Tương tác và mô hình tin cậy phụ thuộc từng giao thức — không phải mọi hệ HE/MPC đều cần server tin cậy.]]</div>
+    </div>
+  </div>
+  <p class="take">[[A clear step forward in parameters and performance in the lab; deployment still needs robustness, broader data and a better capture experience.||Paper cho thấy bước tiến rõ về tham số và hiệu năng trong thí nghiệm; triển khai thực tế vẫn cần độ bền vững, dữ liệu rộng hơn và trải nghiệm thu ảnh.]]</p>
+  <p class="src">[P, §3.0.1, §5.1, §8]</p>
+</section>
+
+<!-- 7.2 -->
+<section class="slide" data-ch="7" data-sec="7.2">
+  <h2>[[Three ideas — and the answer to "practical?"||Ba ý chính và câu trả lời cho "practical?"]]</h2>
+  <div class="s-body g-7-5 ai-s">
+    <div class="stack">
+      <div class="card ch rise" style="--i:0"><h3><span style="color:var(--ch)">1 ·</span> [[Measure security by the weakest subset, with a tighter bound||Đo bảo mật theo tập con yếu nhất, dùng bound chặt hơn]]</h3><p class="small ink2" style="margin:0">[[No average hiding a weak spot.||Tránh một con số trung bình che đi điểm yếu.]]</p></div>
+      <div class="card ch rise" style="--i:1"><h3><span style="color:var(--ch)">2 ·</span> [[Choose subsets by bit quality||Chọn tập con theo chất lượng bit]]</h3><p class="small ink2" style="margin:0">[[ζ-sampling helps when bit statistics are stable and differ enough to exploit.||ζ-sampling có ích khi thống kê chất lượng bit đủ ổn định và còn khác biệt để khai thác.]]</p></div>
+      <div class="card ch rise" style="--i:2"><h3><span style="color:var(--ch)">3 ·</span> [[Design the feature extractor for key derivation||Thiết kế feature extractor cho sinh khoá]]</h3><p class="small ink2" style="margin:0">[[Fewer bit errors allow larger subsets while still authenticating.||Giảm lỗi bit giúp dùng tập con lớn hơn mà vẫn duy trì khả năng xác thực.]]</p></div>
+      <p class="small"><b>[[Remember:||Kết quả cần nhớ:]]</b> [[ClearEyes 105 bits / TAR 64 %; ClearEyes-M 105 bits / TAR 92 % with 3 enrolment and 2 authentication readings.||ClearEyes 105 bit / TAR 64%; ClearEyes-M 105 bit / TAR 92% với 3 ảnh đăng ký và 2 ảnh xác thực.]]</p>
+    </div>
+    <div class="stack">
+      <div class="card flat small"><div class="kicker">[[Future work named by the authors||Hướng phát triển tác giả nêu]]</div>[[Other biometrics; noise in real-life use; ζ-sampling for physically unclonable functions (PUFs).||Sinh trắc khác; nhiễu trong sử dụng thực tế; áp dụng ζ-sampling cho PUF.]]</div>
+      <div class="note">[[<b>Is the fuzzy extractor practical yet?</b> The work shows a fuzzy extractor can reach promising security parameters and running time on the iris data studied. To call it ready for mass deployment, it still has to be verified on diverse data and in real conditions of use.||<b>Fuzzy extractor đã practical chưa?</b> Công trình cho thấy fuzzy extractor có thể đạt tham số bảo mật và thời gian xử lý khả quan trên dữ liệu iris được nghiên cứu. Để kết luận sẵn sàng triển khai đại trà, vẫn cần kiểm chứng trên dữ liệu đa dạng và điều kiện sử dụng thực tế.]]</div>
+    </div>
+  </div>
+  <p class="take">[[The paper's step forward is pairing a tighter security analysis with input features built for the job — bringing iris key derivation close to real deployment.||Điểm tiến bộ của paper là kết hợp phân tích bảo mật chặt hơn với đặc trưng đầu vào phù hợp hơn, để đưa sinh khoá từ iris đến gần triển khai thực tế.]]</p>
+  <p class="src">[P, §8]</p>
+</section>

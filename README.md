@@ -2,6 +2,8 @@
 
 **Slides:** https://trungly-hcmut.github.io/CO5157_Database_Security_Biometric_Template_Protection/
 
+**Paper presentation** (Shukla et al., *Fuzzy Extractors are Practical*, CCS '25): https://trungly-hcmut.github.io/CO5157_Database_Security_Biometric_Template_Protection/paper/ — source in [`paper/`](paper/README.md).
+
 Bilingual (EN / VI) web slide deck for Group 3, Database Security: Biometric Template Protection, with an interactive 15-question quiz (VietBank scenario) at the end.
 
 Bộ slide web song ngữ (Anh / Việt) của Nhóm 3 môn Bảo mật CSDL về chủ đề Bảo vệ mẫu sinh trắc học, cuối deck có quiz tương tác 15 câu (kịch bản VietBank).
@@ -62,6 +64,7 @@ assets/js/deck.js       điều hướng, EN/VI, sáng/tối, mục lục
 assets/js/figures.js    hình SVG: FAR/FRR, Cartesian/Polar/Functional, Fuzzy Vault, biểu đồ kết quả
 assets/js/quiz.js       dữ liệu và logic quiz
 assets/img/             biểu đồ xuất từ notebook G3_BTP_demo.ipynb
+paper/                  deck trình bày paper Fuzzy Extractors are Practical (xem paper/README.md)
 ```
 
 ## Nguồn

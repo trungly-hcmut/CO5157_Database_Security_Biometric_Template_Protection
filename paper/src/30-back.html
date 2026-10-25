@@ -1,0 +1,128 @@
+
+<!-- ================= Q&A ================= -->
+<section class="slide" data-ch="e" id="qa" data-toc-en="Q&amp;A" data-toc-vi="Hỏi &amp; đáp">
+  <h2>[[Thank you — questions?||Cảm ơn — mời thầy cô và các bạn đặt câu hỏi]]</h2>
+  <div class="s-body g2 ai-s">
+    <div class="stack-s">
+      <details class="acc"><summary>[[What if EntTest is off by 20 %?||Nếu EntTest đánh giá sai 20% thì còn bao nhiêu bit?]]</summary>
+        <div class="ans">[[105 × 0.8 = <b>84 bits</b> for the weakest subset. By Lemma 1 an attacker with q = 2⁴⁰ tries still has advantage ≤ 2^−44; −log FAR ≈ 66 (ClearEyes), ≈ 63.5 (ClearEyes-M). Fine for authentication, but no longer 80+ bits as a long-term key. NIST SP 800-22 always gave higher numbers, so EntTest is the cautious one; in our demo it was stable across datasets (105 vs 105.4).||105 × 0,8 = <b>84 bit</b> cho tập con yếu nhất. Theo Lemma 1, kẻ tấn công thử q = 2⁴⁰ lần vẫn có lợi thế ≤ 2^−44; −log FAR ≈ 66 (ClearEyes), ≈ 63,5 (ClearEyes-M). Vẫn rất nhỏ cho xác thực, nhưng không còn 80+ bit nếu dùng làm khoá dài hạn. NIST SP 800-22 luôn cho số cao hơn, nên EntTest là con số thận trọng; trong demo EntTest rất ổn định giữa 2 bộ dữ liệu (105 vs 105,4).]]</div></details>
+      <details class="acc"><summary>[[~32 lockers should open, yet TAR is only 64 %?||Kỳ vọng mở được 32 locker mà TAR chỉ 64%?]]</summary>
+        <div class="ans">[[The 32 assumes every pair has the same error rate μ. Real errors vary a lot: with k = 115, β = 200K, the expected number of open lockers drops to 1 at distance d* ≈ 0.101; on our data 17 % of same-eye pairs are farther than that and get rejected (Figure N4). Correlated errors and overlapping subsets explain the rest — hence several readings beat a larger β.||Con số 32 giả định mọi cặp ảnh có cùng tỉ lệ lỗi μ. Thực tế lỗi rất khác nhau: với k = 115, β = 200K, số locker kỳ vọng mở được chỉ còn 1 tại khoảng cách d* ≈ 0,101; trên dữ liệu của nhóm 17% số cặp cùng mắt lệch hơn mức này nên bị từ chối (Hình N4). Lỗi tương quan và tập con chồng lấn giải thích phần còn lại — vì vậy dùng nhiều ảnh hiệu quả hơn tăng β.]]<div class="fig-img mt-s"><img src="assets/img/demo-fig4_same_eye_distance.png" alt="Same-eye distance distribution and probability of opening a locker"></div></div></details>
+      <details class="acc"><summary>[[The subsets are public and shared — does that help the attacker?||Tập con công khai, dùng chung — kẻ tấn công có lợi gì?]]</summary>
+        <div class="ans">[[The analysis already assumes the attacker knows all subsets. Lemma 1 only needs them to be chosen independently of the enrolee's iris; security is then the entropy of the weakest published subset, ≤ q·2^−ν. Publishing them is what lets Setup filter weak subsets out.||Phân tích đã giả định kẻ tấn công biết mọi tập con. Lemma 1 chỉ cần chúng được chọn độc lập với mống mắt người đăng ký; khi đó bảo mật là entropy của tập con công bố yếu nhất, ≤ q·2^−ν. Chính việc công bố cho phép Setup lọc bỏ tập yếu.]]</div></details>
+      <details class="acc"><summary>[[Why not code-offset / BCH?||Vì sao không dùng code-offset/BCH?]]</summary>
+        <div class="ans">[[Error correction makes the helper data cost entropy. In the example, correction costs ≈ 480 bits while the real entropy is below 250, so FEQual = 0. That says these parameters and the iris distribution are hard for this approach — not that BCH is always useless.||Mã sửa lỗi kéo theo chi phí entropy trong helper data. Ví dụ đang xét có chi phí ≈ 480 bit trong khi entropy thực dưới 250 bit, nên FEQual = 0. Kết luận đúng là tham số và phân phối iris gây khó cho cách này — không phải BCH luôn vô dụng.]]</div></details>
+    </div>
+    <div class="stack-s">
+      <details class="acc"><summary>[[How is a fuzzy extractor different from HE / MPC?||Fuzzy extractor khác HE/MPC ở đâu?]]</summary>
+        <div class="ans">[[A FE creates and rebuilds one stable key from noisy data, with helper data. HE/MPC compute something — e.g. a match — while limiting what each party learns. Different goals and models; whether a server or interaction is needed depends on the protocol.||FE tạo/tái tạo một khoá ổn định từ dữ liệu có nhiễu, với helper data. HE/MPC thực hiện phép tính, chẳng hạn so khớp, mà hạn chế lộ đầu vào giữa các bên. Mục tiêu và mô hình khác nhau; cần server hay tương tác tuỳ giao thức.]]</div></details>
+      <details class="acc"><summary>[[Can it be used for faces on a phone right away?||Có áp dụng ngay cho khuôn mặt trên điện thoại được không?]]</summary>
+        <div class="ans">[[The FE idea is not tied to the iris, but 105 bits / 92 % are iris results in a specific setting. Faces have different features and noise, so the extractor, the entropy and the TAR must all be designed and measured again.||Ý tưởng FE không giới hạn ở iris, nhưng 105 bit / 92% là kết quả trên iris và thiết lập cụ thể. Khuôn mặt có đặc trưng và nhiễu khác, nên phải thiết kế/đánh giá lại extractor, entropy và TAR.]]</div></details>
+      <details class="acc"><summary>[[A 128-bit key but only 105 bits of security — a contradiction?||Khoá 128 bit mà bảo mật chỉ 105 bit — có mâu thuẫn không?]]</summary>
+        <div class="ans">[[No. 128 bits is the length of the key string; 105 bits is the security level from the analysis and entropy estimate. The system is limited by the biometric source and the public information, not by the output length.||Không. 128 bit là độ dài chuỗi khoá, còn 105 bit là mức bảo mật theo phân tích và ước lượng entropy. Bảo mật bị giới hạn bởi nguồn sinh trắc và thông tin công khai, không chỉ bởi độ dài đầu ra.]]</div></details>
+      <p class="xs muted">[[Prepared answers — click a question to open it.||Câu trả lời chuẩn bị sẵn — bấm vào câu hỏi để mở.]]</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= QUESTION REVIEW ================= -->
+<section class="slide" data-ch="q" id="quiz" data-toc-en="Question review" data-toc-vi="Câu hỏi ôn tập">
+  <div class="s-top"><div class="rh-left">Shukla et al. · Fuzzy Extractors are Practical · CCS ’25</div><div class="sec">[[Question review||Câu hỏi ôn tập]]</div></div>
+  <h2>[[Question review — six questions, one per key idea||Câu hỏi ôn tập — sáu câu, mỗi ý chính một câu]]</h2>
+  <div class="s-body quiz-intro">
+    <div class="stack">
+      <table class="tbl">
+        <thead><tr><th>#</th><th>[[Idea checked||Ý được kiểm tra]]</th><th class="c">§</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>[[FEQual: is there entropy left for a key?||FEQual: còn entropy để sinh khoá không?]] <span class="chip warn">[[calc||tính]]</span></td><td class="c">1.3</td></tr>
+          <tr><td>2</td><td>[[Why the weakest subset matters||Vì sao quan tâm tập con yếu nhất]]</td><td class="c">3.4c</td></tr>
+          <tr><td>3</td><td>[[What ζ = 0 means||ζ = 0 nghĩa là gì]]</td><td class="c">3.4d</td></tr>
+          <tr><td>4</td><td>[[(1 − μ)<sup>k</sup> — opening one locker||(1 − μ)<sup>k</sup> — mở một locker]] <span class="chip warn">[[calc||tính]]</span></td><td class="c">4.1</td></tr>
+          <tr><td>5</td><td>[[Where TAR 92 % comes from||TAR 92% đến từ đâu]]</td><td class="c">5.4</td></tr>
+          <tr><td>6</td><td>[[The role of EntTest||Vai trò của EntTest]]</td><td class="c">5.1</td></tr>
+        </tbody>
+      </table>
+      <div class="small ink2" style="text-align:right"><kbd>A</kbd>–<kbd>D</kbd> [[pick||chọn]] · <kbd>→</kbd> [[reveal||hiện đáp án]] · <kbd>→</kbd> [[next||câu tiếp]] &nbsp; <button class="btn" data-quiz-reset style="padding:5px 11px;font-size:13px">[[Reset||Làm lại]]</button></div>
+    </div>
+    <aside class="kahoot rise" id="kahoot" style="--i:2" data-pin="">
+      <div class="kh-brand">Kahoot!</div>
+      <div class="kh-qr"></div>
+      <div class="kh-label">[[Game PIN||Mã PIN trò chơi]]</div>
+      <div class="kh-pin-row"><span class="kh-pin"></span><button type="button" class="kh-edit no-print" title="Kahoot PIN" aria-label="Set Kahoot PIN">✎</button></div>
+      <a class="kh-url" href="https://kahoot.it/" target="_blank" rel="noopener">[[Join at||Tham gia tại]] <b>kahoot.it</b></a>
+    </aside>
+  </div>
+</section>
+
+<!-- questions are inserted here by quiz.js -->
+
+<!-- ================= REFERENCES ================= -->
+<section class="slide" data-ch="e" data-sec="ref" id="refs">
+  <h2>[[References||Tài liệu tham khảo]]</h2>
+  <div class="s-body refs">
+    <ol>
+      <li><b>[P]</b> A. Shukla, L. Demarest, B. Fuller, S. Ahmad, C. Manicke, A. Russell, S. Chen, “Fuzzy Extractors are Practical: Cryptographic Strength Key Derivation from the Iris,” in <i>Proc. ACM CCS ’25</i>, 2025, pp. 3605–3619, doi: 10.1145/3719027.3765098.</li>
+      <li>R. Canetti, B. Fuller, O. Paneth, L. Reyzin, A. Smith, “Reusable fuzzy extractors for low-entropy distributions,” <i>J. Cryptology</i>, vol. 34, no. 1, pp. 1–33, 2021. [P-ref 48]</li>
+      <li>S. Simhadri, J. Steel, B. Fuller, “Cryptographic authentication from the iris,” in <i>Proc. ISC</i>, 2019, pp. 465–485. [P-ref 45]</li>
+      <li>K. Zhang, H. Cui, Y. Yu, “Facial template protection via lattice-based fuzzy extractors,” IACR ePrint 2021/1559. [P-ref 47]</li>
+      <li>F. Zhu et al., “A secure and practical sample-then-lock scheme for iris recognition,” in <i>Proc. ICPR</i>, 2022, pp. 833–839. [P-ref 49]</li>
+      <li>Y. Dodis, R. Ostrovsky, L. Reyzin, A. Smith, “Fuzzy extractors: How to generate strong keys from biometrics and other noisy data,” <i>SIAM J. Comput.</i>, vol. 38, no. 1, pp. 97–139, 2008. [P-ref 14]</li>
+      <li>J. Daugman, “How iris recognition works,” <i>IEEE Trans. Circuits Syst. Video Technol.</i>, vol. 14, no. 1, pp. 21–30, 2004. [P-ref 43]</li>
+      <li>B. Lynn, M. Prabhakaran, A. Sahai, “Positive results and techniques for obfuscation,” in <i>Proc. EUROCRYPT</i>, 2004, pp. 20–39. [P-ref 52]</li>
+      <li>S. Ahmad, B. Fuller, “ThirdEye: Triplet based iris recognition without normalization,” in <i>Proc. BTAS</i>, 2019. [P-ref 42]</li>
+      <li>A. Shukla, S. Ahmad, L. Demarest, B. Fuller, “Fuzzy extractors are practical,” 2025. github.com/whyamey/feap [P-ref 59]</li>
+      <li>A. Juels, M. Wattenberg, “A fuzzy commitment scheme,” in <i>Proc. ACM CCS</i>, 1999.</li>
+      <li>F. Hao, R. Anderson, J. Daugman, “Combining crypto with biometrics effectively,” <i>IEEE Trans. Computers</i>, vol. 55, no. 9, 2006. [P-ref 16]</li>
+      <li>B. Fuller, X. Meng, L. Reyzin, “Computational fuzzy extractors,” in <i>Proc. ASIACRYPT</i>, 2013. [P-ref 18]</li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= THANK YOU ================= -->
+<section class="slide slide-title" data-ch="e" id="thanks" data-toc-en="Thank you" data-toc-vi="Cảm ơn">
+  <div class="tp" style="max-width:900px">
+    <div class="venue">Group 3 · Database Security · Fuzzy Extractors are Practical (ACM CCS ’25)</div>
+    <h1>[[Thank you for listening||Cảm ơn thầy cô và các bạn đã lắng nghe]]</h1>
+    <div class="subtitle">[[A key from the iris: 105 bits of security, measured on the weakest subset.||Khoá từ mống mắt: 105 bit bảo mật, đo trên tập con yếu nhất.]]</div>
+    <div class="group"><b>Ngô Nhất Toàn</b><span class="dot">·</span><b>Lê Công Tú</b><span class="dot">·</span><b>Lý Minh Trung</b></div>
+    <div class="cta">
+      <button class="btn" data-go="1">[[Back to the title||Về trang đầu]]</button>
+      <button class="btn" data-act="print">[[Export as PDF||Xuất PDF]]</button>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+
+<button class="nav-zone l no-print" data-go="prev" aria-label="Previous slide"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+<button class="nav-zone r no-print" data-go="next" aria-label="Next slide"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+<div class="progress" id="progress"><i></i></div>
+
+<div class="toolbar" id="toolbar">
+  <button class="tb tb-nav" data-go="prev" title="Previous (←)" aria-label="Previous slide"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <span class="counter" id="counter">1 / 1</span>
+  <button class="tb tb-nav" data-go="next" title="Next (→)" aria-label="Next slide"><svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg></button>
+  <span class="tb-sep tb-nav"></span>
+  <div class="lang" role="group" aria-label="Language"><button data-act="lang" data-lang="en" aria-pressed="true">EN</button><button data-act="lang" data-lang="vi" aria-pressed="false">VI</button></div>
+  <button class="tb" data-act="theme" title="Light / dark (T)" aria-label="Toggle light or dark theme"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5a8.5 8.5 0 0 0 0 17z" style="fill:currentColor"/></svg></button>
+  <button class="tb" data-act="toc" title="Contents (M)" aria-label="Contents"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h10"/></svg></button>
+  <button class="tb tb-mode" data-act="mode" title="Scroll view / slide view" aria-label="Switch between scroll view and slide view" aria-pressed="false"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="7" rx="1.5"/><rect x="4" y="14" width="16" height="7" rx="1.5"/></svg></button>
+  <button class="tb" data-act="print" title="Export PDF" aria-label="Export as PDF"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg></button>
+  <button class="tb tb-nav" data-act="full" title="Fullscreen (F)" aria-label="Fullscreen"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+</div>
+
+<aside class="toc" id="toc" aria-label="Contents">
+  <header><b>[[Contents||Mục lục]]</b><button class="tb" data-act="toc" aria-label="Close contents"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button></header>
+  <nav></nav>
+</aside>
+<div class="scrim" id="scrim"></div>
+
+<script src="assets/js/iris.js"></script>
+<script src="assets/js/vendor/qrcode-generator.js"></script>
+<script src="assets/js/quiz.js"></script>
+<script src="assets/js/demo-cast.js"></script>
+<script src="assets/js/clip.js"></script>
+<script src="assets/js/deck.js"></script>
+</body>
+</html>
