@@ -262,6 +262,16 @@
     else if (root.requestFullscreen) root.requestFullscreen().catch(() => {});
   }
 
+  // PowerPoint copy of the deck in the current language (built by tools/make-pptx.mjs)
+  function downloadPptx() {
+    const a = document.createElement('a');
+    a.href = `assets/pptx/G3-Fuzzy-Extractors-are-Practical-${root.lang === 'vi' ? 'VI' : 'EN'}.pptx`;
+    a.download = '';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  }
+
   /* ---------- input ---------- */
   function onKey(e) {
     if (e.target.closest('input, textarea, select, [contenteditable="true"]')) return;
@@ -317,6 +327,7 @@
     else if (act === 'full') fullscreen();
     else if (act === 'mode') toggleMode();
     else if (act === 'print') window.print();
+    else if (act === 'pptx') downloadPptx();
     a.blur();
   }
 

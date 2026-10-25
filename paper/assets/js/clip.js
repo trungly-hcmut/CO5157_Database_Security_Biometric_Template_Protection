@@ -297,5 +297,5 @@
   window.addEventListener('beforeprint', () => { pause(); host.classList.add('started'); render(TOTAL); });
   render(cur);
 
-  window.DemoClip = { toggle, play, pause, seek, total: TOTAL, intro: INTRO, owns: (slide) => slide.contains(host) };
+  window.DemoClip = { toggle, play, pause, seek, total: TOTAL, intro: INTRO, chapters: SCENES.map((sc) => sc.tRes), owns: (slide) => slide.contains(host) };
 })();

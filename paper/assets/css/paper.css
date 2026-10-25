@@ -444,7 +444,7 @@ figcaption b, .cap b { font-family: var(--serif); font-size: 13.5px; color: var(
 .cb-time { flex: none; min-width: 92px; text-align: right; font: 500 12.5px var(--mono); color: var(--muted); }
 html.capture .cb, html.capture .clip-big, html.capture .toolbar, html.capture .progress, html.capture .nav-zone { display: none !important; }
 html.capture .t-cur { animation: none; }
-html.capture .slide .src, html.capture .pg { visibility: hidden; }
+html.capture .slide:has(.clip) .src, html.capture .slide:has(.clip) .pg { visibility: hidden; }
 html.doc-mode .clip { height: auto; }
 html.doc-mode .clip-term { flex-basis: auto; height: 340px; }
 @media screen and (max-width: 860px) {

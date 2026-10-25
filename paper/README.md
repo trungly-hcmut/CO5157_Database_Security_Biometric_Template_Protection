@@ -29,6 +29,8 @@ Hoặc mở `index.html` bằng trình duyệt, không cần build hay server.
 
 **Xuất PDF:** nút tải xuống trên thanh công cụ (hoặc `Ctrl/Cmd + P` → *Save as PDF*). Đáp án quiz được hiện sẵn trong PDF.
 
+**Tải PowerPoint:** nút hình màn chiếu trên thanh công cụ tải file `.pptx` theo ngôn ngữ đang chọn (`assets/pptx/G3-Fuzzy-Extractors-are-Practical-EN.pptx` / `-VI.pptx`). Mỗi slide là ảnh chụp 1920×1080 của bản web nên giống hệt, nhưng chữ trên slide không sửa được; nội dung chữ nằm trong phần ghi chú (notes), kể cả các câu trả lời Q&A. Mỗi câu ôn tập có 2 slide (câu hỏi, rồi đáp án). Slide clip demo chứa video MP4, bấm vào để phát trong PowerPoint hoặc Keynote (Google Slides không phát video nhúng trong file .pptx).
+
 **Clip demo (phần 6.2):** phát lại một lần chạy thật của feap-demo (output và thời gian thật, đoạn chờ dài hơn 1 s tua nhanh ×4, có ghi chú trên màn hình). Bấm vào một chương trên thanh tiến trình để nhảy tới. Bản video nằm ở `assets/video/feap-demo-en.mp4` và `feap-demo-vi.mp4`. Ghi lại lần chạy mới: trong `feap-demo/` chạy `python3 scripts/record_demo.py ../g3-btp-slides/paper` (cập nhật `assets/js/demo-cast.js`; các con số trong clip tự lấy theo bản ghi mới).
 
 ## Chỉnh sửa nội dung
@@ -49,8 +51,15 @@ Sửa xong thì chạy `python3 build.py` để tạo lại `index.html`. Script
 | Giao diện | `assets/css/paper.css` |
 | Hình mống mắt trang bìa | `assets/js/iris.js` |
 | Clip demo (chương, chú thích) | `assets/js/clip.js`; dữ liệu ghi lại: `assets/js/demo-cast.js` |
+| File PowerPoint | `tools/make-pptx.mjs` |
 
 Sau khi sửa, mở `index.html?check` để kiểm tra slide có bị tràn chữ không.
+
+**Tạo lại file PowerPoint** sau khi sửa slide (cần Node 22+ và Google Chrome):
+
+```bash
+cd tools && npm install && node make-pptx.mjs     # thêm --pin 123456 để in sẵn mã Kahoot
+```
 
 ## Hình
 

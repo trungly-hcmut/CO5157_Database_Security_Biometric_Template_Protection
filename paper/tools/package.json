@@ -1,0 +1,12 @@
+{
+  "name": "g3-fe-paper-tools",
+  "private": true,
+  "type": "module",
+  "description": "Builds the PowerPoint copies of the paper deck (node make-pptx.mjs).",
+  "scripts": {
+    "pptx": "node make-pptx.mjs"
+  },
+  "dependencies": {
+    "pptxgenjs": "3.12.0"
+  }
+}

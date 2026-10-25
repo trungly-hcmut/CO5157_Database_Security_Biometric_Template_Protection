@@ -178,7 +178,8 @@
   }
   function startTimer(s) {
     stopTimer();
-    if (s.classList.contains('revealed') || document.documentElement.classList.contains('doc-mode')) return;
+    const html = document.documentElement.classList;
+    if (s.classList.contains('revealed') || html.contains('doc-mode') || html.contains('capture')) return;
     const el = s.querySelector('.timer');
     const tn = el.querySelector('.tn');
     let left = +s.dataset.t;
