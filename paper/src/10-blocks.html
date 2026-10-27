@@ -360,22 +360,58 @@
 
 <!-- 4.5 -->
 <section class="slide" data-ch="4" data-sec="4.5">
-  <h2>[[VersionTwo → VersionTwoR: two stages, trained directly on the bits||VersionTwo → VersionTwoR: hai giai đoạn, tối ưu thẳng trên bit]]</h2>
-  <div class="s-body g-6-6 ai-s">
+  <h2>[[Design 2, stage 1 — VersionTwo: a new network and a new loss||Thiết kế 2, giai đoạn 1 — VersionTwo: mạng mới, loss mới]]</h2>
+  <div class="s-body">
+    <div class="card flat">
+      <div class="kicker">[[Goal of design 2||Mục tiêu của thiết kế 2]]</div>
+      <p class="small">[["Designed to produce higher entropy features while 'sampling' bits that are likely to be without error" — i.e. the network should do ζ-sampling's job itself.||"Thiết kế để tạo bit có entropy cao hơn, đồng thời 'chọn' những bit ít khả năng lỗi" — tức là mạng tự làm việc của ζ-sampling.]]</p>
+    </div>
+    <table class="tbl sm mt">
+      <thead><tr><th style="width:22%"></th><th>VersionOne</th><th>VersionTwo</th></tr></thead>
+      <tbody>
+        <tr><td class="k">[[Built on||Xuất phát]]</td><td>[[ThirdEye||ThirdEye]]</td><td>[[a new design||thiết kế mới]]</td></tr>
+        <tr><td class="k">[[Network||Kiến trúc mạng]]</td><td>DenseNet-169</td><td>[[EfficientNet-B0, length-normalised 1,024-dim output||EfficientNet-B0, đầu ra 1.024 chiều chuẩn hoá độ dài]]</td></tr>
+        <tr><td class="k">Loss</td><td>[[triplet + angle (TL<sub>V1</sub>)||triplet + góc (TL<sub>V1</sub>)]]</td><td>L<sub>uce-m</sub> + 0.5 · L<sub>hnm</sub></td></tr>
+        <tr><td class="k">[[Similarity measured by||Đo "giống nhau" bằng]]</td><td>[[L2 distance||khoảng cách L2]]</td><td>[[cosine similarity||độ giống cosine]]</td></tr>
+      </tbody>
+    </table>
+    <ul class="b small tight mt">
+      <li>[[<b>L<sub>uce-m</sub>:</b> same-eye similarity must beat different-eye similarity by a margin.||<b>L<sub>uce-m</sub>:</b> độ giống cùng mắt phải cao hơn độ giống khác mắt một khoảng margin.]]</li>
+      <li>[[<b>L<sub>hnm</sub>:</b> for each image, find the most similar different eye and penalise it — focus on the hardest cases.||<b>L<sub>hnm</sub>:</b> với mỗi ảnh, tìm mắt khác giống nó nhất và phạt — tập trung vào ca khó nhất.]]</li>
+      <li>[[<b>Still like VersionOne in one way:</b> it learns on real-valued vectors; the bits only appear afterwards, by thresholding — nothing controls them yet.||<b>Vẫn giống VersionOne ở một điểm:</b> học trên vector số thực; bit chỉ có sau đó, bằng cách so ngưỡng — chưa có gì kiểm soát chúng.]]</li>
+    </ul>
+  </div>
+  <p class="take">[[VersionTwo learns to tell eyes apart — but the bits are still left to chance.||VersionTwo học cách phân biệt các mắt — nhưng bit vẫn "tới đâu hay tới đó".]]</p>
+  <p class="src">[P, §2.1.4, §6.1, §6.2–6.2.2]</p>
+</section>
+
+<section class="slide" data-ch="4" data-sec="4.5">
+  <h2>[[Design 2, stage 2 — VersionTwoR: train down to the bits||Thiết kế 2, giai đoạn 2 — VersionTwoR: huấn luyện xuống tận bit]]</h2>
+  <div class="s-body g-5-7 ai-s">
     <figure class="fig">
       <div class="fig-img"><img src="assets/img/fig4-5-versiontwor.png" alt="VersionTwoR pipeline"></div>
       <figcaption><b>[[Figure 4.4.||Hình 4.4.]]</b> [[The VersionTwoR pipeline: two training stages and voting at inference (redrawn after [P, §6.2]).||Pipeline VersionTwoR: huấn luyện 2 giai đoạn và suy luận bằng bỏ phiếu (vẽ lại theo [P, §6.2]).]]</figcaption>
     </figure>
-    <ul class="b small tight">
-      <li>[[<b>New goal:</b> bits of uniform quality — it "incorporates ideas from ζ-sampling" [P, §2.1.4]. Built from scratch, not a patch on VersionOne.||<b>Mục tiêu mới:</b> bit đều chất lượng — "incorporates ideas from ζ-sampling" [P, §2.1.4]. Làm lại từ đầu, không sửa tiếp VersionOne.]]</li>
-      <li>[[<b>Stage 1 — VersionTwo:</b> EfficientNet-B0, 1,024 dims; L = L<sub>uce-m</sub> + 0.5·L<sub>hnm</sub> — same-eye pairs must beat different-eye pairs by a margin, plus a penalty on the most similar different eye (hard negative); augmentation: flips, rotation, blur, sharpening, occlusion, contrast.||<b>Giai đoạn 1 — VersionTwo:</b> EfficientNet-B0, 1.024 chiều; L = L<sub>uce-m</sub> + 0,5·L<sub>hnm</sub> — cặp cùng mắt phải giống hơn cặp khác mắt một margin, cộng phạt iris khác mắt giống nhất (hard negative); augmentation: lật, xoay, mờ, nét, che khuất, tương phản.]]</li>
-      <li>[[<b>Stage 2 — VersionTwoR:</b> refinement → 512 dims → tanh (soft bits in [−1, 1]); d<sub>H</sub> = ½(1 − cos); L = L<sub>pos</sub> + λ<sub>neg</sub>·L<sub>neg</sub> pulls the same eye → 0 and different eyes → 0.5.||<b>Giai đoạn 2 — VersionTwoR:</b> refinement → 512 chiều → tanh (bit mềm trong [−1, 1]); d<sub>H</sub> = ½(1 − cos); L = L<sub>pos</sub> + λ<sub>neg</sub>·L<sub>neg</sub> kéo cùng mắt → 0, khác mắt → 0,5.]]</li>
-      <li>[[<b>Why stage 2:</b> binarisation has no gradient → tanh + soft Hamming let the network optimise the very bits the lockers see.||<b>Vì sao cần giai đoạn 2:</b> nhị phân hoá không lấy đạo hàm được → tanh + soft Hamming cho phép tối ưu ngay trên bit, thứ locker thật sự thấy.]]</li>
-      <li>[[<b>At inference:</b> original + horizontal/vertical flips + rotations of ±5° → per-bit vote, keep the most stable value.||<b>Khi chạy:</b> ảnh gốc + lật ngang/dọc + xoay ±5° → bỏ phiếu theo từng bit, giữ giá trị ổn định nhất.]]</li>
-    </ul>
+    <div class="stack">
+      <p class="small">[[Stacked on top of VersionTwo; "inspired by ζ-sampling". Three ideas:||Xếp chồng lên VersionTwo; "lấy cảm hứng từ ζ-sampling". Ba ý tưởng:]]</p>
+      <ol class="n small tight">
+        <li>[[<b>Push every value away from the threshold:</b> a small refinement net → 512 dims → <b>tanh</b> drives each value towards −1 or +1 ("soft binarization") → bits far from the threshold rarely flip.||<b>Ép mỗi giá trị ra xa ngưỡng:</b> mạng refinement nhỏ → 512 chiều → <b>tanh</b> đẩy mỗi giá trị về gần −1 hoặc +1 ("soft binarization") → bit xa ngưỡng thì khó bị lật.]]</li>
+        <li>[[<b>Measure what the lockers see:</b> soft Hamming d<sub>H</sub> = ½(1 − cos) ≈ fraction of differing bits. Targets: <b>same eye → 0</b> (low error rate), <b>different eyes → 0.5</b> (hard to guess).||<b>Đo đúng thứ locker nhìn thấy:</b> soft Hamming d<sub>H</sub> = ½(1 − cos) ≈ tỉ lệ bit khác nhau. Đích: <b>cùng mắt → 0</b> (tỉ lệ lỗi thấp), <b>khác mắt → 0,5</b> (khó đoán).]]</li>
+        <li>[[<b>Vote per bit at use time:</b> the image plus flipped and ±5°-rotated copies; for each position keep the most stable value.||<b>Bỏ phiếu theo từng bit khi dùng:</b> ảnh gốc và các bản lật, xoay ±5°; với mỗi vị trí giữ giá trị ổn định nhất.]]</li>
+      </ol>
+      <div class="eq sm"><span class="f">L = L<sub>pos</sub> + λ<sub>neg</sub> · L<sub>neg</sub></span><span class="n">[[same eye → 0 · different eyes → 0.5||cùng mắt → 0 · khác mắt → 0,5]]</span></div>
+      <table class="tbl sm mt-s">
+        <thead><tr><th></th><th>VersionTwo</th><th>VersionTwoR</th></tr></thead>
+        <tbody>
+          <tr><td class="k">[[Learns to||Học để]]</td><td>[[tell eyes apart||phân biệt mắt]]</td><td><b>[[output stable, hard-to-guess bits||cho ra bit ổn định, khó đoán]]</b></td></tr>
+          <tr><td class="k">[[Measured by||Đo bằng]]</td><td>[[vector similarity||độ giống của vector]]</td><td><b>[[fraction of differing bits||tỉ lệ bit khác nhau]]</b></td></tr>
+          <tr><td class="k">[[Who picks good bits||Ai chọn bit tốt]]</td><td>—</td><td><b>[[the network itself||chính mạng]]</b></td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-  <p class="take">[[Part 3 selects good bits; VersionTwoR makes good bits.||Phần 3 chọn bit tốt; VersionTwoR làm ra bit tốt.]]</p>
-  <p class="src">[P, §2.1.4, §6.2]</p>
+  <p class="take">[[Part 3 selects good bits; VersionTwoR makes good bits — ζ-sampling moved inside the network.||Phần 3 chọn bit tốt; VersionTwoR làm ra bit tốt — ζ-sampling được đưa vào trong mạng.]]</p>
+  <p class="src">[P, §2.1.4, §6.2.3–6.2.4]</p>
 </section>
 
 <!-- 4.6 -->
