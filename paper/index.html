@@ -611,15 +611,16 @@
     </figure>
     <div class="stack">
       <ul class="b">
-        <li><span class="en">The paper has <b>two</b> extractors, not three [P, §2.1.4, §6].</span><span class="vi">Paper có <b>2</b> extractor, không phải 3 [P, §2.1.4, §6].</span></li>
-        <li><span class="en">VersionTwo and VersionTwoR are <b>two stages of one pipeline</b>; ClearEyes uses VersionTwoR.</span><span class="vi">VersionTwo và VersionTwoR là <b>2 giai đoạn của cùng một pipeline</b>; ClearEyes dùng VersionTwoR.</span></li>
-        <li><span class="en">Same goal — high TAR, low FAR. They differ in <b>where the burden of picking good bits</b> sits:</span><span class="vi">Cùng mục tiêu — TAR cao, FAR thấp. Khác ở <b>chỗ đặt gánh nặng chọn bit tốt</b>:</span>
+        <li><span class="en"><b>Route:</b> ThirdEye (baseline) → VersionOne (design 1) → VersionTwo → VersionTwoR (design 2, two stages of one pipeline). ClearEyes uses VersionTwoR.</span><span class="vi"><b>Lộ trình:</b> ThirdEye (baseline) → VersionOne (thiết kế 1) → VersionTwo → VersionTwoR (thiết kế 2, hai giai đoạn của cùng một pipeline). ClearEyes dùng VersionTwoR.</span></li>
+        <li><span class="en"><b>Same goal:</b> high TAR, low FAR.</span><span class="vi"><b>Cùng mục tiêu:</b> TAR cao, FAR thấp.</span></li>
+        <li><span class="en"><b>The difference — who picks the good bits:</b></span><span class="vi"><b>Khác nhau ở chỗ ai lo việc chọn bit tốt:</b></span>
           <ul>
-            <li><span class="en">VersionOne → Block B (ζ-sampling).</span><span class="vi">VersionOne → Khối B (ζ-sampling).</span></li>
-            <li><span class="en">VersionTwoR → the network itself.</span><span class="vi">VersionTwoR → chính mạng nơ-ron.</span></li>
+            <li><span class="en">VersionOne: bits of <b>different quality</b> → ζ-sampling (Block B) has to pick.</span><span class="vi">VersionOne: bit <b>không đều chất lượng</b> → ζ-sampling (Khối B) phải chọn hộ.</span></li>
+            <li><span class="en">VersionTwoR: trained so that all bits have <b>the same quality</b> → the network does the picking itself.</span><span class="vi">VersionTwoR: huấn luyện để mọi bit <b>đều chất lượng</b> → chính mạng làm việc chọn bit.</span></li>
           </ul>
         </li>
       </ul>
+      <p class="xs muted"><span class="en">"Our second version incorporates ideas from ζ-sampling to condense to features with the same quality."</span><span class="vi">"Phiên bản thứ hai đưa ý tưởng của ζ-sampling vào để thu về các bit cùng chất lượng."</span> [P, §2.1.4]</p>
     </div>
   </div>
   <p class="src">[P, §2.1.4, §6]</p>
