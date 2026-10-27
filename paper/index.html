@@ -518,26 +518,41 @@
 <!-- 3.4d (2) -->
 <section class="slide" data-ch="3" data-sec="3.4d">
   <h2><span class="en">The ζ-sampling vocabulary used in Part 5</span><span class="vi">Bộ thuật ngữ ζ-sampling dùng ở Phần 5</span></h2>
-  <div class="s-body g-8-4 ai-s">
-    <table class="tbl sm">
-      <thead><tr><th style="width:24%"><span class="en">Term</span><span class="vi">Thuật ngữ</span></th><th><span class="en">Meaning</span><span class="vi">Ý nghĩa</span></th></tr></thead>
-      <tbody>
-        <tr><td class="k">Like / Unlike</td><td><span class="en">Pairs of readings of the same eye / of different eyes (Daugman's naming — hence μ<sub>Unlike</sub> in EntTest).</span><span class="vi">Cặp ảnh cùng mắt / khác mắt (cách gọi của Daugman — nên EntTest có μ<sub>Unlike</sub>).</span></td></tr>
-        <tr><td class="k">p<sub>same,i</sub></td><td><span class="en">Pr[wᵢ = w′ᵢ | same eye] — how <b>stable</b> bit i is.</span><span class="vi">Pr[wᵢ = w′ᵢ | cùng mắt] — độ <b>ổn định</b> của bit i.</span></td></tr>
-        <tr><td class="k">p<sub>diff,i</sub></td><td><span class="en">Pr[wᵢ ≠ w*ᵢ | different eyes] — how <b>hard to guess</b> bit i is. Both computed on stats_W.</span><span class="vi">Pr[wᵢ ≠ w*ᵢ | khác mắt] — độ <b>khó đoán</b> của bit i. Cả hai tính trên stats_W.</span></td></tr>
-        <tr><td class="k">Uniform</td><td><span class="en">ζ = 0, every bit gets the same weight.</span><span class="vi">ζ = 0, mọi bit cùng trọng số.</span></td></tr>
-        <tr><td class="k">LikeOnly</td><td><span class="en">sᵢ = p<sub>same,i</sub> — stability only.</span><span class="vi">sᵢ = p<sub>same,i</sub> — chỉ xét độ ổn định.</span></td></tr>
-        <tr><td class="k">UnlikeRatio</td><td><span class="en">sᵢ = p<sub>same,i</sub> / max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>} — stability divided by how guessable the bit is.</span><span class="vi">sᵢ = p<sub>same,i</sub> / max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>} — ổn định chia cho mức dễ đoán.</span></td></tr>
-        <tr><td class="k">UnlikeExp</td><td><span class="en">p<sub>same,i</sub>^(ζ / H∞(p<sub>diff,i</sub>)), with H∞(p) = −log₂ max{p, 1 − p} — punishes guessable bits exponentially.</span><span class="vi">p<sub>same,i</sub>^(ζ / H∞(p<sub>diff,i</sub>)), với H∞(p) = −log₂ max{p, 1 − p} — phạt bit dễ đoán theo hàm mũ.</span></td></tr>
-        <tr><td class="k">Single / Pairs</td><td><span class="en">Score each bit, or each pair of bits (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].</span><span class="vi">Chấm điểm từng bit hay từng cặp bit (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].</span></td></tr>
-      </tbody>
-    </table>
-    <div class="stack">
-      <div class="note"><span class="en">Fig. 2 writes UnlikeRatio = (p_same / p_diff)^ζ and the UnlikeExp exponent ζ / (−log p_diff), which differs from §2.1.3 — the slides follow §2.1.3. §6.3 defines p_same with "≠", most likely a typo.</span><span class="vi">Fig. 2 viết UnlikeRatio = (p_same / p_diff)^ζ và số mũ UnlikeExp = ζ / (−log p_diff), khác §2.1.3 — slide dùng bản §2.1.3. §6.3 định nghĩa p_same bằng "≠", nhiều khả năng là lỗi đánh máy.</span></div>
-      <div class="card ch small"><div class="kicker"><span class="en">Bridge to Part 4</span><span class="vi">Câu nối sang Phần 4</span></div><span class="en">ζ can only choose among the bits we already have. To do better, fix the input — Block A.</span><span class="vi">ζ chỉ chọn được trong số bit có sẵn; muốn tốt hơn phải sửa từ đầu vào — Khối A.</span></div>
+  <div class="s-body">
+    <div class="g-5-7 ai-s">
+      <div class="card flat">
+        <div class="kicker"><span class="en">① What we measure on each bit (on stats_W)</span><span class="vi">① Đo gì trên mỗi bit (trên stats_W)</span></div>
+        <table class="tbl sm">
+          <tbody>
+            <tr><td class="k">Like / Unlike</td><td><span class="en">pair of readings of the <b>same</b> eye / of <b>different</b> eyes</span><span class="vi">cặp ảnh <b>cùng</b> mắt / <b>khác</b> mắt</span></td></tr>
+            <tr><td class="k">p<sub>same,i</sub></td><td><span class="en">Pr[bit i is the same on two readings of one eye] → <b>stability</b></span><span class="vi">Pr[bit i giống nhau ở 2 ảnh cùng mắt] → độ <b>ổn định</b></span></td></tr>
+            <tr><td class="k">p<sub>diff,i</sub></td><td><span class="en">Pr[bit i differs between two different eyes] → <b>hard to guess</b> when near ½</span><span class="vi">Pr[bit i khác nhau giữa 2 mắt khác nhau] → <b>khó đoán</b> khi gần ½</span></td></tr>
+            <tr><td class="k">H∞(p<sub>diff,i</sub>)</td><td><span class="en">= −log₂ max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>}: how many bits of unpredictability bit i gives (1 at best)</span><span class="vi">= −log₂ max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>}: bit i khó đoán bao nhiêu bit (tối đa 1)</span></td></tr>
+          </tbody>
+        </table>
+        <div class="eq sm mt-s"><span class="f">Pr&#91;<span class="en">pick</span><span class="vi">chọn</span> bit i&#93; = s<sub>i</sub><sup>ζ</sup> / Σ<sub>j</sub> s<sub>j</sub><sup>ζ</sup></span><span class="n">[P, §2.1.3]</span></div>
+        <p class="xs muted"><span class="en">sᵢ = score of bit i (right). ζ = 0: all bits equal; larger ζ: favour high scores more.</span><span class="vi">sᵢ = điểm của bit i (bên phải). ζ = 0: mọi bit như nhau; ζ lớn: càng dồn vào bit điểm cao.</span></p>
+      </div>
+      <div class="card flat">
+        <div class="kicker"><span class="en">② Four ways to score a bit</span><span class="vi">② Bốn cách chấm điểm bit</span></div>
+        <table class="tbl sm">
+          <thead><tr><th style="width:24%"><span class="en">Method</span><span class="vi">Cách</span></th><th style="width:38%"><span class="en">Score</span><span class="vi">Điểm</span></th><th><span class="en">Looks at</span><span class="vi">Xét đến</span></th></tr></thead>
+          <tbody>
+            <tr><td class="k">Uniform</td><td><span class="en">every bit equal (ζ = 0)</span><span class="vi">mọi bit như nhau (ζ = 0)</span></td><td><span class="en">nothing</span><span class="vi">không xét gì</span></td></tr>
+            <tr><td class="k">LikeOnly</td><td>s<sub>i</sub> = p<sub>same,i</sub></td><td><span class="en">stability only</span><span class="vi">chỉ độ ổn định</span></td></tr>
+            <tr><td class="k">UnlikeRatio</td><td>s<sub>i</sub> = p<sub>same,i</sub> / max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>}</td><td><span class="en">stable, divided by how guessable</span><span class="vi">ổn định, chia cho mức dễ đoán</span></td></tr>
+            <tr><td class="k">UnlikeExp</td><td><span class="en">weight</span><span class="vi">trọng số</span> = p<sub>same,i</sub><sup>ζ / H∞(p<sub>diff,i</sub>)</sup></td><td><span class="en">stable, guessable bits punished exponentially</span><span class="vi">ổn định, bit dễ đoán bị phạt theo hàm mũ</span></td></tr>
+          </tbody>
+        </table>
+        <p class="xs muted"><span class="en">Each method can score single bits or pairs of bits (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].</span><span class="vi">Mỗi cách có thể chấm từng bit hoặc từng cặp bit (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].</span></p>
+      </div>
+    </div>
+    <div class="card ch small mt">
+      <div class="kicker"><span class="en">Bridge to Part 4</span><span class="vi">Câu nối sang Phần 4</span></div>
+      <span class="en">ζ-sampling can only pick among the bits the feature extractor produced — like picking apples from one basket: however carefully you choose, you only get the best apple in that basket. To do better, produce better bits in the first place — that is Block A's job (Part 4).</span><span class="vi">ζ-sampling chỉ chọn lọc trong số bit mà feature extractor đã tạo ra — như chọn táo trong một sọt: chọn khéo đến đâu cũng chỉ lấy được quả ngon nhất trong sọt. Muốn tốt hơn nữa phải làm ra bit tốt hơn ngay từ đầu — đó là việc của Khối A (Phần 4).</span>
     </div>
   </div>
-  <p class="src">[P, §2.1.3, §5.2.1, §6.3, Fig. 2, Table 2]</p>
+  <p class="src">[P, §2.1.3, §5.2.1, §6.3, Table 2]</p>
 </section>
 
 <!-- ================= PART 4 ================= -->

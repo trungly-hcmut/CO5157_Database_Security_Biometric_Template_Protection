@@ -215,26 +215,41 @@
 <!-- 3.4d (2) -->
 <section class="slide" data-ch="3" data-sec="3.4d">
   <h2>[[The ζ-sampling vocabulary used in Part 5||Bộ thuật ngữ ζ-sampling dùng ở Phần 5]]</h2>
-  <div class="s-body g-8-4 ai-s">
-    <table class="tbl sm">
-      <thead><tr><th style="width:24%">[[Term||Thuật ngữ]]</th><th>[[Meaning||Ý nghĩa]]</th></tr></thead>
-      <tbody>
-        <tr><td class="k">Like / Unlike</td><td>[[Pairs of readings of the same eye / of different eyes (Daugman's naming — hence μ<sub>Unlike</sub> in EntTest).||Cặp ảnh cùng mắt / khác mắt (cách gọi của Daugman — nên EntTest có μ<sub>Unlike</sub>).]]</td></tr>
-        <tr><td class="k">p<sub>same,i</sub></td><td>[[Pr[wᵢ = w′ᵢ | same eye] — how <b>stable</b> bit i is.||Pr[wᵢ = w′ᵢ | cùng mắt] — độ <b>ổn định</b> của bit i.]]</td></tr>
-        <tr><td class="k">p<sub>diff,i</sub></td><td>[[Pr[wᵢ ≠ w*ᵢ | different eyes] — how <b>hard to guess</b> bit i is. Both computed on stats_W.||Pr[wᵢ ≠ w*ᵢ | khác mắt] — độ <b>khó đoán</b> của bit i. Cả hai tính trên stats_W.]]</td></tr>
-        <tr><td class="k">Uniform</td><td>[[ζ = 0, every bit gets the same weight.||ζ = 0, mọi bit cùng trọng số.]]</td></tr>
-        <tr><td class="k">LikeOnly</td><td>[[sᵢ = p<sub>same,i</sub> — stability only.||sᵢ = p<sub>same,i</sub> — chỉ xét độ ổn định.]]</td></tr>
-        <tr><td class="k">UnlikeRatio</td><td>[[sᵢ = p<sub>same,i</sub> / max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>} — stability divided by how guessable the bit is.||sᵢ = p<sub>same,i</sub> / max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>} — ổn định chia cho mức dễ đoán.]]</td></tr>
-        <tr><td class="k">UnlikeExp</td><td>[[p<sub>same,i</sub>^(ζ / H∞(p<sub>diff,i</sub>)), with H∞(p) = −log₂ max{p, 1 − p} — punishes guessable bits exponentially.||p<sub>same,i</sub>^(ζ / H∞(p<sub>diff,i</sub>)), với H∞(p) = −log₂ max{p, 1 − p} — phạt bit dễ đoán theo hàm mũ.]]</td></tr>
-        <tr><td class="k">Single / Pairs</td><td>[[Score each bit, or each pair of bits (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].||Chấm điểm từng bit hay từng cặp bit (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].]]</td></tr>
-      </tbody>
-    </table>
-    <div class="stack">
-      <div class="note">[[Fig. 2 writes UnlikeRatio = (p_same / p_diff)^ζ and the UnlikeExp exponent ζ / (−log p_diff), which differs from §2.1.3 — the slides follow §2.1.3. §6.3 defines p_same with "≠", most likely a typo.||Fig. 2 viết UnlikeRatio = (p_same / p_diff)^ζ và số mũ UnlikeExp = ζ / (−log p_diff), khác §2.1.3 — slide dùng bản §2.1.3. §6.3 định nghĩa p_same bằng "≠", nhiều khả năng là lỗi đánh máy.]]</div>
-      <div class="card ch small"><div class="kicker">[[Bridge to Part 4||Câu nối sang Phần 4]]</div>[[ζ can only choose among the bits we already have. To do better, fix the input — Block A.||ζ chỉ chọn được trong số bit có sẵn; muốn tốt hơn phải sửa từ đầu vào — Khối A.]]</div>
+  <div class="s-body">
+    <div class="g-5-7 ai-s">
+      <div class="card flat">
+        <div class="kicker">[[① What we measure on each bit (on stats_W)||① Đo gì trên mỗi bit (trên stats_W)]]</div>
+        <table class="tbl sm">
+          <tbody>
+            <tr><td class="k">Like / Unlike</td><td>[[pair of readings of the <b>same</b> eye / of <b>different</b> eyes||cặp ảnh <b>cùng</b> mắt / <b>khác</b> mắt]]</td></tr>
+            <tr><td class="k">p<sub>same,i</sub></td><td>[[Pr[bit i is the same on two readings of one eye] → <b>stability</b>||Pr[bit i giống nhau ở 2 ảnh cùng mắt] → độ <b>ổn định</b>]]</td></tr>
+            <tr><td class="k">p<sub>diff,i</sub></td><td>[[Pr[bit i differs between two different eyes] → <b>hard to guess</b> when near ½||Pr[bit i khác nhau giữa 2 mắt khác nhau] → <b>khó đoán</b> khi gần ½]]</td></tr>
+            <tr><td class="k">H∞(p<sub>diff,i</sub>)</td><td>[[= −log₂ max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>}: how many bits of unpredictability bit i gives (1 at best)||= −log₂ max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>}: bit i khó đoán bao nhiêu bit (tối đa 1)]]</td></tr>
+          </tbody>
+        </table>
+        <div class="eq sm mt-s"><span class="f">Pr&#91;[[pick||chọn]] bit i&#93; = s<sub>i</sub><sup>ζ</sup> / Σ<sub>j</sub> s<sub>j</sub><sup>ζ</sup></span><span class="n">[P, §2.1.3]</span></div>
+        <p class="xs muted">[[sᵢ = score of bit i (right). ζ = 0: all bits equal; larger ζ: favour high scores more.||sᵢ = điểm của bit i (bên phải). ζ = 0: mọi bit như nhau; ζ lớn: càng dồn vào bit điểm cao.]]</p>
+      </div>
+      <div class="card flat">
+        <div class="kicker">[[② Four ways to score a bit||② Bốn cách chấm điểm bit]]</div>
+        <table class="tbl sm">
+          <thead><tr><th style="width:24%">[[Method||Cách]]</th><th style="width:38%">[[Score||Điểm]]</th><th>[[Looks at||Xét đến]]</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Uniform</td><td>[[every bit equal (ζ = 0)||mọi bit như nhau (ζ = 0)]]</td><td>[[nothing||không xét gì]]</td></tr>
+            <tr><td class="k">LikeOnly</td><td>s<sub>i</sub> = p<sub>same,i</sub></td><td>[[stability only||chỉ độ ổn định]]</td></tr>
+            <tr><td class="k">UnlikeRatio</td><td>s<sub>i</sub> = p<sub>same,i</sub> / max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>}</td><td>[[stable, divided by how guessable||ổn định, chia cho mức dễ đoán]]</td></tr>
+            <tr><td class="k">UnlikeExp</td><td>[[weight||trọng số]] = p<sub>same,i</sub><sup>ζ / H∞(p<sub>diff,i</sub>)</sup></td><td>[[stable, guessable bits punished exponentially||ổn định, bit dễ đoán bị phạt theo hàm mũ]]</td></tr>
+          </tbody>
+        </table>
+        <p class="xs muted">[[Each method can score single bits or pairs of bits (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].||Mỗi cách có thể chấm từng bit hoặc từng cặp bit (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].]]</p>
+      </div>
+    </div>
+    <div class="card ch small mt">
+      <div class="kicker">[[Bridge to Part 4||Câu nối sang Phần 4]]</div>
+      [[ζ-sampling can only pick among the bits the feature extractor produced — like picking apples from one basket: however carefully you choose, you only get the best apple in that basket. To do better, produce better bits in the first place — that is Block A's job (Part 4).||ζ-sampling chỉ chọn lọc trong số bit mà feature extractor đã tạo ra — như chọn táo trong một sọt: chọn khéo đến đâu cũng chỉ lấy được quả ngon nhất trong sọt. Muốn tốt hơn nữa phải làm ra bit tốt hơn ngay từ đầu — đó là việc của Khối A (Phần 4).]]
     </div>
   </div>
-  <p class="src">[P, §2.1.3, §5.2.1, §6.3, Fig. 2, Table 2]</p>
+  <p class="src">[P, §2.1.3, §5.2.1, §6.3, Table 2]</p>
 </section>
 
 <!-- ================= PART 4 ================= -->
