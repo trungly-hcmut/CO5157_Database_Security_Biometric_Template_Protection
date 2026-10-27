@@ -628,30 +628,34 @@
 
 <!-- 4.3-4.4 -->
 <section class="slide" data-ch="4" data-sec="4.4">
-  <h2><span class="en">ThirdEye → VersionOne: adding an angle to the triplet loss</span><span class="vi">ThirdEye → VersionOne: thêm góc vào triplet loss</span></h2>
-  <div class="s-body g2 ai-s">
+  <h2><span class="en">ThirdEye → VersionOne: from a distance margin to distance + angle</span><span class="vi">ThirdEye → VersionOne: từ ràng buộc khoảng cách sang khoảng cách + góc</span></h2>
+  <div class="s-body g-4-8 ai-s">
+    <figure class="fig">
+      <div class="fig-img"><img src="assets/img/fig4-3-triplet.png" alt="Triplet loss"></div>
+      <figcaption><span class="en"><b>Figure 4.3.</b> Triplet loss: the same-eye reading must be closer than a different-eye reading by at least m (group drawing, after [P, §6.1.2]).</span><span class="vi"><b>Hình 4.3.</b> Triplet loss: ảnh cùng mắt phải gần hơn ảnh khác mắt ít nhất m (nhóm vẽ, theo [P, §6.1.2]).</span></figcaption>
+    </figure>
     <div class="stack">
-      <div class="kicker"><span class="en">Baseline — ThirdEye (P-ref 42)</span><span class="vi">Baseline — ThirdEye (P-ref 42)</span></div>
-      <figure class="fig">
-        <div class="fig-img" style="--fh:170px"><img src="assets/img/fig4-3-triplet.png" alt="Triplet loss"></div>
-        <figcaption><b><span class="en">Figure 4.3.</span><span class="vi">Hình 4.3.</span></b> <span class="en">Triplet loss: pull the positive towards the anchor, push the negative at least m away (group drawing, after [P, §6.1.2]).</span><span class="vi">Triplet loss: kéo positive lại gần anchor, đẩy negative ra xa ít nhất m (nhóm vẽ, theo [P, §6.1.2]).</span></figcaption>
-      </figure>
-      <ul class="b small tight">
-        <li><span class="en">ResNet-50 (ImageNet pre-trained) → trained as a classifier → head replaced by a 1,024-dim layer trained with triplet loss [P, §6.1–6.1.2].</span><span class="vi">ResNet-50 (pre-train ImageNet) → học phân loại → thay đầu ra bằng lớp 1.024 chiều, huấn luyện bằng triplet loss [P, §6.1–6.1.2].</span></li>
-        <li><span class="en"><b>Limitation:</b> built for recognition (same person or not); it does not ask each bit to be stable or of uniform quality.</span><span class="vi"><b>Hạn chế:</b> thiết kế cho nhận dạng (đúng người hay không), không đòi từng bit ổn định hay đều chất lượng.</span></li>
-      </ul>
-    </div>
-    <div class="stack">
-      <div class="kicker"><span class="en">Design 1 — VersionOne (§6.1)</span><span class="vi">Thiết kế 1 — VersionOne (§6.1)</span></div>
-      <figure class="fig">
-        <div class="fig-img" style="--fh:170px"><img src="assets/img/fig4-4-versionone.png" alt="VersionOne additions to the triplet loss"></div>
-        <figcaption><b><span class="en">Figure 4.4.</span><span class="vi">Hình 4.4.</span></b> <span class="en">VersionOne: weight c₁ on same-eye pairs and an angle penalty between different irises (group drawing, after [P, §6.1]).</span><span class="vi">VersionOne: trọng số c₁ cho cặp cùng mắt và phạt góc giữa các iris khác nhau (nhóm vẽ, theo [P, §6.1]).</span></figcaption>
-      </figure>
-      <ul class="b small tight">
-        <li><span class="en">DenseNet-169; c₁ = 1.1 punishes same-eye pairs that drift apart; μ<sub>IP</sub> = mean inner product between different irises, c₂ = 2 → push them towards orthogonal (the angular-margin idea).</span><span class="vi">DenseNet-169; c₁ = 1,1 phạt nặng cặp cùng mắt lệch nhau; μ<sub>IP</sub> = tích vô hướng trung bình giữa các iris khác nhau, c₂ = 2 → ép chúng gần vuông góc (ý của angular margin).</span></li>
-        <li><span class="en">Bits are <b>not</b> of uniform quality — the paper: "produces features of different quality", hence "benefits from ζ-sampling". The choice of good bits is pushed to Block B, and the L2 and angle objectives pull against each other.</span><span class="vi">Bit <b>không</b> đều chất lượng — paper: "produces features of different quality", vì thế "benefits from ζ-sampling". Việc chọn bit tốt bị đẩy sang Khối B; hai mục tiêu L2 và góc kéo ngược nhau.</span></li>
-      </ul>
-      <div class="note xs"><span class="en">§6.1 gives the margin as m = 0.8 and then m = 0.4 in the same paragraph — inconsistent.</span><span class="vi">§6.1 ghi m = 0,8 rồi m = 0,4 trong cùng đoạn — không nhất quán.</span></div>
+      <div class="card flat">
+        <div class="kicker"><span class="en">① ThirdEye — the idea</span><span class="vi">① ThirdEye — ý tưởng</span></div>
+        <ul class="b xs tight">
+          <li><span class="en">Two rounds: first learn to <b>classify</b> irises (cross-entropy) to get discriminative features, then replace the head with a <b>1,024-dim</b> layer trained with <b>triplet loss</b>.</span><span class="vi">Hai vòng: trước học <b>phân loại</b> iris (cross-entropy) để nắm đặc điểm phân biệt các mắt, sau thay đầu ra bằng lớp <b>1.024 chiều</b> và huấn luyện bằng <b>triplet loss</b>.</span></li>
+        </ul>
+        <div class="eq sm" style="margin:2px 0 6px"><span class="f">TL = Σ &#91; m + L2(x<sub>a</sub>, x<sub>p</sub>) − L2(x<sub>a</sub>, x<sub>n</sub>) &#93;</span></div>
+        <p class="xs" style="margin-bottom:0"><span class="en">x<sub>a</sub>: a reading; x<sub>p</sub>: same eye; x<sub>n</sub>: different eye. <b>Meaning:</b> the same-eye reading must be closer than the different-eye one by at least the margin m, otherwise the loss is positive.</span><span class="vi">x<sub>a</sub>: một ảnh; x<sub>p</sub>: ảnh cùng mắt; x<sub>n</sub>: ảnh khác mắt. <b>Ý nghĩa:</b> ảnh cùng mắt phải gần hơn ảnh khác mắt ít nhất một khoảng m (margin), nếu không loss dương và mạng bị phạt.</span></p>
+      </div>
+      <div class="card flat mt-s">
+        <div class="kicker"><span class="en">② VersionOne — the idea behind the new loss</span><span class="vi">② VersionOne — sửa loss theo ý tưởng gì</span></div>
+        <p class="xs"><span class="en">Triplet only uses <b>distance</b>. VersionOne adds the <b>angular-margin</b> idea — also look at the <b>angle</b> between vectors: "combines the ideas of L2 margin maximization from triplet loss with angle minimization from angular margin".</span><span class="vi">Triplet chỉ dựa vào <b>khoảng cách</b>. VersionOne ghép thêm ý tưởng <b>angular margin</b> — xét cả <b>góc</b> giữa các vector: "kết hợp L2 margin của triplet loss với ý tưởng angular margin".</span></p>
+        <div class="eq sm" style="margin:2px 0 6px"><span class="f">TL<sub>V1</sub> = Σ &#91; m + <b class="hl">c₁·</b>L2(x<sub>a</sub>, x<sub>p</sub>) − L2(x<sub>a</sub>, x<sub>n</sub>) &#93; <b class="hl">+ c₂·|μ<sub>IP</sub>|</b></span></div>
+        <p class="xs" style="margin-bottom:0"><span class="en">c₁ = 1.1: extra weight on same-eye pairs. μ<sub>IP</sub>: mean inner product between different irises — pushing it to 0 spreads their vectors apart in angle. c₂ = 2: balance between the distance and inner-product terms. Backbone: ResNet-50 → DenseNet-169.</span><span class="vi">c₁ = 1,1: trọng số thêm cho cặp cùng mắt. μ<sub>IP</sub>: tích vô hướng trung bình giữa các iris khác nhau — đưa về gần 0 thì các vector khác mắt lệch góc nhiều. c₂ = 2: cân bằng giữa phần khoảng cách và phần tích vô hướng. Backbone: ResNet-50 → DenseNet-169.</span></p>
+      </div>
+      <div class="card flat mt-s">
+        <div class="kicker"><span class="en">③ What still falls short (stated by the paper)</span><span class="vi">③ Còn hạn chế (paper nêu)</span></div>
+        <ul class="b xs tight" style="margin-bottom:0">
+          <li><span class="en">The two goals compete: μ<sub>IP</sub> can drop by widening the angle <i>or</i> by shrinking the vectors — and shrinking also narrows the L2 gap.</span><span class="vi">Hai mục tiêu cạnh tranh: giảm μ<sub>IP</sub> có thể bằng cách tăng góc <i>hoặc</i> thu nhỏ vector — mà thu nhỏ thì khoảng cách L2 cũng hẹp lại.</span></li>
+          <li><span class="en">Bits come out of <b>different quality</b> → ζ-sampling (Block B) has to pick the good ones.</span><span class="vi">Bit <b>không đều chất lượng</b> → phải nhờ ζ-sampling (Khối B) chọn bit tốt.</span></li>
+        </ul>
+      </div>
     </div>
   </div>
   <p class="src">[P, §6.1–6.1.2] · ThirdEye, BTAS 2019 [P-ref 42]</p>
@@ -663,7 +667,7 @@
   <div class="s-body g-6-6 ai-s">
     <figure class="fig">
       <div class="fig-img"><img src="assets/img/fig4-5-versiontwor.png" alt="VersionTwoR pipeline"></div>
-      <figcaption><b><span class="en">Figure 4.5.</span><span class="vi">Hình 4.5.</span></b> <span class="en">The VersionTwoR pipeline: two training stages and voting at inference (redrawn after [P, §6.2]).</span><span class="vi">Pipeline VersionTwoR: huấn luyện 2 giai đoạn và suy luận bằng bỏ phiếu (vẽ lại theo [P, §6.2]).</span></figcaption>
+      <figcaption><b><span class="en">Figure 4.4.</span><span class="vi">Hình 4.4.</span></b> <span class="en">The VersionTwoR pipeline: two training stages and voting at inference (redrawn after [P, §6.2]).</span><span class="vi">Pipeline VersionTwoR: huấn luyện 2 giai đoạn và suy luận bằng bỏ phiếu (vẽ lại theo [P, §6.2]).</span></figcaption>
     </figure>
     <ul class="b small tight">
       <li><span class="en"><b>New goal:</b> bits of uniform quality — it "incorporates ideas from ζ-sampling" [P, §2.1.4]. Built from scratch, not a patch on VersionOne.</span><span class="vi"><b>Mục tiêu mới:</b> bit đều chất lượng — "incorporates ideas from ζ-sampling" [P, §2.1.4]. Làm lại từ đầu, không sửa tiếp VersionOne.</span></li>
@@ -683,7 +687,7 @@
   <div class="s-body">
     <figure class="fig" style="max-width:1000px;margin:0 auto">
       <div class="fig-img" style="--fh:350px"><img src="assets/img/fig4-6-versions-table.png" alt="Comparison of the four extractor versions"></div>
-      <figcaption><b><span class="en">Figure 4.6.</span><span class="vi">Hình 4.6.</span></b> <span class="en">Comparison of the four versions (group compilation from [P, §6]).</span><span class="vi">So sánh 4 phiên bản (nhóm tổng hợp từ [P, §6]).</span></figcaption>
+      <figcaption><b><span class="en">Figure 4.5.</span><span class="vi">Hình 4.5.</span></b> <span class="en">Comparison of the four versions (group compilation from [P, §6]).</span><span class="vi">So sánh 4 phiên bản (nhóm tổng hợp từ [P, §6]).</span></figcaption>
     </figure>
     <div class="note mt xs" style="max-width:1000px;margin-left:auto;margin-right:auto"><span class="en">VersionTwo is not evaluated on its own in §7 (only its histogram in Fig. 3b), so its "still stuck" row is our remark. The paper does not say which extractor Simhadri et al. used.</span><span class="vi">VersionTwo không được đánh giá riêng ở §7 (chỉ có histogram Fig. 3b), nên dòng "còn vướng" của nó là nhận xét của nhóm. Paper không nói Simhadri dùng extractor nào.</span></div>
   </div>
