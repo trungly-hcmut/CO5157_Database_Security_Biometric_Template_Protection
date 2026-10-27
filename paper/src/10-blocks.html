@@ -416,14 +416,42 @@
 
 <!-- 4.6 -->
 <section class="slide" data-ch="4" data-sec="4.6">
-  <h2>[[The versions side by side||So sánh các phiên bản]]</h2>
+  <h2>[[The versions side by side: how far each gets on bit quality||So sánh các phiên bản: mỗi bản giải quyết chất lượng bit tới đâu]]</h2>
   <div class="s-body">
-    <figure class="fig" style="max-width:1000px;margin:0 auto">
-      <div class="fig-img" style="--fh:350px"><img src="assets/img/fig4-6-versions-table.png" alt="Comparison of the four extractor versions"></div>
-      <figcaption><b>[[Figure 4.5.||Hình 4.5.]]</b> [[Comparison of the four versions (group compilation from [P, §6]).||So sánh 4 phiên bản (nhóm tổng hợp từ [P, §6]).]]</figcaption>
-    </figure>
-    <div class="note mt xs" style="max-width:1000px;margin-left:auto;margin-right:auto">[[VersionTwo is not evaluated on its own in §7 (only its histogram in Fig. 3b), so its "still stuck" row is our remark. The paper does not say which extractor Simhadri et al. used.||VersionTwo không được đánh giá riêng ở §7 (chỉ có histogram Fig. 3b), nên dòng "còn vướng" của nó là nhận xét của nhóm. Paper không nói Simhadri dùng extractor nào.]]</div>
+    <table class="tbl sm" style="max-width:1100px;margin:0 auto">
+      <thead><tr>
+        <th style="width:16%"></th><th>ThirdEye</th><th>VersionOne</th><th>VersionTwo</th><th class="hl">VersionTwoR</th>
+      </tr></thead>
+      <tbody>
+        <tr><td class="k">[[Loss idea||Ý tưởng loss]]</td>
+          <td>[[distance (triplet)||khoảng cách (triplet)]]</td>
+          <td>[[distance <b>+ angle</b>||khoảng cách <b>+ góc</b>]]</td>
+          <td>[[similarity with a margin + penalise the most similar other eye||độ giống có margin + phạt mắt khác giống nhất]]</td>
+          <td><b>[[soft bits: same eye → 0, different eyes → 0.5||bit mềm: cùng mắt → 0, khác mắt → 0,5]]</b></td></tr>
+        <tr><td class="k">[[Optimised on||Tối ưu trên]]</td>
+          <td>[[real-valued vector||vector số thực]]</td><td>[[real-valued vector||vector số thực]]</td><td>[[real-valued vector||vector số thực]]</td>
+          <td><b>[[soft bits (tanh)||bit mềm (tanh)]]</b></td></tr>
+        <tr><td class="k">[[Low error rate||Tỉ lệ lỗi thấp]]</td>
+          <td>[[pull same eye together||kéo cùng mắt lại]]</td>
+          <td>[[+ weight c₁||+ trọng số c₁]]</td>
+          <td>[[similarity margin||margin độ giống]]</td>
+          <td>[[d<sub>H</sub> same eye → 0, <b>per-bit vote</b>||d<sub>H</sub> cùng mắt → 0, <b>bỏ phiếu theo bit</b>]]</td></tr>
+        <tr><td class="k">[[Hard to guess||Khó đoán]]</td>
+          <td>[[push other eyes away||đẩy khác mắt ra]]</td>
+          <td>[[+ spread in angle (μ<sub>IP</sub> → 0)||+ lệch góc (μ<sub>IP</sub> → 0)]]</td>
+          <td>[[penalise the most similar other eye||phạt mắt khác giống nhất]]</td>
+          <td>[[d<sub>H</sub> different eyes → <b>0.5</b>||d<sub>H</sub> khác mắt → <b>0,5</b>]]</td></tr>
+        <tr><td class="k">[[Same quality||Đều chất lượng]]</td>
+          <td>—</td>
+          <td><b>[[no → relies on ζ-sampling||không → nhờ ζ-sampling]]</b></td>
+          <td>[[not yet targeted*||chưa nhắm tới*]]</td>
+          <td><b>[[yes||có]]</b></td></tr>
+        <tr><td class="k">[[Network||Kiến trúc mạng]]</td>
+          <td>ResNet-50</td><td>DenseNet-169</td><td>EfficientNet-B0</td><td>[[EfficientNet-B0 + refinement (512)||EfficientNet-B0 + refinement (512)]]</td></tr>
+      </tbody>
+    </table>
+    <p class="xs muted" style="max-width:1100px;margin:6px auto 0">[[* Our remark — the paper does not evaluate VersionTwo on its own.||* Nhận xét của nhóm — paper không đánh giá riêng VersionTwo.]]</p>
   </div>
-  <p class="take">[[How do the two extractors compare on real numbers? → Part 5.||Hai extractor này khác nhau thế nào trên số liệu thật? → Phần 5.]]</p>
-  <p class="src">[P, §6, §7, Fig. 3]</p>
+  <p class="take">[[Read across the rows: every version improves the first two, but only VersionTwoR reaches "same quality" — which is why ClearEyes uses it. Numbers → Part 5.||Đọc theo hàng: bản nào cũng tiến ở hai hàng đầu, nhưng chỉ VersionTwoR đạt "đều chất lượng" — vì vậy ClearEyes dùng nó. Số liệu → Phần 5.]]</p>
+  <p class="src">[P, §2.1.4, §6]</p>
 </section>
