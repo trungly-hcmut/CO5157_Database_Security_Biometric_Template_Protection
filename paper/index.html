@@ -463,18 +463,22 @@
       </figure>
     </div>
     <div class="stack">
-      <div class="oldnew">
-        <div class="o"><span class="lbl"><span class="en">Old</span><span class="vi">Cách cũ</span></span><span class="en">Canetti's proof assumes every subset has the average entropy [P, §4.1.1]; Simhadri averages 10 subsets → 32 bits; bound q(q + 1)/2^ν.</span><span class="vi">Chứng minh của Canetti giả định mọi tập con có entropy bằng trung bình [P, §4.1.1]; Simhadri đo trung bình 10 tập → 32 bit; cận q(q + 1)/2^ν.</span></div>
-        <div class="n"><span class="lbl"><span class="en">The paper</span><span class="vi">Cách của paper</span></span><span class="en">ν = minᵢ H∞(W<sub>Iᵢ</sub> | Setup) — the entropy of the <b>weakest</b> subset [P, §4.1].</span><span class="vi">ν = minᵢ H∞(W<sub>Iᵢ</sub> | Setup) — entropy của tập con <b>yếu nhất</b> [P, §4.1].</span></div>
+      <div class="card flat">
+        <div class="kicker"><span class="en">① Security metric: average → minimum</span><span class="vi">① Thước đo: trung bình → min</span></div>
+        <ul class="b small tight">
+          <li><span class="en"><b>Old:</b> assumes every subset is as hard to guess as the average subset.</span><span class="vi"><b>Cách cũ:</b> giả định tập con nào cũng khó đoán như tập trung bình.</span></li>
+          <li><span class="en"><b>Paper:</b> the attacker picks the easiest subset, so security is set by the <b>weakest</b> one.</span><span class="vi"><b>Paper:</b> kẻ tấn công chọn tập dễ đoán nhất, nên bảo mật tính theo tập <b>yếu nhất</b>.</span></li>
+        </ul>
+        <div class="eq sm"><span class="f">ν = min<sub>i</sub> H∞(W<sub>Iᵢ</sub> | Setup)</span><span class="n">[P, §4.1]</span></div>
       </div>
-      <div class="eq sm"><span class="f">Adv ≤ q · 2<sup>−ν</sup></span><span class="n">(Lemma 1)</span></div>
-      <ul class="b small tight">
-        <li><span class="en"><b>Min-entropy</b> H∞(X) = −log₂ maxₓ Pr[X = x]: the bit count equivalent to guessing right in one try.</span><span class="vi"><b>Min-entropy</b> H∞(X) = −log₂ maxₓ Pr[X = x]: số bit tương đương xác suất đoán trúng trong một lần.</span></li>
-        <li><span class="en"><b>Why Lemma 1 holds:</b> a wrong guess only returns ⊥, so nothing is learnt; each try wins with at most 2^−ν, summed over q tries.</span><span class="vi"><b>Ý chính Lemma 1:</b> thử sai chỉ nhận ⊥ nên không học thêm được gì; mỗi lần thử trúng tối đa 2^−ν, cộng dồn q lần.</span></li>
-        <li><span class="en"><b>Tighter:</b> with ν = 105 and q = 2⁵³ the old bound is ≥ 1 (useless), the new one is 2^−52 → almost twice as many certified bits [P, §4.1.2].</span><span class="vi"><b>Siết cận:</b> với ν = 105, q = 2⁵³ cận cũ ≥ 1 (vô dụng), cận mới = 2^−52 → gần gấp đôi số bit được chứng nhận [P, §4.1.2].</span></li>
-        <li><span class="en"><b>Why it is sound:</b> the attacker chooses the easiest subset, so the figure that represents security must be the weakest one, not the average.</span><span class="vi"><b>Vì sao hợp lý:</b> kẻ tấn công tự chọn tập dễ đoán nhất, nên con số đại diện cho bảo mật phải là tập yếu nhất, không phải trung bình.</span></li>
-        <li><span class="en"><b>Consequence:</b> FAR := total unlocks · 2^−ν [P, §2.1.2] — Lemma 1 applied in practice; numbers in Part 5.</span><span class="vi"><b>Hệ quả:</b> FAR := tổng lượt mở · 2^−ν [P, §2.1.2] — chính là Lemma 1 áp vào thực tế; con số cụ thể ở Phần 5.</span></li>
-      </ul>
+      <div class="card flat mt">
+        <div class="kicker"><span class="en">② Bound: how likely is the attacker to win after q tries?</span><span class="vi">② Cận: thử q lần thì thắng tối đa bao nhiêu?</span></div>
+        <div class="oldnew">
+          <div class="o"><span class="lbl">Canetti</span><span class="en"><b>Assumption:</b> after q tries the attacker holds a history of answers that can take q + 1 forms, and that history may leak part of the secret. <b>Effect:</b> each try counts as (q + 1) times easier → <b>q(q + 1) / 2^ν</b>, growing like q².</span><span class="vi"><b>Giả định:</b> sau q lần thử, kẻ tấn công có một lịch sử câu trả lời với q + 1 dạng, và lịch sử đó có thể lộ một phần bí mật. <b>Hệ quả:</b> mỗi lần thử bị coi là dễ hơn (q + 1) lần → <b>q(q + 1) / 2^ν</b>, tăng theo q².</span></div>
+          <div class="n"><span class="lbl"><span class="en">The paper</span><span class="vi">Paper</span></span><span class="en"><b>Assumption:</b> the attacker stops at the first hit, so before that it only ever sees "wrong, wrong, …" — always the same, so it leaks nothing. <b>Effect:</b> every try is as hard as the first, like guessing from a fixed list → <b>q / 2^ν</b> (Lemma 1).</span><span class="vi"><b>Giả định:</b> kẻ tấn công dừng ngay khi trúng, nên trước đó chỉ thấy "sai, sai, …", lúc nào cũng như nhau, nên không lộ gì. <b>Hệ quả:</b> lần nào cũng khó như lần đầu, như đoán theo danh sách viết sẵn → <b>q / 2^ν</b> (Lemma 1).</span></div>
+        </div>
+        <p class="small mt-s"><span class="en"><b>Takeaway:</b> same system, tighter proof — the certified security nearly doubles (Figure 3.6).</span><span class="vi"><b>Chốt:</b> cùng hệ thống, chứng minh chặt hơn nên số bit bảo mật được chứng nhận gần gấp đôi (Hình 3.6).</span></p>
+      </div>
     </div>
   </div>
   <p class="src">[P, §2.1.2, §3, §4.1, §4.1.1–4.1.2, Lemma 1]</p>
