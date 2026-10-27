@@ -517,7 +517,7 @@
 
 <!-- 3.4d (2) -->
 <section class="slide" data-ch="3" data-sec="3.4d">
-  <h2><span class="en">The ζ-sampling vocabulary used in Part 5</span><span class="vi">Bộ thuật ngữ ζ-sampling dùng ở Phần 5</span></h2>
+  <h2><span class="en">(d) ζ-sampling: three ways to score each bit</span><span class="vi">(d) ζ-sampling: ba cách tính điểm cho mỗi bit</span></h2>
   <div class="s-body">
     <div class="g-5-7 ai-s">
       <div class="card flat">
@@ -533,14 +533,14 @@
         <p class="xs muted"><span class="en">sᵢ = score of bit i (right). ζ = 0: all bits equal; larger ζ: favour high scores more.</span><span class="vi">sᵢ = điểm của bit i (bên phải). ζ = 0: mọi bit như nhau; ζ lớn: càng dồn vào bit điểm cao.</span></p>
       </div>
       <div class="card flat">
-        <div class="kicker"><span class="en">② Four ways to score a bit</span><span class="vi">② Bốn cách chấm điểm bit</span></div>
+        <div class="kicker"><span class="en">② The paper's three scores (Uniform shown as the baseline)</span><span class="vi">② Ba cách tính điểm của paper (Uniform làm mốc so sánh)</span></div>
         <table class="tbl sm">
           <thead><tr><th style="width:24%"><span class="en">Method</span><span class="vi">Cách</span></th><th style="width:38%"><span class="en">Score</span><span class="vi">Điểm</span></th><th><span class="en">Looks at</span><span class="vi">Xét đến</span></th></tr></thead>
           <tbody>
-            <tr><td class="k">Uniform</td><td><span class="en">every bit equal (ζ = 0)</span><span class="vi">mọi bit như nhau (ζ = 0)</span></td><td><span class="en">nothing</span><span class="vi">không xét gì</span></td></tr>
             <tr><td class="k">LikeOnly</td><td>s<sub>i</sub> = p<sub>same,i</sub></td><td><span class="en">stability only</span><span class="vi">chỉ độ ổn định</span></td></tr>
             <tr><td class="k">UnlikeRatio</td><td>s<sub>i</sub> = p<sub>same,i</sub> / max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>}</td><td><span class="en">stable, divided by how guessable</span><span class="vi">ổn định, chia cho mức dễ đoán</span></td></tr>
             <tr><td class="k">UnlikeExp</td><td><span class="en">weight</span><span class="vi">trọng số</span> = p<sub>same,i</sub><sup>ζ / H∞(p<sub>diff,i</sub>)</sup></td><td><span class="en">stable, guessable bits punished exponentially</span><span class="vi">ổn định, bit dễ đoán bị phạt theo hàm mũ</span></td></tr>
+            <tr><td class="k">Uniform</td><td><span class="en">every bit equal (ζ = 0)</span><span class="vi">mọi bit như nhau (ζ = 0)</span></td><td><span class="en">baseline: ζ = 0, no scoring</span><span class="vi">mốc so sánh: ζ = 0, không chấm điểm</span></td></tr>
           </tbody>
         </table>
         <p class="xs muted"><span class="en">Each method can score single bits or pairs of bits (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].</span><span class="vi">Mỗi cách có thể chấm từng bit hoặc từng cặp bit (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].</span></p>
