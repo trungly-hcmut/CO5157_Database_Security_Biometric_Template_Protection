@@ -583,21 +583,22 @@
     </figure>
     <div class="stack">
       <div class="card ch">
-        <div class="kicker"><span class="en">Three wishes for the bits</span><span class="vi">3 điều ước cho bit</span></div>
+        <div class="kicker"><span class="en">What makes a good bit (the paper's terms)</span><span class="vi">Chất lượng của một bit (theo paper)</span></div>
         <ol class="n small" style="margin-top:4px">
-          <li><span class="en"><b>Stable</b> — the same eye differs little (low μ).</span><span class="vi"><b>Ổn định</b> — cùng mắt ít lệch (μ thấp).</span></li>
-          <li><span class="en"><b>Hard to guess</b> — different eyes agree ≈ 50 % of the time.</span><span class="vi"><b>Khó đoán</b> — khác mắt trùng ≈ 50%.</span></li>
-          <li><span class="en"><b>Uniform quality</b> — every bit is as good as the others.</span><span class="vi"><b>Đều chất lượng</b> — bit nào cũng tốt như nhau.</span></li>
+          <li><span class="en"><b>Low error rate</b> — two readings of the same eye rarely differ on this bit (low μ, high p<sub>same</sub>).</span><span class="vi"><b>Tỉ lệ lỗi thấp</b> (error rate) — hai ảnh cùng mắt hiếm khi lệch ở bit này (μ thấp, p<sub>same</sub> cao).</span></li>
+          <li><span class="en"><b>Unpredictability</b> — different eyes agree on it about half the time (p<sub>diff</sub> ≈ ½).</span><span class="vi"><b>Khó đoán</b> (unpredictability) — hai mắt khác nhau trùng bit này khoảng một nửa số lần (p<sub>diff</sub> ≈ ½).</span></li>
+          <li><span class="en"><b>Same quality</b> — every bit is about as good as the others, so any subset works.</span><span class="vi"><b>Đều chất lượng</b> (same quality) — bit nào cũng tốt gần như nhau, rút tập con nào cũng ổn.</span></li>
         </ol>
+        <p class="xs muted"><span class="en">"…of the same quality from the perspective of error rate and unpredictability"</span><span class="vi">"…cùng chất lượng xét theo error rate và unpredictability"</span> [P, §2.1.1]</p>
       </div>
       <ul class="b small tight">
-        <li><span class="en">Bridge from Part 3: ζ-sampling only chooses among existing bits; to do better, make better bits.</span><span class="vi">Cầu nối từ Phần 3: ζ-sampling chỉ chọn được trong số bit có sẵn; muốn tốt hơn phải làm ra bit tốt hơn.</span></li>
+        <li><span class="en">Bridge from Part 3: ζ-sampling only picks among the bits the extractor produced; to do better, produce better bits — Block A.</span><span class="vi">Cầu nối từ Phần 3: ζ-sampling chỉ chọn lọc trong số bit mà extractor tạo ra; muốn tốt hơn phải làm ra bit tốt hơn — Khối A.</span></li>
         <li><span class="en">Example, k = 100: μ = 0.3 → 0.7¹⁰⁰ ≈ 2^−51; μ = 0.1 → 0.9¹⁰⁰ ≈ 2^−15. A small drop in μ makes lockers <b>exponentially</b> easier to open.</span><span class="vi">Ví dụ k = 100: μ = 0,3 → 0,7¹⁰⁰ ≈ 2^−51; μ = 0,1 → 0,9¹⁰⁰ ≈ 2^−15. Giảm μ một chút → locker dễ mở hơn <b>theo hàm mũ</b>.</span></li>
-        <li><span class="en"><b>Why not PCA/ICA:</b> they only remove pairwise correlation, while iris bits correlate in larger groups [P, §1.0.1] → the paper trains a CNN aimed directly at the three wishes.</span><span class="vi"><b>Vì sao không dùng PCA/ICA:</b> chỉ xoá tương quan theo cặp, còn tương quan giữa các bit iris nằm ở nhóm nhiều bit [P, §1.0.1] → paper huấn luyện CNN nhắm thẳng vào 3 điều ước.</span></li>
+        <li><span class="en">The paper's own words: "the dependence between feature-extractor mean error rate and k is exponential" [P, §2.1.2].</span><span class="vi">Paper nói thẳng: "sự phụ thuộc giữa tỉ lệ lỗi trung bình của feature extractor và k là theo hàm mũ" [P, §2.1.2].</span></li>
       </ul>
     </div>
   </div>
-  <p class="src">[P, §1.0.1, §2.1.2]</p>
+  <p class="src">[P, §2.1.1, §2.1.2]</p>
 </section>
 
 <!-- 4.2 -->
