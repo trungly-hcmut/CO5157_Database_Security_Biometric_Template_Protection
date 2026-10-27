@@ -527,7 +527,6 @@
             <tr><td class="k">Like / Unlike</td><td><span class="en">pair of readings of the <b>same</b> eye / of <b>different</b> eyes</span><span class="vi">cặp ảnh <b>cùng</b> mắt / <b>khác</b> mắt</span></td></tr>
             <tr><td class="k">p<sub>same,i</sub></td><td><span class="en">Pr[bit i is the same on two readings of one eye] → <b>stability</b></span><span class="vi">Pr[bit i giống nhau ở 2 ảnh cùng mắt] → độ <b>ổn định</b></span></td></tr>
             <tr><td class="k">p<sub>diff,i</sub></td><td><span class="en">Pr[bit i differs between two different eyes] → <b>hard to guess</b> when near ½</span><span class="vi">Pr[bit i khác nhau giữa 2 mắt khác nhau] → <b>khó đoán</b> khi gần ½</span></td></tr>
-            <tr><td class="k">H∞(p<sub>diff,i</sub>)</td><td><span class="en">= −log₂ max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>}: how many bits of unpredictability bit i gives (1 at best)</span><span class="vi">= −log₂ max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>}: bit i khó đoán bao nhiêu bit (tối đa 1)</span></td></tr>
           </tbody>
         </table>
         <div class="eq sm mt-s"><span class="f">Pr&#91;<span class="en">pick</span><span class="vi">chọn</span> bit i&#93; = s<sub>i</sub><sup>ζ</sup> / Σ<sub>j</sub> s<sub>j</sub><sup>ζ</sup></span><span class="n">[P, §2.1.3]</span></div>
@@ -545,6 +544,11 @@
           </tbody>
         </table>
         <p class="xs muted"><span class="en">Each method can score single bits or pairs of bits (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].</span><span class="vi">Mỗi cách có thể chấm từng bit hoặc từng cặp bit (p<sub>same,i,j</sub>, p<sub>diff,i,j</sub>) [P, §6.3, Table 2].</span></p>
+        <table class="tbl sm mt-s">
+          <tbody>
+            <tr><td class="k">H∞(p<sub>diff,i</sub>)</td><td><span class="en"><b>min-entropy of bit i alone</b> (the §3 definition applied to one bit):<br>① chance of guessing bit i right = max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>}<br>② H∞ = −log₂(that chance) — 1 bit at best (coin flip), near 0 if almost everyone has the same value.<br><span class="muted">The paper uses it "to incorporate the entropy represented by each feature" [P, §2.1.3].</span></span><span class="vi"><b>min-entropy của riêng bit i</b> (định nghĩa ở §3 áp cho 1 bit):<br>① xác suất đoán trúng bit i = max{p<sub>diff,i</sub>, 1 − p<sub>diff,i</sub>}<br>② H∞ = −log₂(xác suất đó) — tối đa 1 bit (như tung đồng xu), gần 0 nếu mọi người gần như cùng giá trị.<br><span class="muted">Paper dùng nó để "đưa entropy của từng bit vào" UnlikeRatio và UnlikeExp [P, §2.1.3].</span></span></td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
     <div class="card ch small mt">
