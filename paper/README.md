@@ -31,6 +31,8 @@ Hoặc mở `index.html` bằng trình duyệt, không cần build hay server.
 
 **Tải PowerPoint:** nút hình màn chiếu trên thanh công cụ tải file `.pptx` theo ngôn ngữ đang chọn (`assets/pptx/G3-Fuzzy-Extractors-are-Practical-EN.pptx` / `-VI.pptx`). Mỗi slide là ảnh chụp 1920×1080 của bản web nên giống hệt, nhưng chữ trên slide không sửa được; nội dung chữ nằm trong phần ghi chú (notes), kể cả các câu trả lời Q&A. Mỗi câu ôn tập có 2 slide (câu hỏi, rồi đáp án). Slide clip demo chứa video MP4, bấm vào để phát trong PowerPoint hoặc Keynote (Google Slides không phát video nhúng trong file .pptx).
 
+**Script thuyết trình:** [`script.html`](script.html) — script tiếng Việt cho Phần 5 (Thực nghiệm), đọc trên điện thoại được; online tại `…/paper/script.html`. Trang [`hieu-nhanh.html`](hieu-nhanh.html) giải thích Phần 5 bằng lời thường (10 phút) để đọc trước script. Script Phần 6 (Demo), viết bằng lời thường: [`script-phan6.html`](script-phan6.html).
+
 **Clip demo (phần 6.2):** phát lại một lần chạy thật của feap-demo (output và thời gian thật, đoạn chờ dài hơn 1 s tua nhanh ×4, có ghi chú trên màn hình). Bấm vào một chương trên thanh tiến trình để nhảy tới. Bản video nằm ở `assets/video/feap-demo-en.mp4` và `feap-demo-vi.mp4`. Ghi lại lần chạy mới: trong `feap-demo/` chạy `python3 scripts/record_demo.py ../g3-btp-slides/paper` (cập nhật `assets/js/demo-cast.js`; các con số trong clip tự lấy theo bản ghi mới).
 
 ## Chỉnh sửa nội dung

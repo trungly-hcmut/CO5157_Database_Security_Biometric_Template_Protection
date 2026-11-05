@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Script phần 5 · Nhóm 3</title>
+<meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f131b" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Cpath d='M9 10h14M9 16h14M9 22h9' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f7fb;
+  --surface: #ffffff;
+  --surface-2: #eef1f6;
+  --ink: #0f172a;
+  --ink-2: #3f4a5e;
+  --muted: #687389;
+  --line: #e1e6ef;
+  --accent: #4f46e5;
+  --accent-soft: #e8e7fd;
+  --cue: #0f766e;
+  --cue-soft: #ddf0ec;
+  --warn: #b45309;
+  --warn-soft: #fdf1df;
+  --fs: 19px;
+  --font: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f131b; --surface: #161b25; --surface-2: #1d2430; --ink: #e8eaef; --ink-2: #b6bcc8;
+    --muted: #828a98; --line: #2a3240; --accent: #a5b4fc; --accent-soft: rgba(165, 180, 252, .14);
+    --cue: #2dd4bf; --cue-soft: rgba(45, 212, 191, .12); --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, .12);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f131b; --surface: #161b25; --surface-2: #1d2430; --ink: #e8eaef; --ink-2: #b6bcc8;
+  --muted: #828a98; --line: #2a3240; --accent: #a5b4fc; --accent-soft: rgba(165, 180, 252, .14);
+  --cue: #2dd4bf; --cue-soft: rgba(45, 212, 191, .12); --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, .12);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 112px; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: var(--fs);
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+}
+b { font-weight: 700; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+
+/* ---------- top bar ---------- */
+.top {
+  position: sticky; top: 0; z-index: 10;
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  padding-top: env(safe-area-inset-top);
+}
+.top-row { display: flex; align-items: center; gap: 8px; padding: 10px 0 6px; }
+.top-title { flex: 1; min-width: 0; font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top-title span { color: var(--muted); font-weight: 500; }
+.tb {
+  flex: none; height: 36px; min-width: 36px; padding: 0 10px;
+  border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+  color: var(--ink-2); font: 700 14px var(--font); cursor: pointer;
+}
+.tb[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 10px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chips a {
+  flex: none; text-decoration: none; color: var(--ink-2);
+  font-size: 14px; font-weight: 600; padding: 6px 12px;
+  border-radius: 999px; background: var(--surface-2); border: 1px solid transparent;
+}
+.chips a.cur { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+/* ---------- content ---------- */
+header.intro { padding: 22px 0 6px; }
+header.intro h1 { font-size: 1.5em; line-height: 1.2; margin: 0 0 6px; letter-spacing: -.02em; }
+header.intro p { margin: 0; color: var(--muted); font-size: .8em; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; font-size: .72em; }
+.legend span { padding: 3px 10px; border-radius: 999px; }
+
+section.part { padding: 18px 0 8px; border-bottom: 1px solid var(--line); }
+section.part:last-of-type { border-bottom: 0; }
+.part-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.num {
+  flex: none; font: 700 .7em var(--mono); color: #fff; background: var(--accent);
+  padding: 3px 9px; border-radius: 8px;
+}
+:root[data-theme="dark"] .num { color: #0f131b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .num { color: #0f131b; } }
+.part h2 { font-size: 1.12em; line-height: 1.3; margin: 0; letter-spacing: -.01em; }
+.time { font-size: .7em; color: var(--muted); margin: 0 0 10px; }
+.part p { margin: 0 0 14px; }
+.cue {
+  display: block; margin: 6px 0 10px; padding: 6px 12px;
+  font-size: .76em; font-weight: 600; line-height: 1.45;
+  color: var(--cue); background: var(--cue-soft); border-radius: 8px;
+}
+.cue::before { content: '▸ '; }
+.key { background: var(--accent-soft); color: var(--accent); padding: 0 4px; border-radius: 4px; font-weight: 700; }
+.num-s { font-family: var(--mono); font-size: .92em; font-weight: 700; }
+.box {
+  margin: 4px 0 16px; padding: 12px 14px; border-radius: 12px;
+  background: var(--surface); border: 1px solid var(--line); font-size: .86em;
+}
+.box h3 { margin: 0 0 6px; font-size: .95em; }
+.box ul { margin: 0; padding-left: 1.1em; }
+.box li { margin-bottom: 6px; }
+.box.warn { border-left: 4px solid var(--warn); }
+
+.gist {
+  margin: 4px 0 14px; padding: 10px 14px; border-radius: 10px;
+  background: var(--accent-soft); color: var(--ink); font-weight: 700; font-size: .86em; line-height: 1.5;
+}
+.gist::before { content: 'Ý chính · '; color: var(--accent); }
+p.bridge {
+  margin: 16px 0 6px; padding: 10px 14px; border-left: 4px solid var(--accent);
+  background: var(--surface); border-radius: 0 10px 10px 0; font-style: italic;
+}
+p.bridge::before { content: '→ '; font-style: normal; font-weight: 800; color: var(--accent); }
+p.opt { color: var(--muted); }
+p.opt::before {
+  content: 'có thể bỏ'; display: inline-block; margin-right: 8px; padding: 0 7px; border-radius: 6px;
+  font-size: .62em; font-weight: 700; vertical-align: .15em; background: var(--surface-2); color: var(--muted);
+}
+p.note::before {
+  content: 'nhóm nhận xét'; display: inline-block; margin-right: 8px; padding: 0 7px; border-radius: 6px;
+  font-size: .62em; font-weight: 700; vertical-align: .15em; background: var(--warn-soft); color: var(--warn);
+}
+p.opt.note::before { content: 'nhóm nhận xét · có thể bỏ'; }
+ol.chain { margin: 0 0 6px; padding-left: 1.3em; font-size: .9em; }
+ol.chain li { margin-bottom: 10px; padding-left: 4px; }
+ol.chain li::marker { color: var(--accent); font-weight: 800; }
+ol.chain i { color: var(--accent); }
+.lg-gist { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.lg-cue { background: var(--cue-soft); color: var(--cue); font-weight: 600; }
+.lg-key { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.lg-opt { background: var(--surface-2); color: var(--muted); }
+.lg-note { background: var(--warn-soft); color: var(--warn); font-weight: 600; }
+.lg-bridge { border-left: 3px solid var(--accent); background: var(--surface); font-style: italic; }
+
+/* ---------- numbers to remember ---------- */
+.nums { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; font-size: .86em; }
+.nums dt { font: 700 .95em var(--mono); color: var(--accent); white-space: nowrap; }
+.nums dd { margin: 0; color: var(--ink-2); }
+
+/* ---------- glossary ---------- */
+details.grp { margin: 0 0 10px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+details.grp summary {
+  cursor: pointer; list-style: none; padding: 12px 14px; font-weight: 700; font-size: .9em;
+  display: flex; justify-content: space-between; align-items: center;
+}
+details.grp summary::-webkit-details-marker { display: none; }
+details.grp summary::after { content: '+'; font: 700 1.2em var(--mono); color: var(--accent); }
+details.grp[open] summary::after { content: '−'; }
+dl.gl { margin: 0; padding: 0 14px 6px; font-size: .82em; }
+dl.gl > div { padding: 10px 0; border-top: 1px solid var(--line); }
+dl.gl dt { font-weight: 800; color: var(--accent); }
+dl.gl dt small { font-weight: 600; color: var(--ink); margin-left: 6px; font-size: .95em; }
+dl.gl dd { margin: 2px 0 0; color: var(--ink-2); }
+
+.foot { text-align: center; color: var(--muted); font-size: .7em; padding: 24px 0 calc(40px + env(safe-area-inset-bottom)); }
+.foot a { color: var(--accent); }
+</style>
+<script>
+  try {
+    var t = localStorage.getItem('g3script:theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+    var f = localStorage.getItem('g3script:fs'); if (f) document.documentElement.style.setProperty('--fs', f + 'px');
+  } catch (e) {}
+</script>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <div class="top-title">Script phần 5 · Thực nghiệm <span>· Lý Minh Trung</span></div>
+      <button class="tb" id="fs-dn" aria-label="Giảm cỡ chữ">A−</button>
+      <button class="tb" id="fs-up" aria-label="Tăng cỡ chữ">A+</button>
+      <button class="tb" id="theme" aria-label="Sáng / tối">◐</button>
+      <button class="tb" id="wake" aria-pressed="false" aria-label="Giữ màn hình sáng" title="Giữ màn hình sáng">☀︎</button>
+    </div>
+    <nav class="chips" id="chips">
+      <a href="#mach">Mạch</a>
+      <a href="#mo-dau">Mở đầu</a>
+      <a href="#s1">5.1 Dữ liệu</a>
+      <a href="#s2">5.1 EntTest</a>
+      <a href="#s3">5.1 TAR</a>
+      <a href="#s4">5.2 Tấn công</a>
+      <a href="#s5">5.3 VersionOne</a>
+      <a href="#s6">5.3 VersionTwoR</a>
+      <a href="#s7">5.4 Điểm cuối</a>
+      <a href="#s8">5.5 So sánh</a>
+      <a href="#so">Số cần nhớ</a>
+      <a href="#hoi">Câu hỏi</a>
+      <a href="#thuat-ngu">Thuật ngữ</a>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap">
+  <header class="intro">
+    <h1>Script trình bày Phần 5 — Thực nghiệm và kết quả</h1>
+    <p>Slide 29 → 37 · 8 slide nội dung + 1 slide mở phần<br>Toàn bộ ≈ 6 phút 25 giây · bỏ các câu mờ còn ≈ 5 phút 05 giây (khung của nhóm: 6 phút)</p>
+    <p style="margin-top:10px"><a href="hieu-nhanh.html" style="color:var(--accent);font-weight:700">Đọc thấy khó? Mở "Hiểu nhanh Phần 5" trước (10 phút) →</a> · <a href="script-phan6.html" style="color:var(--accent);font-weight:700">Script Phần 6 →</a></p>
+    <div class="legend">
+      <span class="lg-gist">Ý chính của slide</span>
+      <span class="lg-cue">▸ chỉ vào đâu trên slide</span>
+      <span class="lg-key">từ khoá cần nhấn</span>
+      <span class="lg-note">ý của nhóm, không phải của paper</span>
+      <span class="lg-opt">câu có thể bỏ</span>
+      <span class="lg-bridge">→ câu nối sang slide sau</span>
+    </div>
+  </header>
+
+  <section class="part" id="mach">
+    <div class="part-head"><span class="num">≡</span><h2>Mạch trình bày — đọc cái này trước</h2></div>
+    <p class="time">Phần 5 trả lời bằng số liệu đúng hai câu hỏi của Phần 3: khoá mạnh bao nhiêu bit, và người thật mở được bao nhiêu phần trăm. Mỗi slide trả lời câu hỏi mà slide trước để lại.</p>
+    <ol class="chain">
+      <li><b>Nối từ Tú:</b> ba tiêu chí của slide 4.6 sẽ thành ba con số: <b>khó đoán</b> → histogram sát 0,5 (5.1), <b>đều chất lượng</b> → tương quan 0,83 vs 0,14 (5.3), <b>tỉ lệ lỗi</b> → μ 0,32 → 0,08 (5.5).</li>
+      <li><b>Dữ liệu:</b> 3 tập tách rời, mọi con số đo trên 162 mắt mô hình chưa thấy. <i>Vậy 105 bit đo bằng cách nào?</i></li>
+      <li><b>EntTest:</b> độ hẹp của histogram khác mắt → số "đồng xu độc lập" → min-entropy, đo riêng từng tập con. <i>Còn phía người dùng thật?</i></li>
+      <li><b>TAR:</b> tỉ lệ ảnh thật mở được ít nhất 1 locker; quét cả lưới k, ζ. <i>Kết quả phía kẻ tấn công ra sao?</i></li>
+      <li><b>Phía tấn công:</b> đo bằng min thì mất ~5 bit, lọc tập yếu lấy lại → <b>105 bit</b>. <i>Người thật có mở được không?</i></li>
+      <li><b>VersionOne:</b> ζ-sampling giúp, nhưng trần chỉ ~40 bit. <i>Vậy 105 bit từ đâu ra?</i></li>
+      <li><b>VersionTwoR:</b> trục entropy kéo tới ~120 bit, mọi cách chọn bằng nhau → <b>extractor mới là nguồn của 105 bit</b>. <i>Nhưng một ảnh chỉ mở được 64%?</i></li>
+      <li><b>Điểm cuối:</b> 3 ảnh đăng ký + 2 ảnh xác thực → <b>92%</b>, đổi lại chậm hơn. <i>So với công trình trước thì sao?</i></li>
+      <li><b>So sánh:</b> 26 bit, 204 giây → 105 bit, 0,2 giây; gốc là μ giảm 0,32 → 0,08 → sang <b>Phần 6</b>: em tự chạy lại để kiểm chứng.</li>
+    </ol>
+  </section>
+
+  <section class="part" id="mo-dau">
+    <div class="part-head"><span class="num">→</span><h2>Mở đầu — nhận lời từ Tú (slide 29, mở Phần 5)</h2></div>
+    <p class="time">≈ 15 giây</p>
+    <p>Cảm ơn Tú. Tú vừa so các phiên bản theo ba tiêu chí: <b>tỉ lệ lỗi thấp</b>, <b>khó đoán</b> và <b>đều chất lượng</b>. Phần 5 em đưa số liệu thật cho các tiêu chí đó, qua hai câu hỏi của Phần 3: <span class="key">khoá mạnh bao nhiêu bit</span>, và <span class="key">người thật mở được bao nhiêu phần trăm</span>.</p>
+  </section>
+
+  <section class="part" id="s1">
+    <div class="part-head"><span class="num">5.1</span><h2>Dữ liệu và cách chia</h2></div>
+    <p class="time">Slide 30 · ≈ 40 giây · bỏ câu mờ còn ≈ 30 giây</p>
+    <div class="gist">Ba tập tách rời nhau; mọi con số phía sau đều đo trên 162 mắt mà mô hình chưa từng thấy.</div>
+    <span class="cue">Chỉ vào dòng đầu bên trái (IITD)</span>
+    <p>Paper dùng bộ <b>IIT Delhi</b>: <span class="num-s">224</span> người, <span class="num-s">2.240</span> ảnh mống mắt chụp hồng ngoại gần. Mắt trái và mắt phải được tính là hai sinh trắc riêng.</p>
+    <span class="cue">Chỉ vào bảng ba tập bên phải</span>
+    <p>Có ba tập, và <span class="key">không mắt nào nằm ở hai tập</span>: mắt trái để huấn luyện extractor; <span class="num-s">40</span> mắt phải, gọi là <b>stats_W</b>, để tính thống kê bit cho ζ-sampling; <span class="num-s">162</span> mắt phải còn lại để đo.</p>
+    <p class="opt note">IITD có 211 mắt phải nhưng paper chỉ chia 202; nhiều khả năng 9 mắt bị loại khi lọc ảnh, paper không nói rõ.</p>
+    <p>Nên <span class="key">mọi con số sắp xem đều đo trên 162 mắt mà mô hình chưa từng thấy</span>.</p>
+    <p class="bridge">Vậy con số 105 bit được đo bằng cách nào?</p>
+  </section>
+
+  <section class="part" id="s2">
+    <div class="part-head"><span class="num">5.1</span><h2>Đo bảo mật bằng EntTest</h2></div>
+    <p class="time">Slide 31 · ≈ 45 giây</p>
+    <div class="gist">Histogram khác mắt càng hẹp và càng sát 0,5 thì càng nhiều "đồng xu độc lập", tức càng nhiều bit; paper đo như vậy cho từng tập con.</div>
+    <span class="cue">Chỉ vào histogram đỏ ở hình bên phải</span>
+    <p>Ý tưởng của Daugman: so hai mắt khác nhau thì mỗi bit giống một lần tung đồng xu, nên khoảng cách Hamming tập trung quanh <span class="num-s">0,5</span>. Histogram màu đỏ chính là khoảng cách đó.</p>
+    <span class="cue">Chỉ vào công thức (5), rồi ô "Ví dụ tính tay"</span>
+    <p>Histogram càng hẹp thì càng nhiều đồng xu độc lập, đó là bậc tự do <b>dF</b>, và từ dF ra <span class="key">min-entropy</span>. Ví dụ σ bằng <span class="num-s">0,046</span> thì được khoảng <span class="num-s">118</span> bit. Paper đo <span class="key">riêng cho từng tập con</span>.</p>
+    <span class="cue">So hai hình: trên VersionOne, dưới VersionTwoR</span>
+    <p>Đây cũng là tiêu chí <span class="key">khó đoán</span> của Tú: VersionOne có histogram rộng, lệch về 0,3; VersionTwoR hẹp và nằm đúng 0,5.</p>
+    <p>Đây là <b>giả định thống kê duy nhất</b> của paper. Công cụ NIST còn cho số cao hơn, nên 105 là con số thận trọng.</p>
+    <p class="bridge">Còn phía người dùng thật thì đo bằng TAR.</p>
+  </section>
+
+  <section class="part" id="s3">
+    <div class="part-head"><span class="num">5.1</span><h2>Đo phía người dùng thật: TAR và lưới tham số</h2></div>
+    <p class="time">Slide 32 · ≈ 45 giây · bỏ câu mờ còn ≈ 35 giây</p>
+    <div class="gist">TAR là tỉ lệ ảnh thật mở được ít nhất một locker; paper quét cả một lưới k và ζ để tìm điểm cân bằng.</div>
+    <span class="cue">Khung xanh bên trái, đi theo 3 bước</span>
+    <p>Mỗi mắt lấy một ảnh làm ảnh đăng ký, các ảnh còn lại làm truy vấn. Truy vấn thành công nếu <span class="key">mở được ít nhất một locker</span>, tức có một tập con trùng hoàn toàn.</p>
+    <p class="opt">Paper so bit trực tiếp, không chạy HMAC thật, nên quét được rất nhiều cấu hình.</p>
+    <span class="cue">Khung "Lưới tham số"</span>
+    <p>Paper quét k từ <span class="num-s">40</span> đến <span class="num-s">140</span> và mười giá trị ζ. Cấu hình tốt thì chạy 250 nghìn tập con, rồi <span class="key">giữ 200 nghìn tập có entropy cao nhất</span>.</p>
+    <span class="cue">Ô vàng nét đứt bên phải</span>
+    <p class="opt note">Tập test chỉ có 162 mắt, nên chênh một, hai điểm phần trăm TAR giữa hai cấu hình là nằm trong sai số.</p>
+    <p>Vậy: <span class="key">105 bit đo trên tập con yếu nhất</span>, còn <span class="key">TAR là tỉ lệ người thật mở được</span>.</p>
+    <p class="bridge">Giờ đến kết quả, trước hết là phía kẻ tấn công.</p>
+  </section>
+
+  <section class="part" id="s4">
+    <div class="part-head"><span class="num">5.2</span><h2>Phía kẻ tấn công: đo bằng min mất ~5 bit, lọc tập yếu lấy lại</h2></div>
+    <p class="time">Slide 33 · ≈ 55 giây · bỏ câu mờ còn ≈ 40 giây</p>
+    <div class="gist">Đo bằng tập yếu nhất làm con số khiêm tốn hơn khoảng 5 bit, nhưng bỏ đi 50 nghìn tập yếu thì lấy lại 5 bit đó gần như miễn phí.</div>
+    <span class="cue">Bảng Table 4: cột Min, rồi cột Avg</span>
+    <p>Em đọc bảng theo ba xu hướng. Một, <b>k càng lớn thì entropy càng cao</b>, vì kẻ tấn công phải đoán đúng nhiều bit hơn.</p>
+    <p>Hai, quan trọng nhất: ở mọi dòng, <span class="key">Min thấp hơn Avg 4 đến 6 bit</span>. Kẻ tấn công nhắm vào tập yếu nhất, nên phải báo min. Báo trung bình như Simhadri là thổi phồng khoảng 5 bit.</p>
+    <span class="cue">Hai cột "giữ 200K tốt nhất", dòng tô vàng</span>
+    <p>Ba, bỏ 50 nghìn tập yếu nhất thì min tăng 3 đến 5 bit, từ <span class="num-s">100</span> lên <span class="num-s">105</span>, mà TAR chỉ giảm 0,01 đến 0,02. Kết quả: <span class="key">105 bit</span>, FAR ước lượng khoảng 2 mũ trừ 84.</p>
+    <span class="cue">Ô vàng nét đứt</span>
+    <p class="opt note">Hai lưu ý của nhóm. 200 nghìn tập tốt nhất được chọn trên chính tập test, nên 105 có thể hơi lạc quan, dù demo của nhóm vẫn ra 105,4 bit trên dữ liệu khác. Và FAR quan sát bằng 0 chỉ chứng minh được cỡ 2 mũ trừ 13; con số 84 bit đến từ EntTest.</p>
+    <p class="bridge">Khoá mạnh 105 bit. Còn người thật có mở được không?</p>
+  </section>
+
+  <section class="part" id="s5">
+    <div class="part-head"><span class="num">5.3</span><h2>Phía người dùng thật, VersionOne: ζ-sampling có ích</h2></div>
+    <p class="time">Slide 34 · ≈ 35 giây · bỏ câu mờ còn ≈ 30 giây</p>
+    <div class="gist">Với extractor cũ, chọn bit thông minh giúp được: cùng TAR mà nhiều entropy hơn. Nhưng trần chỉ khoảng 40 bit.</div>
+    <span class="cue">Fig. 4: giải thích hai trục trước</span>
+    <p>Trục ngang là entropy, trục dọc là TAR, mỗi điểm là một cấu hình. Mọi điểm đi xuống: <span class="key">càng nhiều bit bảo mật thì TAR càng thấp</span>.</p>
+    <span class="cue">Dòng tô vàng của Table 2 (mức 28 bit)</span>
+    <p>VersionOne chưa đều chất lượng nên phải nhờ ζ-sampling, và nó có tác dụng: ở mức <span class="num-s">28</span> bit, chọn đều chỉ còn TAR <span class="num-s">0,22</span>, còn UnlikeRatio đạt <span class="num-s">0,47</span>, <span class="key">gấp đôi</span>.</p>
+    <span class="cue">Fig. 5</span>
+    <p class="opt">Fig. 5: tăng số tập con thì chọn đều dễ vớ phải tập yếu, còn ζ-sampling giữ entropy tốt hơn.</p>
+    <p>Nhưng VersionOne tối đa chỉ khoảng <span class="num-s">40</span> bit, còn rất xa 105.</p>
+    <p class="bridge">Vậy 105 bit đến từ đâu? Từ extractor mới.</p>
+  </section>
+
+  <section class="part" id="s6">
+    <div class="part-head"><span class="num">5.3</span><h2>Phía người dùng thật, VersionTwoR: extractor mới thay đổi bức tranh</h2></div>
+    <p class="time">Slide 35 · ≈ 45 giây · bỏ câu mờ còn ≈ 35 giây</p>
+    <div class="gist">Với VersionTwoR, trục entropy kéo tới ~120 bit và mọi cách chọn bit cho kết quả như nhau: cái làm nên 105 bit là extractor, không phải ζ.</div>
+    <span class="cue">Fig. 6, so với Fig. 4 vừa xem</span>
+    <p>Cùng kiểu hình đó với VersionTwoR, có hai thay đổi: trục ngang kéo tới khoảng <span class="num-s">120</span> bit thay vì 45, và <span class="key">bốn cách chọn chồng lên nhau</span>.</p>
+    <span class="cue">Dòng tô vàng của Table 3 (≥ 100 bit)</span>
+    <p>Ở mức 100 bit, cả ba cách đều cho TAR khoảng <span class="num-s">0,65</span>. Lý do là tiêu chí <span class="key">đều chất lượng</span> của Tú: bit tốt ở stats_W có còn tốt ở tập test không? VersionOne tương quan <span class="num-s">0,83</span>, VersionTwoR chỉ <span class="num-s">0,14</span>, nên ζ không còn gì để chọn.</p>
+    <span class="cue">Ô vàng nét đứt</span>
+    <p class="opt note">Ở dòng này cấu hình tốt nhất là ζ bằng 0, tức chọn đều; demo của nhóm cũng cho kết quả như vậy.</p>
+    <p>Tóm lại: <span class="key">ζ-sampling cứu extractor yếu, còn extractor tốt thì chọn đều là đủ</span>.</p>
+    <p class="bridge">Nhưng một ảnh chỉ mở được khoảng 64%. Làm sao lên 92%?</p>
+  </section>
+
+  <section class="part" id="s7">
+    <div class="part-head"><span class="num">5.4</span><h2>Điểm vận hành cuối: 105 bit, 92% với 3 + 2 ảnh</h2></div>
+    <p class="time">Slide 36 · ≈ 50 giây · bỏ câu mờ còn ≈ 35 giây</p>
+    <div class="gist">92% không đến từ một ảnh tốt hơn, mà từ việc cho 3 ảnh đăng ký và 2 ảnh xác thực cùng thử; đổi lại Gen chậm 3 lần, Rep chậm 6 lần.</div>
+    <span class="cue">Hàng tiêu đề Table 5: giải thích ký hiệu 3–2</span>
+    <p>Paper cho <b>chụp nhiều lần</b>: 5 ảnh chia giữa đăng ký và xác thực, "3–2" là 3 ảnh đăng ký, 2 ảnh xác thực. Chỉ cần <span class="key">một cặp bất kỳ mở được locker</span>.</p>
+    <p>Làm được vì sample-then-lock dùng lại được: mỗi ảnh đăng ký có bộ locker riêng nhưng cùng khoá một Key.</p>
+    <span class="cue">Dòng k = 115, ô tô vàng</span>
+    <p>Với k bằng 115: một ảnh đạt <span class="num-s">0,64</span>, 3–2 lên <span class="num-s">0,92</span>. Đây là cấu hình cuối, <b>ClearEyes-M</b>: <span class="key">105 bit, TAR 92%</span>. Cái giá: đăng ký chậm 3 lần, xác thực chậm 6 lần.</p>
+    <span class="cue">Ô vàng nét đứt</span>
+    <p class="opt note">Cùng 5 ảnh nhưng 3–2 tốt hơn hẳn 1–4, 0,92 so với 0,82: nếu ảnh đăng ký duy nhất bị xấu thì mọi cặp đều hỏng.</p>
+    <p class="opt">Nếu chấp nhận 83 bit, cấu hình k bằng 90 đạt TAR 0,98, vượt ngưỡng của NIST là 95% và của FIDO là 97%.</p>
+    <p class="bridge">Giờ đặt cạnh công trình trước, xem paper tiến được bao xa.</p>
+  </section>
+
+  <section class="part" id="s8">
+    <div class="part-head"><span class="num">5.5</span><h2>Từ 26 bit, 204 giây lên 105 bit, 0,2 giây</h2></div>
+    <p class="time">Slide 37 · ≈ 55 giây · bỏ câu mờ còn ≈ 40 giây</p>
+    <div class="gist">Cùng cơ chế sample-then-lock, nhưng đo đúng cách, chọn tập con toàn cục và extractor tốt hơn đã đưa nó từ 26 bit, 204 giây lên 105 bit, 0,2 giây.</div>
+    <span class="cue">Dòng tô vàng "Bảo mật (bit)"</span>
+    <p>Simhadri tự báo <span class="num-s">32</span> bit, đo lại đúng cách chỉ còn <span class="num-s">26</span>. ClearEyes đạt <span class="num-s">105</span>, <span class="key">hơn khoảng 79 bit</span>.</p>
+    <span class="cue">Các dòng dung lượng và thời gian</span>
+    <p>Các chỉ số khác cũng tốt hơn: helper data từ <span class="num-s">96</span> MB xuống <span class="num-s">7</span> MB, đăng ký từ <span class="num-s">204</span> giây xuống <span class="num-s">0,2</span> giây, đo trên một luồng của laptop.</p>
+    <span class="cue">Dòng "Tỉ lệ lỗi bit μ"</span>
+    <p>Gốc của mọi cải thiện là tiêu chí thứ ba của Tú: <span class="key">tỉ lệ lỗi bit μ giảm từ 0,32 xuống 0,08</span>, nên mỗi locker dễ mở hơn khoảng 2 mũ 11 lần, dù tập con dài gần gấp 3.</p>
+    <span class="cue">Ô vàng nét đứt</span>
+    <p class="opt note">Theo bảng, người thật kỳ vọng mở được khoảng 32 locker, vậy mà TAR chỉ 64%. Lý do là lỗi không đều giữa các lần chụp: một ảnh xấu thì không locker nào mở. Phần demo sẽ cho thấy đúng điều này.</p>
+    <p class="bridge">Đó là các con số của paper. Phần tiếp theo, em chạy lại chính code của tác giả để kiểm chứng.</p>
+  </section>
+
+  <section class="part" id="so">
+    <div class="part-head"><span class="num">#</span><h2>Số cần nhớ</h2></div>
+    <p class="time">Không cần thuộc bảng, chỉ cần các số này.</p>
+    <div class="box">
+      <dl class="nums">
+        <dt>162</dt><dd>mắt phải trong tập test (40 mắt cho stats_W, mắt trái để huấn luyện)</dd>
+        <dt>0,5 · 0,046 → 118</dt><dd>ví dụ EntTest: μ, σ → khoảng 118 bit</dd>
+        <dt>106 vs 100</dt><dd>trung bình vs tập yếu nhất (k = 115) → đo bằng min mất ~5 bit</dd>
+        <dt>100 → 105</dt><dd>lọc bỏ 50K tập yếu; TAR chỉ giảm 0,01–0,02</dd>
+        <dt>0,22 vs 0,47</dt><dd>VersionOne ở mức 28 bit: chọn đều vs UnlikeRatio</dd>
+        <dt>0,83 vs 0,14</dt><dd>tương quan p_same giữa stats_W và test: VersionOne vs VersionTwoR</dd>
+        <dt>0,64 → 0,92</dt><dd>TAR một ảnh → 3 ảnh đăng ký + 2 ảnh xác thực (ClearEyes-M)</dd>
+        <dt>×3 · ×6</dt><dd>Gen chậm 3 lần, Rep chậm 6 lần khi dùng nhiều ảnh</dd>
+        <dt>26 → 105 bit</dt><dd>Simhadri (đo lại) → ClearEyes</dd>
+        <dt>204 s → 0,2 s</dt><dd>thời gian đăng ký (Gen)</dd>
+        <dt>0,32 → 0,08</dt><dd>tỉ lệ lỗi bit μ: gốc của mọi cải thiện</dd>
+      </dl>
+    </div>
+    <div class="box">
+      <ul>
+        <li>Mỗi bảng hay hình đọc theo ba bước: <b>trục/cột là gì → xu hướng → kết luận</b>. Không đọc hết bảng, chỉ chỉ vào dòng tô vàng.</li>
+        <li>Ô vàng nét đứt là ý của nhóm. Khi nói thì mở đầu bằng "nhóm nhận thấy" để thầy cô phân biệt với kết quả của paper.</li>
+        <li>Thiếu thời gian thì bỏ các câu in mờ. Câu <b>Ý chính</b> và câu <b>nối sang slide sau</b> luôn giữ, vì chúng giữ mạch cho người nghe.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="part" id="hoi">
+    <div class="part-head"><span class="num">?</span><h2>Câu hỏi có thể gặp ở Phần 5</h2></div>
+    <div class="box warn">
+      <ul>
+        <li><b>"Làm sao tin con số 105 bit?"</b> Nó dựa trên EntTest, giả định thống kê duy nhất của paper. EntTest chỉ dùng μ và σ nên là heuristic, nhưng NIST SP 800-22 luôn cho số cao hơn, nên 105 là con số thận trọng. Demo của nhóm trên dữ liệu khác vẫn ra 105,4 bit.</li>
+        <li><b>"FAR quan sát bằng 0 thì FAR là 2 mũ trừ 84?"</b> Không. Khoảng 26 nghìn cặp khác mắt chỉ cho cận cỡ 2 mũ trừ 13 (quy tắc 3). Con số 84 bit đến từ EntTest.</li>
+        <li><b>"Sao đo bằng min mà không lấy trung bình?"</b> Kẻ tấn công chọn locker dễ đoán nhất, nên bảo mật của cả hệ thống bằng tập con yếu nhất (Lemma 1). Lấy trung bình sẽ thổi phồng khoảng 5 bit.</li>
+        <li><b>"Vậy ζ-sampling còn cần không?"</b> Với VersionTwoR gần như không: tương quan chỉ 0,14 và ở mức 100 bit thì chọn đều là tốt nhất. Nó vẫn có ích khi extractor yếu và số tập con ít, như VersionOne.</li>
+        <li><b>"Sao 3–2 tốt hơn 1–4 dù cùng 5 ảnh?"</b> 3–2 có 6 cặp thử, 1–4 chỉ có 4; và 3–2 có dự phòng nếu một ảnh đăng ký bị xấu.</li>
+        <li><b>"Chọn 200K tập tốt nhất trên chính tập test có thiên lệch không?"</b> Có thể hơi lạc quan; cách chặt hơn là lọc bằng stats_W rồi đo trên test. Demo cho thấy ảnh hưởng nhỏ: 105,4 bit trên dữ liệu khác.</li>
+        <li><b>"Kỳ vọng mở 32 locker mà TAR chỉ 64%?"</b> Lỗi không đều giữa các lần chụp: ảnh xấu thì không locker nào mở. Slide Q&amp;A có hình N4 để minh hoạ.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="part" id="thuat-ngu">
+    <div class="part-head"><span class="num">A–Z</span><h2>Thuật ngữ và viết tắt</h2></div>
+    <p class="time">Lần đầu nói thì đọc tên đầy đủ, lần sau dùng tên tắt. Bấm vào nhóm để mở.</p>
+
+    <details class="grp" open>
+      <summary>Đo lường (5.1, 5.2)</summary>
+      <dl class="gl">
+        <div><dt>IITD <small>IIT Delhi Iris Database</small></dt><dd>Bộ ảnh mống mắt của Indian Institute of Technology Delhi, chụp hồng ngoại gần</dd></div>
+        <div><dt>stats_W</dt><dd>40 mắt phải chỉ dùng để tính thống kê từng bit (p_same, p_diff) cho ζ-sampling</dd></div>
+        <div><dt>EntTest</dt><dd>Phép đo entropy của Daugman, chuyển sang min-entropy; paper áp dụng cho từng tập con</dd></div>
+        <div><dt>min-entropy</dt><dd>Độ khó của lần đoán tốt nhất: k bit min-entropy nghĩa là đoán đúng ngay lần đầu với xác suất ≤ 2<sup>−k</sup></dd></div>
+        <div><dt>μ, σ</dt><dd>Trung bình và độ lệch chuẩn của khoảng cách Hamming giữa các mắt khác nhau</dd></div>
+        <div><dt>dF <small>degrees of freedom</small></dt><dd>Bậc tự do = μ(1 − μ)/σ²: số "đồng xu độc lập" tương đương</dd></div>
+        <div><dt>Hamming phân số</dt><dd>Tỉ lệ bit khác nhau giữa hai mã iris (0 = giống hệt, 0,5 = như ngẫu nhiên)</dd></div>
+        <div><dt>TAR <small>True Accept Rate</small></dt><dd>Tỉ lệ chấp nhận đúng người thật</dd></div>
+        <div><dt>FAR <small>False Accept Rate</small></dt><dd>Tỉ lệ chấp nhận nhầm người khác; "−log FAR = 84" nghĩa là FAR ≈ 2<sup>−84</sup></dd></div>
+        <div><dt>NIST SP 800-22</dt><dd>Bộ kiểm tra tính ngẫu nhiên của NIST; cho entropy cao hơn EntTest</dd></div>
+        <div><dt>Quy tắc 3 <small>rule of three</small></dt><dd>Quan sát 0 lỗi trong n lần thì cận trên 95% của tỉ lệ lỗi ≈ 3/n</dd></div>
+      </dl>
+    </details>
+
+    <details class="grp">
+      <summary>Tham số và cấu hình (5.3, 5.4)</summary>
+      <dl class="gl">
+        <div><dt>k</dt><dd>Số bit trong mỗi tập con (mỗi locker)</dd></div>
+        <div><dt>β</dt><dd>Số tập con, tức số locker (200K ở cấu hình cuối)</dd></div>
+        <div><dt>ζ <small>zeta</small></dt><dd>Mức "ưu tiên bit tốt" khi chọn tập con; ζ = 0 là chọn đều</dd></div>
+        <div><dt>p_same / p_diff</dt><dd>Xác suất một bit giống nhau giữa hai ảnh cùng mắt / khác mắt</dd></div>
+        <div><dt>LikeOnly · UnlikeRatio · UnlikeExp</dt><dd>Ba cách chấm điểm bit: chỉ xét độ ổn định; ổn định chia cho mức dễ đoán; phạt bit dễ đoán theo hàm mũ</dd></div>
+        <div><dt>Uniform</dt><dd>Chọn bit đều, không ưu tiên (ζ = 0)</dd></div>
+        <div><dt>Pearson</dt><dd>Hệ số tương quan; ở đây đo bit tốt ở stats_W có còn tốt ở test không</dd></div>
+        <div><dt>1–1 · 1–4 · 2–3 · 3–2</dt><dd>Số ảnh đăng ký – số ảnh xác thực</dd></div>
+        <div><dt>ClearEyes / ClearEyes-M</dt><dd>Cấu hình cuối của paper: 1 + 1 ảnh (TAR 64%) / 3 + 2 ảnh (TAR 92%), cùng 105 bit</dd></div>
+        <div><dt>VersionOne / VersionTwoR</dt><dd>Feature extractor cũ / mới của paper (Phần 4)</dd></div>
+        <div><dt>Setup · Gen · Rep</dt><dd>Tạo tập con (một lần) · đăng ký · xác thực</dd></div>
+        <div><dt>HMAC-SHA256</dt><dd>Hàm băm có khoá dùng để khoá mỗi locker</dd></div>
+      </dl>
+    </details>
+
+    <details class="grp">
+      <summary>Tên riêng và tổ chức</summary>
+      <dl class="gl">
+        <div><dt>Simhadri et al.</dt><dd>Công trình sample-then-lock trước đó trên iris (ISC 2019): tự báo 32 bit</dd></div>
+        <div><dt>Daugman</dt><dd>Người đặt nền cho nhận dạng iris; nghĩ ra phép đo bậc tự do mà EntTest dùng</dd></div>
+        <div><dt>NIST <small>National Institute of Standards and Technology</small></dt><dd>Viện Tiêu chuẩn và Công nghệ Hoa Kỳ; yêu cầu TAR ≥ 95% cho xác thực sinh trắc</dd></div>
+        <div><dt>FIDO <small>Fast IDentity Online Alliance</small></dt><dd>Liên minh chuẩn xác thực không mật khẩu; yêu cầu TAR ≥ 97%</dd></div>
+        <div><dt>OpenSSL</dt><dd>Thư viện mật mã mà code C của tác giả dùng để tính HMAC</dd></div>
+        <div><dt>ISC · CCS</dt><dd>Information Security Conference · ACM Conference on Computer and Communications Security (nơi đăng paper)</dd></div>
+      </dl>
+    </details>
+  </section>
+
+  <p class="foot"><a href="./#ch5">Mở slide Phần 5</a> · <a href="script-phan6.html">Script Phần 6 →</a> · Nhóm 3 · CO5157</p>
+</main>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  function save(k, v) { try { localStorage.setItem('g3script:' + k, v); } catch (e) {} }
+
+  // font size
+  function fs() { return parseFloat(getComputedStyle(root).getPropertyValue('--fs')) || 19; }
+  function setFs(v) { v = Math.max(15, Math.min(28, v)); root.style.setProperty('--fs', v + 'px'); save('fs', v); }
+  document.getElementById('fs-up').onclick = function () { setFs(fs() + 1); };
+  document.getElementById('fs-dn').onclick = function () { setFs(fs() - 1); };
+
+  // theme
+  document.getElementById('theme').onclick = function () {
+    var cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var next = cur === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next; save('theme', next);
+  };
+
+  // keep the screen awake while reading
+  var lock = null, wakeBtn = document.getElementById('wake');
+  if (!('wakeLock' in navigator)) wakeBtn.hidden = true;
+  async function wake(on) {
+    try {
+      if (on) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', function () { if (!document.hidden) wakeBtn.setAttribute('aria-pressed', 'false'); }); }
+      else if (lock) { await lock.release(); lock = null; }
+      wakeBtn.setAttribute('aria-pressed', String(on));
+    } catch (e) { wakeBtn.setAttribute('aria-pressed', 'false'); }
+  }
+  wakeBtn.onclick = function () { wake(wakeBtn.getAttribute('aria-pressed') !== 'true'); };
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && wakeBtn.getAttribute('aria-pressed') === 'true' && (!lock || lock.released)) wake(true);
+  });
+
+  // highlight the section being read
+  var links = Array.prototype.slice.call(document.querySelectorAll('#chips a'));
+  var parts = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+  var ticking = false;
+  function mark() {
+    ticking = false;
+    var y = Math.max(200, window.innerHeight * 0.3), cur = 0;
+    parts.forEach(function (p, i) { if (p && p.getBoundingClientRect().top <= y) cur = i; });
+    links.forEach(function (a, i) { a.classList.toggle('cur', i === cur); });
+    var c = links[cur], bar = document.getElementById('chips');
+    if (c && (c.offsetLeft < bar.scrollLeft || c.offsetLeft + c.offsetWidth > bar.scrollLeft + bar.clientWidth)) bar.scrollTo({ left: c.offsetLeft - 16, behavior: 'smooth' });
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(mark); } }, { passive: true });
+  mark();
+})();
+</script>
+</body>
+</html>

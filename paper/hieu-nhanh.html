@@ -1,0 +1,390 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Hiểu nhanh Phần 5 · Nhóm 3</title>
+<meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f131b" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234f46e5'/%3E%3Ccircle cx='16' cy='14' r='6' fill='none' stroke='white' stroke-width='2.4'/%3E%3Cpath d='M16 20v6' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f7fb; --surface: #ffffff; --surface-2: #eef1f6; --ink: #0f172a; --ink-2: #3f4a5e; --muted: #687389;
+  --line: #e1e6ef; --accent: #4f46e5; --accent-soft: #e8e7fd;
+  --atk: #dc2626; --atk-soft: #fdecec; --hon: #059669; --hon-soft: #e3f6ee; --warn: #b45309; --warn-soft: #fdf1df;
+  --fs: 19px;
+  --font: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f131b; --surface: #161b25; --surface-2: #1d2430; --ink: #e8eaef; --ink-2: #b6bcc8; --muted: #828a98;
+    --line: #2a3240; --accent: #a5b4fc; --accent-soft: rgba(165, 180, 252, .14);
+    --atk: #f87171; --atk-soft: rgba(248, 113, 113, .13); --hon: #34d399; --hon-soft: rgba(52, 211, 153, .13);
+    --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, .12);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f131b; --surface: #161b25; --surface-2: #1d2430; --ink: #e8eaef; --ink-2: #b6bcc8; --muted: #828a98;
+  --line: #2a3240; --accent: #a5b4fc; --accent-soft: rgba(165, 180, 252, .14);
+  --atk: #f87171; --atk-soft: rgba(248, 113, 113, .13); --hon: #34d399; --hon-soft: rgba(52, 211, 153, .13);
+  --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, .12);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 112px; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+b { font-weight: 700; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+
+/* top bar (same as script.html) */
+.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top); }
+.top-row { display: flex; align-items: center; gap: 8px; padding: 10px 0 6px; }
+.top-title { flex: 1; min-width: 0; font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top-title span { color: var(--muted); font-weight: 500; }
+.tb { flex: none; height: 36px; min-width: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink-2); font: 700 14px var(--font); cursor: pointer; }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 10px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chips a { flex: none; text-decoration: none; color: var(--ink-2); font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: var(--surface-2); border: 1px solid transparent; }
+.chips a.cur { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+header.intro { padding: 22px 0 4px; }
+header.intro h1 { font-size: 1.5em; line-height: 1.2; margin: 0 0 8px; letter-spacing: -.02em; }
+header.intro p { margin: 0; color: var(--ink-2); font-size: .82em; }
+section.part { padding: 20px 0 10px; border-bottom: 1px solid var(--line); }
+section.part:last-of-type { border-bottom: 0; }
+.part h2 { font-size: 1.15em; line-height: 1.3; margin: 0 0 4px; letter-spacing: -.01em; }
+.sub { font-size: .74em; color: var(--muted); margin: 0 0 12px; }
+.part p { margin: 0 0 12px; }
+.key { background: var(--accent-soft); color: var(--accent); padding: 0 4px; border-radius: 4px; font-weight: 700; }
+.n { font-family: var(--mono); font-weight: 700; font-size: .92em; }
+
+/* steps */
+ol.steps { margin: 12px 0 4px; padding: 0; list-style: none; counter-reset: st; font-size: .84em; }
+ol.steps li { counter-increment: st; display: flex; gap: 10px; align-items: baseline; padding: 6px 0; }
+ol.steps li::before { content: counter(st); flex: none; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--accent); color: #fff; font: 700 12px var(--mono); }
+:root[data-theme="dark"] ol.steps li::before { color: #0f131b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) ol.steps li::before { color: #0f131b; } }
+
+/* story */
+.story { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.story p { margin: 0 0 10px; }
+.story p:last-child { margin: 0; }
+.scene { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 6px 0 12px; }
+.scene div { text-align: center; padding: 10px 6px; border-radius: 12px; background: var(--surface-2); font-size: .7em; line-height: 1.35; color: var(--ink-2); }
+.scene .ic { display: block; font-size: 1.9em; line-height: 1.2; margin-bottom: 4px; }
+.sides { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.side { border-radius: 12px; padding: 10px 12px; font-size: .8em; line-height: 1.45; }
+.side b.h { display: block; font-size: 1.05em; margin-bottom: 2px; }
+.side.atk { background: var(--atk-soft); } .side.atk b.h { color: var(--atk); }
+.side.hon { background: var(--hon-soft); } .side.hon b.h { color: var(--hon); }
+.side .big { display: block; font: 800 1.5em var(--mono); margin-top: 4px; }
+
+/* four ideas */
+.idea { display: flex; gap: 12px; padding: 12px 14px; margin-bottom: 10px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; }
+.idea .no { flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font: 800 16px var(--mono); background: var(--accent-soft); color: var(--accent); }
+.idea h3 { margin: 0 0 4px; font-size: .95em; line-height: 1.35; }
+.idea p { margin: 0; font-size: .84em; color: var(--ink-2); }
+.idea .why { display: block; margin-top: 6px; font-size: .95em; color: var(--ink); }
+.locks { display: flex; gap: 6px; margin: 8px 0 2px; flex-wrap: wrap; }
+.locks span { font: 700 .78em var(--mono); padding: 4px 8px; border-radius: 8px; background: var(--surface-2); color: var(--ink-2); }
+.locks span.weak { background: var(--atk-soft); color: var(--atk); outline: 2px solid var(--atk); }
+
+/* lab */
+.lab { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; }
+.lab .lbl { font-size: .74em; font-weight: 700; color: var(--muted); margin: 0 0 6px; }
+.seg { display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap; }
+.seg button { flex: 1 1 0; min-width: 60px; padding: 8px 6px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface-2); color: var(--ink-2); font: 700 .8em var(--font); cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+:root[data-theme="dark"] .seg button[aria-pressed="true"] { color: #0f131b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .seg button[aria-pressed="true"] { color: #0f131b; } }
+.meter { margin: 0 0 12px; }
+.meter .row { display: flex; justify-content: space-between; align-items: baseline; font-size: .8em; margin-bottom: 4px; }
+.meter .row b { font: 800 1.1em var(--mono); }
+.bar { height: 14px; border-radius: 7px; background: var(--surface-2); overflow: hidden; }
+.bar i { display: block; height: 100%; border-radius: 7px; transition: width .45s cubic-bezier(.3, .9, .3, 1); }
+.meter.atk b { color: var(--atk); } .meter.atk .bar i { background: var(--atk); }
+.meter.hon b { color: var(--hon); } .meter.hon .bar i { background: var(--hon); }
+.verdict { font-size: .82em; padding: 10px 12px; border-radius: 10px; background: var(--accent-soft); margin: 4px 0 0; }
+
+/* slide cards */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; margin-bottom: 10px; }
+.card .top-l { display: flex; gap: 8px; align-items: baseline; margin-bottom: 6px; }
+.card .sl { flex: none; font: 700 .66em var(--mono); color: #fff; background: var(--accent); padding: 2px 8px; border-radius: 7px; }
+:root[data-theme="dark"] .card .sl { color: #0f131b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .card .sl { color: #0f131b; } }
+.card h3 { margin: 0; font-size: .95em; line-height: 1.3; }
+.card .say { font-weight: 700; font-size: .9em; margin: 0 0 8px; }
+.card .say::before { content: '1 câu: '; color: var(--accent); }
+.card dl { margin: 0; font-size: .8em; display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; }
+.card dt { font-weight: 700; color: var(--muted); white-space: nowrap; }
+.card dd { margin: 0; color: var(--ink-2); }
+
+/* flashcards */
+details.flash { margin-bottom: 8px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+details.flash summary { cursor: pointer; list-style: none; padding: 12px 14px; font-weight: 700; font-size: .86em; display: flex; gap: 10px; justify-content: space-between; }
+details.flash summary::-webkit-details-marker { display: none; }
+details.flash summary::after { content: 'xem'; flex: none; font: 700 .8em var(--font); color: var(--accent); }
+details.flash[open] summary::after { content: '✓'; }
+details.flash p { margin: 0; padding: 0 14px 12px; font-size: .84em; color: var(--ink-2); }
+.score { font-size: .76em; color: var(--muted); margin: 6px 0 0; }
+
+.foot { text-align: center; color: var(--muted); font-size: .7em; padding: 24px 0 calc(40px + env(safe-area-inset-bottom)); }
+.foot a { color: var(--accent); }
+@media (max-width: 420px) { .sides { grid-template-columns: 1fr; } }
+</style>
+<script>
+  try {
+    var t = localStorage.getItem('g3script:theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+    var f = localStorage.getItem('g3script:fs'); if (f) document.documentElement.style.setProperty('--fs', f + 'px');
+  } catch (e) {}
+</script>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <div class="top-title">Hiểu nhanh Phần 5 <span>· 10 phút</span></div>
+      <button class="tb" id="fs-dn" aria-label="Giảm cỡ chữ">A−</button>
+      <button class="tb" id="fs-up" aria-label="Tăng cỡ chữ">A+</button>
+      <button class="tb" id="theme" aria-label="Sáng / tối">◐</button>
+    </div>
+    <nav class="chips" id="chips">
+      <a href="#cach-hoc">Cách học</a>
+      <a href="#chuyen">1 · Câu chuyện</a>
+      <a href="#y-lon">2 · 4 ý lớn</a>
+      <a href="#thu">3 · Kéo thử</a>
+      <a href="#slide">4 · Từng slide</a>
+      <a href="#kiem-tra">5 · Tự kiểm tra</a>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap">
+  <header class="intro">
+    <h1>Hiểu nhanh Phần 5 — Thực nghiệm</h1>
+    <p>Đọc trang này để <b>hiểu</b> trước, rồi mới mở <a href="script.html" style="color:var(--accent)">script</a> để <b>nói</b>. Không cần thuộc thuật ngữ, chỉ cần một hình dung duy nhất: <b>chìa khoá cất trong két, mở bằng mắt</b>.</p>
+  </header>
+
+  <section class="part" id="cach-hoc">
+    <h2>Cách học trong 10 phút</h2>
+    <ol class="steps">
+      <li><span><b>Câu chuyện</b> (1 phút): hiểu cả Phần 5 đang hỏi gì.</span></li>
+      <li><span><b>4 ý lớn</b> (2 phút): toàn bộ Phần 5 chỉ có 4 ý này.</span></li>
+      <li><span><b>Kéo thử</b> (1 phút): tự thấy sự đánh đổi bằng tay.</span></li>
+      <li><span><b>Từng slide</b> (4 phút): mở slide bên cạnh, mỗi slide chỉ nhớ 1 câu.</span></li>
+      <li><span><b>Tự kiểm tra</b> (2 phút): trả lời trong đầu rồi bấm "xem".</span></li>
+    </ol>
+    <p class="sub">Sau đó đọc to script một lần. Mẹo: thử giải thích 4 ý lớn cho một người bạn trong 1 phút. Nói trôi được là đã hiểu.</p>
+  </section>
+
+  <section class="part" id="chuyen">
+    <h2>1 · Câu chuyện 1 phút</h2>
+    <p class="sub">Đây là hình dung dùng cho cả phần.</p>
+    <div class="story">
+      <div class="scene">
+        <div><span class="ic">🔑</span>Hệ thống tạo một <b>chìa khoá</b> bí mật cho bạn</div>
+        <div><span class="ic">🗄️</span>Cất chìa vào <b>200.000 két</b> nhỏ (locker)</div>
+        <div><span class="ic">👁️</span>Mỗi két mở bằng <b>115 bit</b> lấy từ mống mắt bạn</div>
+      </div>
+      <p>Mỗi két dùng một nhóm <b>115 bit khác nhau</b> của mã mống mắt làm "mật mã". Lần sau bạn chụp mắt lại: chỉ cần <b>một két</b> có đủ 115 bit trùng khớp là bạn lấy lại được chìa.</p>
+      <p>Phần 5 chỉ đo hai thứ, từ hai phía:</p>
+      <div class="sides">
+        <div class="side atk"><b class="h">Kẻ trộm</b>Không có mắt bạn, phải <b>đoán mật mã</b> của một két. Két khó đoán cỡ nào? Đo bằng <b>bit</b>.<span class="big">105 bit</span>tức phải đoán khoảng 2<sup>105</sup> lần.</div>
+        <div class="side hon"><b class="h">Bạn (người thật)</b>Ảnh chụp lần sau <b>hơi khác</b> lần trước, lệch 1 bit là két đó không mở. Bạn mở được bao nhiêu %? Gọi là <b>TAR</b>.<span class="big">64% → 92%</span>một ảnh → nhiều ảnh.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="part" id="y-lon">
+    <h2>2 · Bốn ý lớn — cả Phần 5 chỉ có vậy</h2>
+    <p class="sub">Mỗi ý kèm một câu "vì sao" bằng lời thường.</p>
+
+    <div class="idea"><span class="no">1</span><div>
+      <h3>An toàn = két <u>yếu nhất</u>, không phải trung bình</h3>
+      <p>Mỗi két có độ khó khác nhau (ví dụ, tính bằng bit):</p>
+      <div class="locks"><span>110</span><span>104</span><span>112</span><span class="weak">100 ← trộm chọn</span><span>104</span></div>
+      <p><span class="why"><b>Vì sao:</b> kẻ trộm luôn chọn két dễ nhất. Báo trung bình (~106) là nói quá ~5 bit. Paper báo cái yếu nhất, rồi <b>vứt 50.000 két yếu</b> → cái yếu nhất còn lại là <b>105</b>.</span></p>
+    </div></div>
+
+    <div class="idea"><span class="no">2</span><div>
+      <h3>Luôn có đánh đổi: khó phá hơn thì cũng khó mở hơn</h3>
+      <p>Mật mã mỗi két dài hơn (nhiều bit hơn) → kẻ trộm khó đoán hơn, nhưng bạn cũng dễ lệch 1 bit hơn → khó mở hơn.</p>
+      <p><span class="why"><b>Vì sao:</b> càng nhiều bit phải khớp thì càng khó khớp, với cả trộm lẫn bạn. Kéo thử ở mục 3 để thấy.</span></p>
+    </div></div>
+
+    <div class="idea"><span class="no">3</span><div>
+      <h3>Bit tốt quan trọng hơn cách chọn bit</h3>
+      <p>"Máy đọc mắt" cũ (VersionOne) cho bit chất lượng lộn xộn, phải <b>chọn bit khéo</b> (ζ-sampling) mới khá lên, mà vẫn chỉ được ~40 bit. Máy mới (VersionTwoR) cho <b>bit tốt đều</b>, chọn kiểu gì cũng như nhau → đạt 100+ bit.</p>
+      <p><span class="why"><b>Vì sao:</b> nguyên liệu kém thì phải lựa kỹ; nguyên liệu đều ngon thì bốc đại cũng ngon. Đây chính là tiêu chí "đều chất lượng" Tú vừa nói.</span></p>
+    </div></div>
+
+    <div class="idea"><span class="no">4</span><div>
+      <h3>Chụp nhiều lần cứu người dùng: 64% → 92%</h3>
+      <p>Đăng ký bằng <b>3 ảnh</b>, khi mở chụp <b>2 ảnh</b>. Cặp ảnh nào mở được két cũng tính.</p>
+      <p><span class="why"><b>Vì sao:</b> một ảnh xấu thì hỏng, nhưng 3 × 2 = 6 cơ hội thì gần như luôn có cặp khớp. Cái giá: đăng ký chậm ×3, mở chậm ×6 (vẫn dưới 1 giây).</span></p>
+    </div></div>
+
+    <div class="idea"><span class="no">+</span><div>
+      <h3>Kết quả: 26 bit, 204 giây → 105 bit, 0,2 giây</h3>
+      <p>So với công trình trước (Simhadri). Gốc của cải thiện: ảnh <b>ít lỗi hơn hẳn</b>, tỉ lệ bit lệch giảm từ 32% xuống 8% nhờ máy đọc mắt mới.</p>
+    </div></div>
+  </section>
+
+  <section class="part" id="thu">
+    <h2>3 · Kéo thử: sự đánh đổi</h2>
+    <p class="sub">Số liệu thật từ Table 5 của paper (200K két). Bấm thử từng nút.</p>
+    <div class="lab">
+      <div class="lbl">Mỗi két dùng bao nhiêu bit (k)?</div>
+      <div class="seg" id="k-seg">
+        <button data-k="0">70</button><button data-k="1">90</button><button data-k="2">110</button><button data-k="3" aria-pressed="true">115</button>
+      </div>
+      <div class="lbl">Chụp bao nhiêu ảnh?</div>
+      <div class="seg" id="r-seg">
+        <button data-r="0" aria-pressed="true">1 ảnh</button><button data-r="1">3 ảnh đăng ký + 2 ảnh mở</button>
+      </div>
+      <div class="meter atk"><div class="row"><span>Kẻ trộm phải đoán</span><b id="m-bit">105 bit</b></div><div class="bar"><i id="b-bit"></i></div></div>
+      <div class="meter hon"><div class="row"><span>Bạn mở được (TAR)</span><b id="m-tar">64%</b></div><div class="bar"><i id="b-tar"></i></div></div>
+      <p class="verdict" id="verdict"></p>
+    </div>
+  </section>
+
+  <section class="part" id="slide">
+    <h2>4 · Từng slide trong 1 câu</h2>
+    <p class="sub">Mở slide song song. Quên hết thì nói đúng "1 câu" là đủ ý.</p>
+
+    <div class="card"><div class="top-l"><span class="sl">30</span><h3>5.1 · Dữ liệu và cách chia</h3></div>
+      <p class="say">Mọi con số đều đo trên mắt mà mô hình chưa từng thấy.</p>
+      <dl><dt>Hình dung</dt><dd>Học bằng mắt trái, thi bằng mắt phải, không có chuyện "học tủ".</dd>
+      <dt>Số để nói</dt><dd>162 mắt phải để đo; 40 mắt khác chỉ để chọn bit.</dd></dl></div>
+
+    <div class="card"><div class="top-l"><span class="sl">31</span><h3>5.1 · EntTest — đo "két khó đoán cỡ nào"</h3></div>
+      <p class="say">So mắt của hai người khác nhau: bit càng giống tung đồng xu thì càng khó đoán, càng nhiều bit an toàn.</p>
+      <dl><dt>Hình dung</dt><dd>Mỗi bit như một đồng xu: nếu đúng 50/50 và không ăn theo nhau thì mỗi đồng = 1 bit khó đoán. Histogram đỏ càng <b>hẹp</b> và càng <b>sát 0,5</b> → càng nhiều "đồng xu thật".</dd>
+      <dt>Số để nói</dt><dd>Ví dụ trên slide ra khoảng 118 bit. Đo riêng cho từng két.</dd>
+      <dt>Nhớ thêm</dt><dd>Đây là giả định duy nhất của paper (tin rằng phép đo này đúng).</dd></dl></div>
+
+    <div class="card"><div class="top-l"><span class="sl">32</span><h3>5.1 · TAR — đo "bạn mở được bao nhiêu %"</h3></div>
+      <p class="say">Chụp lại mắt, thử hết các két, mở được ít nhất một két là thành công.</p>
+      <dl><dt>Hình dung</dt><dd>Cầm chùm chìa đi thử 200.000 ổ, chỉ cần một ổ mở.</dd>
+      <dt>Số để nói</dt><dd>Paper thử nhiều độ dài k (40 → 140); làm 250K két rồi giữ 200K két tốt nhất.</dd></dl></div>
+
+    <div class="card"><div class="top-l"><span class="sl">33</span><h3>5.2 · Phía kẻ trộm</h3></div>
+      <p class="say">Đo bằng két yếu nhất thì mất ~5 bit, vứt két yếu đi thì lấy lại → 105 bit.</p>
+      <dl><dt>Hình dung</dt><dd>Dãy nhà: trộm chọn cửa yếu nhất. Thay 50.000 cửa yếu nhất thì cả dãy chắc hơn.</dd>
+      <dt>Số để nói</dt><dd>Trung bình 106 nhưng yếu nhất 100 → sau khi lọc: <b>105 bit</b>.</dd></dl></div>
+
+    <div class="card"><div class="top-l"><span class="sl">34</span><h3>5.3 · Máy đọc mắt cũ (VersionOne)</h3></div>
+      <p class="say">Chọn bit khéo có giúp, nhưng máy cũ tối đa chỉ ~40 bit.</p>
+      <dl><dt>Hình dung</dt><dd>Nguyên liệu kém thì phải lựa kỹ, lựa kỹ rồi vẫn không đủ.</dd>
+      <dt>Đọc hình</dt><dd>Ngang = độ khó phá (bit), dọc = % mở được. Mọi điểm đi xuống: khó phá hơn thì khó mở hơn.</dd>
+      <dt>Số để nói</dt><dd>Ở 28 bit: chọn đại 22%, chọn khéo 47% (gấp đôi).</dd></dl></div>
+
+    <div class="card"><div class="top-l"><span class="sl">35</span><h3>5.3 · Máy đọc mắt mới (VersionTwoR)</h3></div>
+      <p class="say">Bit tốt đều nên chọn kiểu gì cũng như nhau, và đạt được 100+ bit.</p>
+      <dl><dt>Hình dung</dt><dd>Nguyên liệu đều ngon thì bốc đại cũng ngon. Không còn "bit tốt" nào để mà chọn.</dd>
+      <dt>Số để nói</dt><dd>Trục ngang kéo tới ~120 bit (máy cũ ~45). "Bit tốt hôm trước còn tốt hôm sau không?": máy cũ 0,83 (có), máy mới 0,14 (gần như không).</dd></dl></div>
+
+    <div class="card"><div class="top-l"><span class="sl">36</span><h3>5.4 · Cấu hình cuối</h3></div>
+      <p class="say">Chụp 3 ảnh khi đăng ký, 2 ảnh khi mở → 92%, đổi lại chậm hơn.</p>
+      <dl><dt>Hình dung</dt><dd>3 chùm chìa × 2 lần thử = 6 cơ hội; chỉ cần một cặp khớp.</dd>
+      <dt>Số để nói</dt><dd>1 ảnh 64% → 3+2 ảnh <b>92%</b>; vẫn 105 bit. Đăng ký chậm ×3, mở chậm ×6.</dd>
+      <dt>Ký hiệu</dt><dd>"3–2" = 3 ảnh đăng ký – 2 ảnh mở.</dd></dl></div>
+
+    <div class="card"><div class="top-l"><span class="sl">37</span><h3>5.5 · So với công trình trước</h3></div>
+      <p class="say">Từ 26 bit, 204 giây lên 105 bit, 0,2 giây, nhờ ảnh ít lỗi hơn.</p>
+      <dl><dt>Hình dung</dt><dd>Cùng một kiểu két, nhưng "chìa" (ảnh mắt) chuẩn hơn nên làm được két khó hơn mà vẫn mở nhanh.</dd>
+      <dt>Số để nói</dt><dd>Bit lệch 32% → 8%. Dung lượng 96 MB → 7 MB.</dd></dl></div>
+  </section>
+
+  <section class="part" id="kiem-tra">
+    <h2>5 · Tự kiểm tra</h2>
+    <p class="sub">Trả lời trong đầu trước, rồi bấm để xem. Đúng 8/10 là đủ để trình bày.</p>
+    <div id="flash">
+      <details class="flash"><summary>105 bit nghĩa là gì, bằng lời thường?</summary><p>Kẻ trộm phải đoán khoảng 2<sup>105</sup> lần mới mở được một két, kể cả két dễ nhất.</p></details>
+      <details class="flash"><summary>Vì sao báo két yếu nhất mà không lấy trung bình?</summary><p>Vì kẻ trộm luôn chọn két dễ nhất. Lấy trung bình là nói quá khoảng 5 bit.</p></details>
+      <details class="flash"><summary>Làm sao từ 100 bit lên 105 bit?</summary><p>Làm dư 250.000 két rồi vứt 50.000 két yếu nhất. Người thật gần như không bị ảnh hưởng (TAR chỉ giảm 1–2 điểm phần trăm).</p></details>
+      <details class="flash"><summary>TAR 64% nghĩa là gì?</summary><p>Với 1 ảnh, 64% số lần người thật chụp lại mở được ít nhất một két.</p></details>
+      <details class="flash"><summary>Tăng số bit mỗi két (k) thì được gì, mất gì?</summary><p>Khó phá hơn, nhưng người thật cũng khó mở hơn. Luôn là đánh đổi.</p></details>
+      <details class="flash"><summary>Vì sao "chọn bit khéo" (ζ-sampling) hết tác dụng ở máy đọc mắt mới?</summary><p>Vì bit của máy mới tốt đều; bit trông tốt lúc chọn chưa chắc còn tốt lúc dùng (tương quan chỉ 0,14), nên không có gì để chọn.</p></details>
+      <details class="flash"><summary>Làm sao từ 64% lên 92%?</summary><p>Đăng ký 3 ảnh, khi mở chụp 2 ảnh; cặp nào khớp cũng được (6 cơ hội).</p></details>
+      <details class="flash"><summary>Cái giá của 92% là gì?</summary><p>Đăng ký chậm 3 lần, mở chậm 6 lần, nhưng vẫn dưới 1 giây.</p></details>
+      <details class="flash"><summary>Vì sao paper tốt hơn công trình trước nhiều như vậy?</summary><p>Máy đọc mắt mới cho ảnh ít lỗi hơn: tỉ lệ bit lệch giảm từ 32% xuống 8%. Ngoài ra paper đo đúng (két yếu nhất) và chọn két tốt từ trước.</p></details>
+      <details class="flash"><summary>Tập test có bao nhiêu mắt, và vì sao quan trọng?</summary><p>162 mắt phải mà mô hình chưa từng thấy, nên kết quả không bị "học tủ".</p></details>
+    </div>
+    <p class="score" id="score">Đã xem 0/10</p>
+  </section>
+
+  <p class="foot"><a href="script.html">Hiểu rồi → mở script Phần 5</a> · <a href="./#ch5">Mở slide Phần 5</a></p>
+</main>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  function save(k, v) { try { localStorage.setItem('g3script:' + k, v); } catch (e) {} }
+  function fs() { return parseFloat(getComputedStyle(root).getPropertyValue('--fs')) || 19; }
+  function setFs(v) { v = Math.max(15, Math.min(28, v)); root.style.setProperty('--fs', v + 'px'); save('fs', v); }
+  document.getElementById('fs-up').onclick = function () { setFs(fs() + 1); };
+  document.getElementById('fs-dn').onclick = function () { setFs(fs() - 1); };
+  document.getElementById('theme').onclick = function () {
+    var cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var next = cur === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next; save('theme', next);
+  };
+
+  // trade-off lab: [P, Table 5], best 200K subsets — entropy, TAR 1–1, TAR 3–2
+  var ROWS = [
+    { k: 70, bit: 65, one: 0.84, multi: 0.99, note: 'Dễ mở nhất, nhưng chỉ 65 bit: két quá dễ đoán.' },
+    { k: 90, bit: 83, one: 0.74, multi: 0.98, note: '83 bit; với nhiều ảnh đạt 98%, vượt ngưỡng NIST (95%) và FIDO (97%).' },
+    { k: 110, bit: 100, one: 0.64, multi: 0.92, note: 'Cùng % mở được với k = 115 nhưng kém 5 bit, nên paper chọn 115.' },
+    { k: 115, bit: 105, one: 0.64, multi: 0.92, note: '' }
+  ];
+  var k = 3, r = 0;
+  function pct(x) { return Math.round(x * 100) + '%'; }
+  function draw() {
+    var row = ROWS[k], tar = r ? row.multi : row.one;
+    document.getElementById('m-bit').textContent = row.bit + ' bit';
+    document.getElementById('m-tar').textContent = pct(tar);
+    document.getElementById('b-bit').style.width = (row.bit / 120 * 100) + '%';
+    document.getElementById('b-tar').style.width = (tar * 100) + '%';
+    var v = row.note;
+    if (k === 3) v = r ? 'Đây là cấu hình cuối của paper (ClearEyes-M): 105 bit và 92%. Đổi lại đăng ký chậm ×3, mở chậm ×6.' : 'Cấu hình của paper với 1 ảnh (ClearEyes): 105 bit nhưng chỉ 64%. Bấm "3 ảnh + 2 ảnh" xem chuyện gì xảy ra.';
+    else if (r) v += ' Nhiều ảnh: từ ' + pct(row.one) + ' lên ' + pct(row.multi) + '.';
+    document.getElementById('verdict').textContent = v;
+    document.querySelectorAll('#k-seg button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.k === k)); });
+    document.querySelectorAll('#r-seg button').forEach(function (b) { b.setAttribute('aria-pressed', String(+b.dataset.r === r)); });
+  }
+  document.getElementById('k-seg').onclick = function (e) { var b = e.target.closest('button'); if (b) { k = +b.dataset.k; draw(); } };
+  document.getElementById('r-seg').onclick = function (e) { var b = e.target.closest('button'); if (b) { r = +b.dataset.r; draw(); } };
+  draw();
+
+  // flashcards: count the ones opened
+  var cards = document.querySelectorAll('#flash details');
+  cards.forEach(function (d) { d.addEventListener('toggle', function () {
+    var n = 0; cards.forEach(function (c) { if (c.dataset.seen || c.open) { c.dataset.seen = 1; n++; } });
+    document.getElementById('score').textContent = 'Đã xem ' + n + '/' + cards.length + (n === cards.length ? ' — xong! Giờ mở script đọc to một lần.' : '');
+  }); });
+
+  // highlight the section being read
+  var links = Array.prototype.slice.call(document.querySelectorAll('#chips a'));
+  var parts = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+  var ticking = false;
+  function mark() {
+    ticking = false;
+    var y = Math.max(200, window.innerHeight * 0.3), cur = 0;
+    parts.forEach(function (p, i) { if (p && p.getBoundingClientRect().top <= y) cur = i; });
+    links.forEach(function (a, i) { a.classList.toggle('cur', i === cur); });
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(mark); } }, { passive: true });
+  mark();
+})();
+</script>
+</body>
+</html>

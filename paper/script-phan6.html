@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Script phần 6 · Nhóm 3</title>
+<meta name="theme-color" content="#f6f7fb" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f131b" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230891b2'/%3E%3Cpath d='M12 10l9 6-9 6z' fill='white'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f6f7fb; --surface: #ffffff; --surface-2: #eef1f6; --ink: #0f172a; --ink-2: #3f4a5e; --muted: #687389;
+  --line: #e1e6ef; --accent: #0e7490; --accent-soft: #dff3f8;
+  --cue: #4f46e5; --cue-soft: #e8e7fd; --ok: #059669; --ok-soft: #e3f6ee; --no: #dc2626; --no-soft: #fdecec;
+  --warn: #b45309; --warn-soft: #fdf1df;
+  --fs: 19px;
+  --font: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f131b; --surface: #161b25; --surface-2: #1d2430; --ink: #e8eaef; --ink-2: #b6bcc8; --muted: #828a98;
+    --line: #2a3240; --accent: #67e8f9; --accent-soft: rgba(103, 232, 249, .12);
+    --cue: #a5b4fc; --cue-soft: rgba(165, 180, 252, .13); --ok: #34d399; --ok-soft: rgba(52, 211, 153, .13);
+    --no: #f87171; --no-soft: rgba(248, 113, 113, .13); --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, .12);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f131b; --surface: #161b25; --surface-2: #1d2430; --ink: #e8eaef; --ink-2: #b6bcc8; --muted: #828a98;
+  --line: #2a3240; --accent: #67e8f9; --accent-soft: rgba(103, 232, 249, .12);
+  --cue: #a5b4fc; --cue-soft: rgba(165, 180, 252, .13); --ok: #34d399; --ok-soft: rgba(52, 211, 153, .13);
+  --no: #f87171; --no-soft: rgba(248, 113, 113, .13); --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, .12);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 112px; -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: var(--fs); line-height: 1.62; -webkit-font-smoothing: antialiased; }
+b { font-weight: 700; }
+.wrap { max-width: 720px; margin: 0 auto; padding: 0 16px; }
+
+/* top bar (same as script.html) */
+.top { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 92%, transparent); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); padding-top: env(safe-area-inset-top); }
+.top-row { display: flex; align-items: center; gap: 8px; padding: 10px 0 6px; }
+.top-title { flex: 1; min-width: 0; font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.top-title span { color: var(--muted); font-weight: 500; }
+.tb { flex: none; height: 36px; min-width: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--ink-2); font: 700 14px var(--font); cursor: pointer; }
+.tb[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chips { display: flex; gap: 6px; overflow-x: auto; padding: 0 0 10px; scrollbar-width: none; }
+.chips::-webkit-scrollbar { display: none; }
+.chips a { flex: none; text-decoration: none; color: var(--ink-2); font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: var(--surface-2); border: 1px solid transparent; }
+.chips a.cur { background: var(--accent-soft); color: var(--accent); border-color: var(--accent); }
+
+header.intro { padding: 22px 0 6px; }
+header.intro h1 { font-size: 1.5em; line-height: 1.2; margin: 0 0 6px; letter-spacing: -.02em; }
+header.intro p { margin: 0; color: var(--muted); font-size: .8em; }
+header.intro a { color: var(--accent); font-weight: 700; }
+.legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; font-size: .72em; }
+.legend span { padding: 3px 10px; border-radius: 999px; }
+
+section.part { padding: 18px 0 8px; border-bottom: 1px solid var(--line); }
+section.part:last-of-type { border-bottom: 0; }
+.part-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 6px; }
+.num { flex: none; font: 700 .7em var(--mono); color: #fff; background: var(--accent); padding: 3px 9px; border-radius: 8px; }
+:root[data-theme="dark"] .num { color: #0f131b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .num { color: #0f131b; } }
+.part h2 { font-size: 1.12em; line-height: 1.3; margin: 0; letter-spacing: -.01em; }
+.time { font-size: .7em; color: var(--muted); margin: 0 0 10px; }
+.time .skip { display: inline-block; margin-left: 6px; padding: 0 7px; border-radius: 6px; background: var(--warn-soft); color: var(--warn); font-weight: 700; }
+.part p { margin: 0 0 14px; }
+.cue { display: block; margin: 6px 0 10px; padding: 6px 12px; font-size: .76em; font-weight: 600; line-height: 1.45; color: var(--cue); background: var(--cue-soft); border-radius: 8px; }
+.cue::before { content: '▸ '; }
+.key { background: var(--accent-soft); color: var(--accent); padding: 0 4px; border-radius: 4px; font-weight: 700; }
+.n { font-family: var(--mono); font-size: .92em; font-weight: 700; }
+.gist { margin: 4px 0 14px; padding: 10px 14px; border-radius: 10px; background: var(--accent-soft); color: var(--ink); font-weight: 700; font-size: .86em; line-height: 1.5; }
+.gist::before { content: 'Ý chính · '; color: var(--accent); }
+p.bridge { margin: 16px 0 6px; padding: 10px 14px; border-left: 4px solid var(--accent); background: var(--surface); border-radius: 0 10px 10px 0; font-style: italic; }
+p.bridge::before { content: '→ '; font-style: normal; font-weight: 800; color: var(--accent); }
+p.opt { color: var(--muted); }
+p.opt::before { content: 'có thể bỏ'; display: inline-block; margin-right: 8px; padding: 0 7px; border-radius: 6px; font-size: .62em; font-weight: 700; vertical-align: .15em; background: var(--surface-2); color: var(--muted); }
+.box { margin: 4px 0 16px; padding: 12px 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--line); font-size: .86em; }
+.box h3 { margin: 0 0 6px; font-size: .95em; }
+.box ul, .box ol { margin: 0; padding-left: 1.2em; }
+.box li { margin-bottom: 6px; }
+.box.warn { border-left: 4px solid var(--warn); }
+.lg-gist { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.lg-cue { background: var(--cue-soft); color: var(--cue); font-weight: 600; }
+.lg-key { background: var(--accent-soft); color: var(--accent); font-weight: 700; }
+.lg-opt { background: var(--surface-2); color: var(--muted); }
+.lg-skip { background: var(--warn-soft); color: var(--warn); font-weight: 700; }
+.lg-bridge { border-left: 3px solid var(--accent); background: var(--surface); font-style: italic; }
+
+/* three-line summary */
+.three { margin: 0; padding: 0; list-style: none; }
+.three li { display: flex; gap: 10px; padding: 8px 0; border-top: 1px solid var(--line); font-size: .9em; }
+.three li:first-child { border-top: 0; }
+.three .m { flex: none; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font: 800 14px var(--mono); }
+.three .m.ok { background: var(--ok-soft); color: var(--ok); }
+.three .m.no { background: var(--warn-soft); color: var(--warn); }
+.three .m.i { background: var(--accent-soft); color: var(--accent); }
+
+/* clip chapters */
+.chap { margin: 0 0 14px; padding: 0; list-style: none; counter-reset: c 1; }
+.chap li { counter-increment: c; display: grid; grid-template-columns: 34px 1fr; gap: 4px 10px; padding: 10px 0; border-top: 1px dashed var(--line); }
+.chap li::before { content: counter(c); grid-row: span 2; width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; font: 800 14px var(--mono); background: var(--surface-2); color: var(--ink-2); }
+.chap .see { font-size: .74em; font-weight: 700; color: var(--muted); }
+.chap .see b.ok { color: var(--ok); } .chap .see b.no { color: var(--no); }
+.chap .say { font-size: .95em; }
+
+/* numbers + glossary */
+.nums { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; font-size: .86em; }
+.nums dt { font: 700 .95em var(--mono); color: var(--accent); white-space: nowrap; }
+.nums dd { margin: 0; color: var(--ink-2); }
+dl.gl { margin: 0; font-size: .82em; }
+dl.gl > div { padding: 9px 0; border-top: 1px solid var(--line); }
+dl.gl > div:first-child { border-top: 0; }
+dl.gl dt { font-weight: 800; color: var(--accent); }
+dl.gl dd { margin: 2px 0 0; color: var(--ink-2); }
+.foot { text-align: center; color: var(--muted); font-size: .7em; padding: 24px 0 calc(40px + env(safe-area-inset-bottom)); }
+.foot a { color: var(--accent); }
+</style>
+<script>
+  try {
+    var t = localStorage.getItem('g3script:theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t;
+    var f = localStorage.getItem('g3script:fs'); if (f) document.documentElement.style.setProperty('--fs', f + 'px');
+  } catch (e) {}
+</script>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap">
+    <div class="top-row">
+      <div class="top-title">Script phần 6 · Demo <span>· Lý Minh Trung</span></div>
+      <button class="tb" id="fs-dn" aria-label="Giảm cỡ chữ">A−</button>
+      <button class="tb" id="fs-up" aria-label="Tăng cỡ chữ">A+</button>
+      <button class="tb" id="theme" aria-label="Sáng / tối">◐</button>
+      <button class="tb" id="wake" aria-pressed="false" aria-label="Giữ màn hình sáng" title="Giữ màn hình sáng">☀︎</button>
+    </div>
+    <nav class="chips" id="chips">
+      <a href="#tom-tat">3 câu</a>
+      <a href="#chuan-bi">Chuẩn bị</a>
+      <a href="#s0">38 Mở phần</a>
+      <a href="#s1">39 Thiết lập</a>
+      <a href="#s2">40 Sửa lỗi</a>
+      <a href="#s3">41 Clip</a>
+      <a href="#s4">42 Gen/Rep</a>
+      <a href="#s5">43 105 bit</a>
+      <a href="#s6">44 TAR</a>
+      <a href="#s7">45 ζ</a>
+      <a href="#s8">46 Tổng kết</a>
+      <a href="#hoi">Câu hỏi</a>
+      <a href="#tu">Từ khó</a>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap">
+  <header class="intro">
+    <h1>Script Phần 6 — Demo</h1>
+    <p>Slide 38 → 46 · đường ngắn ≈ 3 phút 05 giây (khung của nhóm: 3 phút) · nói đủ ≈ 4 phút 30 giây<br>Viết bằng lời thường, cùng hình dung với <a href="hieu-nhanh.html">Hiểu nhanh</a>: <b>chìa khoá</b> cất trong <b>200.000 két</b>, mở bằng mống mắt. Nói tiếp ngay sau <a href="script.html">Phần 5</a>.</p>
+    <div class="legend">
+      <span class="lg-gist">Ý chính của slide</span>
+      <span class="lg-cue">▸ chỉ vào đâu / bấm gì</span>
+      <span class="lg-key">từ khoá cần nhấn</span>
+      <span class="lg-opt">câu có thể bỏ</span>
+      <span class="lg-skip">slide có thể lướt</span>
+      <span class="lg-bridge">→ câu nối sang slide sau</span>
+    </div>
+  </header>
+
+  <section class="part" id="tom-tat">
+    <div class="part-head"><span class="num">≡</span><h2>Cả Phần 6 trong 3 câu — đọc cái này trước</h2></div>
+    <div class="box">
+      <ol class="three">
+        <li><span class="m i">1</span><span>Nhóm <b>chạy lại chính code của tác giả</b>, trên dữ liệu mắt tổng hợp (ảnh mắt thật cần giấy phép).</span></li>
+        <li><span class="m ok">✓</span><span><b>Khớp với paper:</b> cùng mắt thì ra đúng chìa, mắt khác thì bị từ chối; độ khó phá ra <b>105,4 bit</b> (paper: 105).</span></li>
+        <li><span class="m no">≈</span><span><b>Khác paper:</b> tỉ lệ mở cao hơn vì dữ liệu tổng hợp ít lỗi hơn, nên demo chỉ kiểm chứng <b>xu hướng</b>, không chứng minh lại con số 92%.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="part" id="chuan-bi">
+    <div class="part-head"><span class="num">!</span><h2>Chuẩn bị trước khi lên</h2></div>
+    <div class="box">
+      <ul>
+        <li>Mở slide <b>41</b> (clip) và bấm thử ▶ một lần cho chắc. Phím <b>K</b> là phát / dừng.</li>
+        <li>Trên thanh tiến trình của clip, <b>bấm số 2</b> để bỏ qua chương "Dữ liệu", rồi bấm nút <b>1×</b> cho thành <b>1.5×</b>. Clip còn khoảng 50 giây.</li>
+        <li>Muốn chạy trực tiếp thay cho clip: mở sẵn terminal ở thư mục <span class="n">feap-demo</span>, gõ <span class="n">./scripts/live_demo.sh</span> (chạy ≈ 20 giây). Lỗi gì thì quay về clip, không sửa tại chỗ.</li>
+        <li>Đường ngắn: dừng clip sau chương 5 (bấm K) rồi sang slide 42.</li>
+        <li>Thiếu giờ: lướt slide <b>40</b> và <b>45</b> (mỗi slide 1 câu), giữ nguyên clip và slide <b>46</b>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="part" id="s0">
+    <div class="part-head"><span class="num">38</span><h2>Mở Phần 6</h2></div>
+    <p class="time">Slide 38 · ≈ 10 giây</p>
+    <p>Phần 5 là các con số của paper. Ở Phần 6, nhóm em <span class="key">tự chạy lại code của tác giả</span> để xem các con số đó có đúng không.</p>
+  </section>
+
+  <section class="part" id="s1">
+    <div class="part-head"><span class="num">39</span><h2>Thiết lập: code của tác giả, dữ liệu mắt tổng hợp</h2></div>
+    <p class="time">Slide 39 · ≈ 40 giây · đường ngắn ≈ 30 giây</p>
+    <div class="gist">Dùng đúng code tác giả công bố, chạy trên dữ liệu mắt tổng hợp, và kiểm 4 việc.</div>
+    <span class="cue">Bảng bên trái</span>
+    <p>Tác giả công bố code tên là <b>feap</b>. Nhóm chạy hai phần chính: <b>sample-lock</b> để khoá và mở chìa thật, và <b>lsh-lock</b> để đo độ khó phá và tỉ lệ mở.</p>
+    <p>Ảnh mắt thật cần giấy phép, nên nhóm dùng <span class="key">dữ liệu mắt tổng hợp</span> do tác giả công bố: <span class="n">200</span> mắt, mỗi mắt 5 ảnh. Chia giống paper: 40 mắt để chọn bit, 160 mắt để đo.</p>
+    <span class="cue">4 ô bên phải, từ (a) đến (d)</span>
+    <p class="opt">Nhóm kiểm 4 việc: khoá và mở thật, độ khó phá, tỉ lệ mở, và tự chạy lại bước chọn bit.</p>
+    <p class="opt">Tác giả cũng lưu ý: dữ liệu tổng hợp cho kết quả nhỉnh hơn dữ liệu thật. Lát nữa sẽ thấy đúng như vậy.</p>
+    <p class="bridge">Đây là code nghiên cứu nên không chạy ngay được, nhóm phải xử lý vài chỗ.</p>
+  </section>
+
+  <section class="part" id="s2">
+    <div class="part-head"><span class="num">40</span><h2>Những gì nhóm phải sửa để chạy được</h2></div>
+    <p class="time">Slide 40 · ≈ 25 giây · đường ngắn ≈ 10 giây<span class="skip">có thể lướt</span></p>
+    <div class="gist">Sửa vài lỗi nhỏ mà không đụng vào code tác giả; chỗ code khác paper thì nhóm tự viết bản đúng.</div>
+    <span class="cue">Lướt bảng từ trên xuống, dừng ở dòng thứ 4</span>
+    <p>Có mấy lỗi vặt, như file dữ liệu thừa ký tự xuống dòng hay hướng dẫn ghi sai tên tuỳ chọn. Nhóm xử lý mà <span class="key">không sửa code của tác giả</span>.</p>
+    <p>Chỗ đáng nói nhất là dòng 4: bản C của tác giả là code nghiên cứu, bên kiểm tra phải biết sẵn chìa. Nên nhóm viết thêm một <span class="key">bản Python làm đúng như Fig. 1</span> trong paper.</p>
+    <p class="bridge">Giờ xem chạy thật.</p>
+  </section>
+
+  <section class="part" id="s3">
+    <div class="part-head"><span class="num">41</span><h2>Clip demo — vừa xem vừa nói</h2></div>
+    <p class="time">Slide 41 · ≈ 65 giây (clip ≈ 50 giây ở 1.5×) · đường ngắn ≈ 40 giây (dừng sau chương 5)</p>
+    <div class="gist">Xem tận mắt: cùng mắt ra đúng chìa, mắt khác bị từ chối, rồi hai con số chính.</div>
+    <span class="cue">Bấm số 2 trên thanh chương → tốc độ 1.5× → ▶ (hoặc phím K)</span>
+    <p>Đây là bản ghi của một lần chạy thật: output và thời gian đều thật, đoạn chờ lâu được tua nhanh.</p>
+    <p class="time" style="margin-top:-4px">Nói mỗi câu khi ô kết quả bên phải hiện ra. Cần nói thêm thì bấm K để dừng.</p>
+    <ol class="chap">
+      <li><span class="see">Gen — đăng ký · ô kết quả: <b>Helper data 6,4 MB</b></span><span class="say">Đây là bước đăng ký: lấy ảnh mắt, khoá chìa vào <b>200 nghìn két</b>. Chỉ mất khoảng 0,1 giây.</span></li>
+      <li><span class="see">Rep — cùng mắt · <b class="ok">✓ Đúng key</b></span><span class="say">Chụp lại cùng mắt: mở được két, ra <span class="key">đúng chìa</span>. Hai dòng tô vàng giống hệt nhau.</span></li>
+      <li><span class="see">Rep — mắt khác · <b class="no">⊥ Từ chối</b></span><span class="say">Mắt của người khác: thử hết 200 nghìn két, không két nào mở, nên <span class="key">bị từ chối</span>.</span></li>
+      <li><span class="see">Ảnh nhiễu → nhiều ảnh</span><span class="say">Ảnh xấu của cùng mắt cũng không mở được, đó là từ chối nhầm. Nhưng đăng ký 3 ảnh thì ảnh đó lại vào được.</span></li>
+      <li><span class="see">EntTest · <b>Min-entropy 105,4 bit</b> · đường ngắn: bỏ</span><span class="say">Đo độ khó phá trên đúng các két paper công bố: <span class="key">105,4 bit</span>, paper là 105.</span></li>
+      <li><span class="see">TAR · <b class="ok">158 / 160 mắt</b> · đường ngắn: bỏ</span><span class="say">Và với 3 ảnh đăng ký, 2 ảnh khi mở: gần <b>99%</b> số mắt vào được.</span></li>
+    </ol>
+    <span class="cue">Đường ngắn: bấm K dừng clip ngay sau chương 5, sang slide 42. Hai con số ở chương 6–7 sẽ nói ở slide 43–44.</span>
+    <span class="cue">Đường đủ: chờ khung tóm tắt cuối clip hiện ra, dừng 2 giây rồi sang slide</span>
+    <p class="opt">Nếu chạy trực tiếp bằng live_demo.sh: nói theo đúng thứ tự trên, bỏ câu của chương 5 "ảnh nhiễu" (script trực tiếp không có phần nhiều ảnh).</p>
+    <p class="bridge">Các slide sau ghi lại từng kết quả này và so với paper.</p>
+  </section>
+
+  <section class="part" id="s4">
+    <div class="part-head"><span class="num">42</span><h2>Kịch bản 1: đăng ký → chìa; cùng mắt → đúng chìa; mắt khác → từ chối</h2></div>
+    <p class="time">Slide 42 · ≈ 30 giây · đường ngắn ≈ 20 giây</p>
+    <div class="gist">Cơ chế chạy đúng như paper; ảnh xấu bị từ chối nhầm, và nhiều ảnh cứu được.</div>
+    <span class="cue">Terminal bên trái: dòng xanh, rồi các dòng đỏ</span>
+    <p class="opt">Ảnh 3 của cùng mắt chỉ lệch 3%, mở được và ra đúng chìa. Mắt khác lệch khoảng một nửa số bit, <span class="key">luôn bị từ chối</span>.</p>
+    <p>Như vừa thấy trong clip: cùng mắt ra đúng chìa, mắt khác bị từ chối. Nhưng ảnh 2 của cùng mắt lệch 16% thì không mở được. Đó là lý do <span class="key">một ảnh chỉ mở được khoảng 64%</span>. Dùng nhiều ảnh thì mắt này được nhận, đúng cơ chế 64 lên 92% ở Phần 5.</p>
+    <p class="opt">Helper data của nhóm 6,4 MB, gần với 7 MB trong paper.</p>
+    <p class="bridge">Cơ chế đúng. Còn con số 105 bit thì sao?</p>
+  </section>
+
+  <section class="part" id="s5">
+    <div class="part-head"><span class="num">43</span><h2>Phía kẻ tấn công: nhóm ra 105,4 bit</h2></div>
+    <p class="time">Slide 43 · ≈ 30 giây · đường ngắn ≈ 20 giây</p>
+    <div class="gist">Đo trên đúng các két paper công bố, nhóm ra 105,4 bit: lệch paper chưa tới 1 bit.</div>
+    <span class="cue">Bảng bên trái, dòng tô vàng</span>
+    <p>Nhóm lấy đúng 200 nghìn két paper công bố và đo độ khó phá trên dữ liệu tổng hợp: <span class="key">105,4 bit</span>, paper là 105. Cả 4 cấu hình đều <span class="key">lệch chưa tới 1 bit</span>.</p>
+    <span class="cue">Hình bên phải: đường "min" ở đuôi trái</span>
+    <p class="opt">Hình bên phải nhắc lại ý ở Phần 5: độ an toàn tính theo <b>két yếu nhất</b>, tức đuôi bên trái, không phải đỉnh.</p>
+    <p class="opt">Điều này cũng kiểm chứng Lemma 1: két chọn độc lập với mắt người dùng thì vẫn giữ độ khó trên một bộ mắt hoàn toàn khác.</p>
+    <p class="bridge">Phía người dùng thật thì kết quả hơi khác paper.</p>
+  </section>
+
+  <section class="part" id="s6">
+    <div class="part-head"><span class="num">44</span><h2>Phía người dùng thật: cùng xu hướng, tỉ lệ mở cao hơn</h2></div>
+    <p class="time">Slide 44 · ≈ 25 giây</p>
+    <div class="gist">Cùng xu hướng với paper, nhưng tỉ lệ mở cao hơn vì dữ liệu tổng hợp ít lỗi hơn.</div>
+    <span class="cue">Hình: cột xám là paper, cột xanh là nhóm</span>
+    <p>Xu hướng giống paper: két càng dài thì càng khó mở, và nhiều ảnh thì mở dễ hơn hẳn.</p>
+    <p>Nhưng số của nhóm cao hơn: một ảnh <span class="n">74%</span> so với 64%, nhiều ảnh <span class="n">98%</span> so với 92%. Lý do là ảnh tổng hợp ít lỗi hơn ảnh thật.</p>
+    <p>Vì vậy nhóm nói rõ: demo <span class="key">kiểm chứng xu hướng</span>, không chứng minh lại con số 92%.</p>
+    <p class="bridge">Nhóm còn tự chạy lại bước chọn bit.</p>
+  </section>
+
+  <section class="part" id="s7">
+    <div class="part-head"><span class="num">45</span><h2>Nhóm tự chạy ζ-sampling: chọn bit khéo không giúp gì</h2></div>
+    <p class="time">Slide 45 · ≈ 20 giây · đường ngắn ≈ 10 giây<span class="skip">có thể lướt</span></p>
+    <div class="gist">Trên dữ liệu này, chọn bit khéo không tăng độ khó phá mà còn làm giảm tỉ lệ mở.</div>
+    <span class="cue">Bảng bên phải, so cột ζ = 0 với các cột còn lại</span>
+    <p>Nhóm tự chọn két với nhiều mức ζ. Độ khó phá <span class="key">gần như không đổi</span>, còn tỉ lệ mở lại giảm, ví dụ từ 99% xuống 93%.</p>
+    <p>Lý do: trên dữ liệu này, bit trông tốt lúc chọn không còn tốt lúc đo. Đúng điều Phần 5 nói: <span class="key">bit đã tốt đều thì chọn đều là đủ</span>.</p>
+    <p class="bridge">Tổng kết lại.</p>
+  </section>
+
+  <section class="part" id="s8">
+    <div class="part-head"><span class="num">46</span><h2>Paper và nhóm chạy lại — tổng kết</h2></div>
+    <p class="time">Slide 46 · ≈ 25 giây · đường ngắn ≈ 20 giây</p>
+    <div class="gist">Khớp: 105 bit và cơ chế khoá, mở, từ chối. Khác: tỉ lệ mở, vì dữ liệu khác.</div>
+    <span class="cue">Bảng: dòng tô vàng, rồi hai dòng TAR</span>
+    <p>Tóm lại: độ khó phá <span class="key">105,4 so với 105, khớp</span>. Cơ chế khoá, mở và từ chối, khớp. Tỉ lệ mở cao hơn vì dữ liệu sạch hơn, nên dữ liệu tổng hợp không thay được dữ liệu thật.</p>
+    <p class="opt">Tốc độ trên máy của nhóm: đăng ký 0,1 giây, mở 0,015 giây; mắt lạ thì 0,1 giây vì phải thử hết két.</p>
+    <p class="bridge">Phần demo của em đến đây là hết. Em xin chuyển lời cho Toàn với phần thảo luận và kết luận.</p>
+  </section>
+
+  <section class="part" id="hoi">
+    <div class="part-head"><span class="num">?</span><h2>Nếu bị hỏi ở Phần 6</h2></div>
+    <div class="box warn">
+      <ul>
+        <li><b>"Sao không dùng dữ liệu thật?"</b> Bộ IITD cần giấy phép. Tác giả công bố dữ liệu tổng hợp làm bằng cùng quy trình, nên nhóm dùng bộ đó.</li>
+        <li><b>"Vậy demo có chứng minh được 92% không?"</b> Không. Dữ liệu tổng hợp ít lỗi hơn nên tỉ lệ mở cao hơn. Demo kiểm chứng 105 bit và xu hướng.</li>
+        <li><b>"Clip có phải chạy thật không?"</b> Có. Script ghi lại output và thời gian thật của từng lệnh; đoạn chờ dài hơn 1 giây được tua nhanh ×4 và có ghi chú ngay trên màn hình.</li>
+        <li><b>"Sao lệnh verify cần file key?"</b> Đó là code nghiên cứu của tác giả. Bản Python của nhóm làm đúng Fig. 1, không cần biết trước chìa.</li>
+        <li><b>"Sao mỗi lần chạy TAR hơi khác?"</b> Công cụ chọn ảnh ngẫu nhiên. Chạy 5 lần ra 0,98 ± 0,01.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="part" id="so">
+    <div class="part-head"><span class="num">#</span><h2>Số cần nhớ</h2></div>
+    <div class="box">
+      <dl class="nums">
+        <dt>200 × 5</dt><dd>mắt tổng hợp × ảnh mỗi mắt; 40 mắt chọn bit, 160 mắt đo</dd>
+        <dt>3% · 16% · 50%</dt><dd>độ lệch: ảnh tốt cùng mắt (mở) · ảnh xấu cùng mắt (từ chối nhầm) · mắt khác (từ chối)</dd>
+        <dt>105,4 vs 105</dt><dd>độ khó phá: nhóm vs paper</dd>
+        <dt>74% · 98%</dt><dd>tỉ lệ mở của nhóm (1 ảnh · nhiều ảnh); paper 64% · 92%</dd>
+        <dt>0,1 s · 0,015 s</dt><dd>đăng ký · mở trên máy của nhóm</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section class="part" id="tu">
+    <div class="part-head"><span class="num">A–Z</span><h2>Từ khó, nói bằng lời thường</h2></div>
+    <div class="box">
+      <dl class="gl">
+        <div><dt>feap</dt><dd>Kho code tác giả công bố trên GitHub.</dd></div>
+        <div><dt>sample-lock / lsh-lock</dt><dd>Hai công cụ trong feap: một cái khoá và mở chìa thật, một cái đo độ khó phá và tỉ lệ mở.</dd></div>
+        <div><dt>Dữ liệu tổng hợp</dt><dd>Mã mống mắt do máy sinh ra theo cùng quy trình, không phải ảnh của người thật.</dd></div>
+        <div><dt>Gen / Rep</dt><dd>Đăng ký (khoá chìa vào két) / xác thực (mở két lấy chìa).</dd></div>
+        <div><dt>⊥</dt><dd>Ký hiệu "từ chối": không két nào mở.</dd></div>
+        <div><dt>Helper data</dt><dd>Toàn bộ két được lưu lại sau khi đăng ký (6,4 MB).</dd></div>
+        <div><dt>HD</dt><dd>Khoảng cách Hamming: tỉ lệ bit khác nhau giữa hai ảnh mắt.</dd></div>
+        <div><dt>EntTest / TAR / ζ-sampling</dt><dd>Đo độ khó phá / tỉ lệ người thật mở được / cách chọn bit "tốt" (xem Phần 5).</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <p class="foot"><a href="script.html">← Script Phần 5</a> · <a href="hieu-nhanh.html">Hiểu nhanh</a> · <a href="./#ch6">Mở slide Phần 6</a></p>
+</main>
+
+<script>
+(function () {
+  var root = document.documentElement;
+  function save(k, v) { try { localStorage.setItem('g3script:' + k, v); } catch (e) {} }
+  function fs() { return parseFloat(getComputedStyle(root).getPropertyValue('--fs')) || 19; }
+  function setFs(v) { v = Math.max(15, Math.min(28, v)); root.style.setProperty('--fs', v + 'px'); save('fs', v); }
+  document.getElementById('fs-up').onclick = function () { setFs(fs() + 1); };
+  document.getElementById('fs-dn').onclick = function () { setFs(fs() - 1); };
+  document.getElementById('theme').onclick = function () {
+    var cur = root.dataset.theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    var next = cur === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next; save('theme', next);
+  };
+
+  // keep the screen awake while reading
+  var lock = null, wakeBtn = document.getElementById('wake');
+  if (!('wakeLock' in navigator)) wakeBtn.hidden = true;
+  async function wake(on) {
+    try {
+      if (on) { lock = await navigator.wakeLock.request('screen'); lock.addEventListener('release', function () { if (!document.hidden) wakeBtn.setAttribute('aria-pressed', 'false'); }); }
+      else if (lock) { await lock.release(); lock = null; }
+      wakeBtn.setAttribute('aria-pressed', String(on));
+    } catch (e) { wakeBtn.setAttribute('aria-pressed', 'false'); }
+  }
+  wakeBtn.onclick = function () { wake(wakeBtn.getAttribute('aria-pressed') !== 'true'); };
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && wakeBtn.getAttribute('aria-pressed') === 'true' && (!lock || lock.released)) wake(true);
+  });
+
+  // highlight the section being read
+  var links = Array.prototype.slice.call(document.querySelectorAll('#chips a'));
+  var parts = links.map(function (a) { return document.querySelector(a.getAttribute('href')); });
+  var ticking = false;
+  function mark() {
+    ticking = false;
+    var y = Math.max(200, window.innerHeight * 0.3), cur = 0;
+    parts.forEach(function (p, i) { if (p && p.getBoundingClientRect().top <= y) cur = i; });
+    links.forEach(function (a, i) { a.classList.toggle('cur', i === cur); });
+    var c = links[cur], bar = document.getElementById('chips');
+    if (c && (c.offsetLeft < bar.scrollLeft || c.offsetLeft + c.offsetWidth > bar.scrollLeft + bar.clientWidth)) bar.scrollTo({ left: c.offsetLeft - 16, behavior: 'smooth' });
+  }
+  window.addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(mark); } }, { passive: true });
+  mark();
+})();
+</script>
+</body>
+</html>
