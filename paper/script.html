@@ -215,7 +215,7 @@ dl.gl dd { margin: 2px 0 0; color: var(--ink-2); }
 <main class="wrap">
   <header class="intro">
     <h1>Script trình bày Phần 5 — Thực nghiệm và kết quả</h1>
-    <p>Slide 29 → 37 · 8 slide nội dung + 1 slide mở phần<br>Toàn bộ ≈ 6 phút 25 giây · bỏ các câu mờ còn ≈ 5 phút 05 giây (khung của nhóm: 6 phút)</p>
+    <p>Slide 29 → 37 · 8 slide nội dung + 1 slide mở phần<br>Toàn bộ ≈ 6 phút 50 giây · bỏ các câu mờ còn ≈ 5 phút 30 giây (khung của nhóm: 6 phút)</p>
     <p style="margin-top:10px"><a href="hieu-nhanh.html" style="color:var(--accent);font-weight:700">Đọc thấy khó? Mở "Hiểu nhanh Phần 5" trước (10 phút) →</a> · <a href="script-phan6.html" style="color:var(--accent);font-weight:700">Script Phần 6 →</a></p>
     <div class="legend">
       <span class="lg-gist">Ý chính của slide</span>
@@ -264,14 +264,25 @@ dl.gl dd { margin: 2px 0 0; color: var(--ink-2); }
 
   <section class="part" id="s2">
     <div class="part-head"><span class="num">5.1</span><h2>Đo bảo mật bằng EntTest</h2></div>
-    <p class="time">Slide 31 · ≈ 45 giây</p>
-    <div class="gist">Histogram khác mắt càng hẹp và càng sát 0,5 thì càng nhiều "đồng xu độc lập", tức càng nhiều bit; paper đo như vậy cho từng tập con.</div>
+    <p class="time">Slide 31 · ≈ 70 giây</p>
+    <div class="gist">Paper đếm xem mã mống mắt khó đoán bằng bao nhiêu đồng xu tung riêng rẽ; mỗi đồng xu là một bit an toàn. Đếm riêng cho từng két.</div>
+    <div class="box">
+      <h3>Hiểu trước khi nói — "đồng xu độc lập" là gì?</h3>
+      <ul>
+        <li><b>Bit như đồng xu:</b> kẻ trộm đoán bit đó chỉ trúng 50/50, không có mẹo nào hơn.</li>
+        <li><b>Độc lập = không dính nhau:</b> biết bit này không giúp đoán bit kia. 10 đồng xu tung riêng có 2<sup>10</sup> = 1.024 khả năng, tức 10 bit. 10 đồng xu dán dính thành một khối thì luôn cùng mặt, chỉ 2 khả năng, tức 1 bit. Mống mắt có nhiều bit dính nhau, nên 512 bit không khó đoán bằng 512 đồng xu.</li>
+        <li><b>Đếm bằng độ hẹp histogram:</b> tung 1.000 đồng xu thì tỉ lệ ngửa lần nào cũng gần 50% (histogram hẹp); tung 10 đồng xu thì có lần 30%, có lần 70% (histogram rộng). Nhìn độ rộng là đếm ngược ra số đồng xu thật, gọi là bậc tự do <b>dF</b>.</li>
+        <li><b>Vì sao phải sát 0,5:</b> nếu mắt người khác chỉ lệch 30%, các bit hay trùng nhau, mỗi đồng xu bị "méo" (70/30) và chỉ đáng khoảng nửa bit.</li>
+      </ul>
+    </div>
     <span class="cue">Chỉ vào histogram đỏ ở hình bên phải</span>
-    <p>Ý tưởng của Daugman: so hai mắt khác nhau thì mỗi bit giống một lần tung đồng xu, nên khoảng cách Hamming tập trung quanh <span class="num-s">0,5</span>. Histogram màu đỏ chính là khoảng cách đó.</p>
-    <span class="cue">Chỉ vào công thức (5), rồi ô "Ví dụ tính tay"</span>
-    <p>Histogram càng hẹp thì càng nhiều đồng xu độc lập, đó là bậc tự do <b>dF</b>, và từ dF ra <span class="key">min-entropy</span>. Ví dụ σ bằng <span class="num-s">0,046</span> thì được khoảng <span class="num-s">118</span> bit. Paper đo <span class="key">riêng cho từng tập con</span>.</p>
+    <p>Ý tưởng của Daugman: lấy mắt của hai người khác nhau, đếm xem bao nhiêu phần trăm bit khác nhau. Nếu mỗi bit khó đoán như tung đồng xu, con số này sẽ quanh <span class="num-s">50%</span>. Histogram màu đỏ là các con số đó.</p>
+    <span class="cue">Chỉ vào công thức (5)</span>
+    <p>Câu hỏi là: 512 bit này thật ra <span class="key">khó đoán bằng bao nhiêu đồng xu tung riêng rẽ</span>? Vì nhiều bit dính nhau, đoán được bit này là đoán được bit kia. Cách đếm là: tung càng nhiều đồng xu thì tỉ lệ ngửa càng sát 50%, histogram càng hẹp. Nên từ độ hẹp của histogram, ta đếm ngược ra số đồng xu thật, gọi là bậc tự do <b>dF</b>. Mỗi đồng xu thật là <span class="key">một bit an toàn</span>.</p>
+    <span class="cue">Chỉ vào ô "Ví dụ tính tay"</span>
+    <p>Ví dụ trên slide: độ rộng <span class="num-s">0,046</span> ứng với khoảng <span class="num-s">118</span> đồng xu, tức khoảng 118 bit. Paper đếm <span class="key">riêng cho từng két</span>.</p>
     <span class="cue">So hai hình: trên VersionOne, dưới VersionTwoR</span>
-    <p>Đây cũng là tiêu chí <span class="key">khó đoán</span> của Tú: VersionOne có histogram rộng, lệch về 0,3; VersionTwoR hẹp và nằm đúng 0,5.</p>
+    <p>Đây cũng là tiêu chí <span class="key">khó đoán</span> của Tú: VersionOne có histogram rộng, lệch về 0,3, tức ít đồng xu và đồng xu bị méo; VersionTwoR hẹp và nằm đúng 0,5.</p>
     <p>Đây là <b>giả định thống kê duy nhất</b> của paper. Công cụ NIST còn cho số cao hơn, nên 105 là con số thận trọng.</p>
     <p class="bridge">Còn phía người dùng thật thì đo bằng TAR.</p>
   </section>

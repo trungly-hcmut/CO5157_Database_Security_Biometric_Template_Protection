@@ -267,7 +267,8 @@ details.flash p { margin: 0; padding: 0 14px 12px; font-size: .84em; color: var(
 
     <div class="card"><div class="top-l"><span class="sl">31</span><h3>5.1 · EntTest — đo "két khó đoán cỡ nào"</h3></div>
       <p class="say">So mắt của hai người khác nhau: bit càng giống tung đồng xu thì càng khó đoán, càng nhiều bit an toàn.</p>
-      <dl><dt>Hình dung</dt><dd>Mỗi bit như một đồng xu: nếu đúng 50/50 và không ăn theo nhau thì mỗi đồng = 1 bit khó đoán. Histogram đỏ càng <b>hẹp</b> và càng <b>sát 0,5</b> → càng nhiều "đồng xu thật".</dd>
+      <dl><dt>Hình dung</dt><dd>Mỗi bit như một đồng xu: đoán chỉ trúng 50/50. "Độc lập" là không dính nhau: 10 đồng xu tung riêng = 10 bit, nhưng 10 đồng xu dán dính thành một khối chỉ = 1 bit.</dd>
+      <dt>Cách đếm</dt><dd>Tung 1.000 đồng xu thì tỉ lệ ngửa luôn gần 50% (histogram hẹp); tung 10 đồng thì lúc 30%, lúc 70% (histogram rộng). Histogram đỏ càng <b>hẹp</b> và càng <b>sát 0,5</b> → càng nhiều "đồng xu thật" → càng nhiều bit.</dd>
       <dt>Số để nói</dt><dd>Ví dụ trên slide ra khoảng 118 bit. Đo riêng cho từng két.</dd>
       <dt>Nhớ thêm</dt><dd>Đây là giả định duy nhất của paper (tin rằng phép đo này đúng).</dd></dl></div>
 
